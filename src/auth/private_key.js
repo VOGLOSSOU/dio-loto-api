@@ -1,0 +1,1 @@
+module.exports = "USER_PRIVATE_KEY"

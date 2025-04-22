@@ -18,7 +18,7 @@ app
 initDb()
 
 // Routes (exemple basique)
-app.get("/ressources/", (req, res) => {
+app.get("/", (req, res) => {
   res.json({ message: "Bienvenue sur notre API !" })
 })
 

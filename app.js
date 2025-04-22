@@ -6,7 +6,7 @@ const cors = require("cors") // Ajout de cors
 const { initDb } = require("./src/db/sequelize") 
 
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 // Middleware
 app
@@ -48,9 +48,10 @@ require("./src/routes/reseller/findAllReseller")(app)
 require("./src/routes/reseller/findResellerByPk")(app)
 require("./src/routes/reseller/login")(app)
 
-app.use(({ res } ) => {
-    const message = `Impossible de récupérer la ressource demandée`
-    res.status(404).json({message})
+app.listen(port, () => {
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`Notre app tourne sur http://localhost:${port}`);
+  }
 })
 
 // Démarrer le serveur

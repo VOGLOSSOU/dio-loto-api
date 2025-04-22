@@ -5,11 +5,11 @@ const AdminModel = require('../models/admin')
 const ResellerModel = require('../models/reseller')
 
 // Connexion sécurisée avec des variables d'environnement
-const sequelize = new Sequelize('dio', 'root', '', {
-  host: 'localhost',
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
   dialect: 'mariadb',
   dialectOptions: {
-    timezone: 'Etc/GMT-2',
+    connectTimeout: 10000,
   },
   logging: false
 })

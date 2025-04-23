@@ -1,6 +1,6 @@
 const { Reseller } = require('../../db/sequelize');
 const { ValidationError, UniqueConstraintError } = require('sequelize');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 module.exports = (app) => {
   app.post('/api/resellers', async (req, res) => {

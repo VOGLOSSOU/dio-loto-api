@@ -48,11 +48,7 @@ require("./src/routes/reseller/findAllReseller")(app)
 require("./src/routes/reseller/findResellerByPk")(app)
 require("./src/routes/reseller/login")(app)
 
-app.listen(port, () => {
-  if (process.env.NODE_ENV !== "production") {
-    console.log(`Notre app tourne sur http://localhost:${port}`);
-  }
-})
 
-// Démarrer le serveur
-app.listen(port, () => console.log(`Notre app tourne sur http://localhost:${port}`))
+app.listen(port, () => {
+  console.log(`Notre app tourne sur le port ${port}`)
+})

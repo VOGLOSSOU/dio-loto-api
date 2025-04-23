@@ -4,9 +4,9 @@
   "description": "my node api",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "build": "npm install" 
-  },
+  "start": "node app.js",
+  "build": "npm install"
+},
   "author": "Nathan VOGLOSSOU",
   "license": "ISC",
   "dependencies": {

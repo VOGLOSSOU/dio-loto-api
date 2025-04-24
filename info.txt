@@ -1,0 +1,78 @@
+1 - users ( joueurs ) :
+- id
+- uniqueUserId
+- nom
+- prenom
+-email
+-password
+-solde
+-gain
+
+2 - resellers ( revendeurs ) :
+- id
+- uniqueResellerId
+- nom
+- prenom
+- email
+- password
+- solde
+- gain
+- soldeRevendeur
+- whatsapp
+- pays ( Benin , Côte d' Ivoire, Ghana, Niger, Togo )
+- status
+
+3 - admin :
+- id
+- uniqueAdminId
+- nom
+- prenom
+- email
+- password
+
+   - /auth/register (POST)  
+   - /auth/login (POST) → retourne un JWT / token  
+   - /users/ (GET, POST, PUT, DELETE)  
+     - champ rôle (joueur, revendeur, admin)  
+
+4 & 5. Games & Schedules  
+   - /games (GET, POST, PUT, DELETE)  
+     - id, nom, description, statut (ouvert/fermé)  
+   - /games/{gameId}/schedules (GET, POST, PUT, DELETE)  
+     - id, gameId, startTime, endTime  
+
+6. Rechargements & Transactions  
+   - /transactions/recharge (POST)  
+     - userId, resellerId, montant, date, status (validé, annulé)  
+   - /transactions/recharge/{id}/cancel (POST)  
+     - pour que l’admin annule une recharge erronée  
+   - /transactions/withdrawal (POST)  
+     - userId, montant, date, status  
+
+7. Tickets de pari 
+   - /tickets/ (POST) → créer un ticket (mise)  
+     - userId, scheduleId, chiffres joués, montant misé, date  
+   - /tickets/?user={userId} (GET) → lister les tickets d’un joueur  
+   - /tickets/{id} (GET, PUT) → mettre à jour le statut (validé/non validé) et créditer le gain  
+
+8. Résultats & Gains  
+   - /results/ (POST)  
+     - scheduleId, numéros gagnants  
+   - Lorsqu’un résultat est publié, ton back peut automatiquement :  
+     1. récupérer tous les tickets liés  
+     2. comparer et mettre à jour leur statut  
+     3. créer une transaction de gain si validé  
+
+9. Administration & Reporting
+   - /admin/users/ (GET, POST, PUT, DELETE) – gérer tous les comptes  
+   - /admin/resellers/ (GET, POST, PUT, DELETE) – activer/désactiver, bloquer  
+   - /admin/transactions/ (GET) – filtrer par date, par revendeur, par type  
+   - /admin/reports/statistics (GET)  
+     - total misé, total reversé, total rechargé par revendeur/joueur, etc.  
+   - /audit/logs (GET) – journalisation de toutes les actions importantes  
+
+  Processus : 
+
+  - Création de tous les models ( les 8 first ) 
+  - Exportation des models en table sql avec sequelize
+  - création des routes de création d' authentification pour user, admin et création de revendeur

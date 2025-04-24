@@ -5,6 +5,21 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       autoIncrement: true
     },
+    uniqueUserId: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      unique: {
+        msg: 'Cet identifiant admin existe déjà.'
+      },
+      allowNull: false,
+      validate: {
+        isUUID: {
+          args: 4,
+          msg: 'L’identifiant admin doit être un UUID version 4 valide.'
+        },
+        notNull: { msg: 'L’identifiant admin est requis.' }
+      }
+    },
     lastName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -60,15 +75,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         notEmpty: { msg: 'Le mot de passe ne peut pas être vide.' },
         notNull: { msg: 'Le mot de passe est requis.' }
-      }
-    },
-    solde: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-      defaultValue: 0,
-      validate: {
-        isFloat: { msg: 'Le solde doit être un nombre valide.' },
-        notNull: { msg: 'Le solde est requis.' }
       }
     }
   }, {

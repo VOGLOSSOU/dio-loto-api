@@ -105,11 +105,11 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     timestamps: true,
     createdAt: 'created',
-    updatedAt: false,
+    updatedAt: true,
     indexes: [
       {
         unique: true,
-        fields: ['email'] // Ajout d'un index unique sur le champ email
+        fields: ['email'] 
       }
     ]
   });

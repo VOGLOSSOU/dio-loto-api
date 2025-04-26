@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Bannière Code</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #canvas-container {
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    canvas {
+      max-width: 100%;
+      height: auto;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-center mb-8">Générateur de Bannière Code</h1>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+      <div id="canvas-container" class="mb-6 flex justify-center">
+        <canvas id="codeCanvas" width="1584" height="396" class="border border-gray-300 rounded-lg shadow"></canvas>
+      </div>
+      
+      <div class="flex flex-col md:flex-row justify-center gap-4">
+        <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+          Télécharger l'image
+        </button>
+        <button id="regenerateBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+          Régénérer
+        </button>
+      </div>
+    </div>
+    
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Personnalisation</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label for="bgColor" class="block text-sm font-medium text-gray-700 mb-1">Couleur d'arrière-plan</label>
+          <input type="color" id="bgColor" value="#1e1e1e" class="w-full h-10 rounded border border-gray-300">
+        </div>
+        <div>
+          <label for="textSize" class="block text-sm font-medium text-gray-700 mb-1">Taille du texte</label>
+          <input type="range" id="textSize" min="16" max="32" value="24" class="w-full">
+          <div class="text-center" id="textSizeValue">24px</div>
+        </div>
+      </div>
+      
+      <div class="mb-4">
+        <label for="codeInput" class="block text-sm font-medium text-gray-700 mb-1">Code JavaScript</label>
+        <textarea id="codeInput" rows="6" class="w-full p-2 border border-gray-300 rounded-lg font-mono text-sm">
+            class Human {
+  name = "Nathan VOGLOSSOU";
+  tagline = "Only Creating";             
+  philosophy = "Serve others"; 
+}</textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const canvas = document.getElementById('codeCanvas');
+      const ctx = canvas.getContext('2d');
+      const downloadBtn = document.getElementById('downloadBtn');
+      const regenerateBtn = document.getElementById('regenerateBtn');
+      const bgColorInput = document.getElementById('bgColor');
+      const textSizeInput = document.getElementById('textSize');
+      const textSizeValue = document.getElementById('textSizeValue');
+      const codeInput = document.getElementById('codeInput');
+      
+      // Update text size display
+      textSizeInput.addEventListener('input', function() {
+        textSizeValue.textContent = `${this.value}px`;
+      });
+      
+      // Generate the image
+      function generateImage() {
+        const bgColor = bgColorInput.value;
+        const fontSize = parseInt(textSizeInput.value);
+        const code = codeInput.value;
+        
+        // Clear canvas
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Parse and draw the code with syntax highlighting
+        drawCodeWithSyntaxHighlighting(code, fontSize);
+      }
+      
+      function drawCodeWithSyntaxHighlighting(code, fontSize) {
+        const lines = code.split('\n');
+        const fontFamily = 'Consolas, Monaco, "Andale Mono", monospace';
+        ctx.font = `${fontSize}px ${fontFamily}`;
+        
+        // Calculate code block dimensions
+        const lineHeight = fontSize * 1.5;
+        const padding = 20;
+        const codeBlockHeight = lines.length * lineHeight + padding * 2;
+        
+        // Measure the widest line to determine code block width
+        let maxLineWidth = 0;
+        for (const line of lines) {
+          const lineWidth = ctx.measureText(line).width;
+          if (lineWidth > maxLineWidth) {
+            maxLineWidth = lineWidth;
+          }
+        }
+        
+        const codeBlockWidth = maxLineWidth + padding * 2;
+        
+        // Position code block on the right side
+        const blockX = canvas.width - codeBlockWidth - 40; // 40px margin from right edge
+        const blockY = (canvas.height - codeBlockHeight) / 2;
+        
+        // Draw code block background
+        ctx.fillStyle = 'rgba(30, 30, 30, 0.8)';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 4;
+        ctx.fillRect(blockX, blockY, codeBlockWidth, codeBlockHeight);
+        ctx.shadowBlur = 0;
+        
+        // Draw code with syntax highlighting
+        let y = blockY + padding + fontSize;
+        
+        for (const line of lines) {
+          let x = blockX + padding;
+          
+          // Apply syntax highlighting
+          const tokens = tokenizeLine(line);
+          
+          for (const token of tokens) {
+            ctx.fillStyle = token.color;
+            ctx.fillText(token.text, x, y);
+            x += ctx.measureText(token.text).width;
+          }
+          
+          y += lineHeight;
+        }
+      }
+      
+      function tokenizeLine(line) {
+        const tokens = [];
+        
+        // Simple tokenizer for JavaScript syntax highlighting
+        // Keywords
+        const keywords = ['class', 'function', 'const', 'let', 'var', 'return', 'if', 'else', 'for', 'while'];
+        // Colors based on VS Code dark theme
+        const colors = {
+          keyword: '#569cd6',    // blue
+          property: '#9cdcfe',   // light blue
+          string: '#ce9178',     // orange/salmon
+          operator: '#d4d4d4',   // light gray
+          punctuation: '#d4d4d4',// light gray
+          class: '#4ec9b0',      // teal
+          default: '#d4d4d4'     // light gray
+        };
+        
+        // Split the line into parts to analyze
+        let currentPart = '';
+        let inString = false;
+        let stringChar = '';
+        
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          
+          // Handle strings
+          if ((char === '"' || char === "'") && (i === 0 || line[i-1] !== '\\')) {
+            if (inString && char === stringChar) {
+              // End of string
+              currentPart += char;
+              tokens.push({ text: currentPart, color: colors.string });
+              currentPart = '';
+              inString = false;
+            } else if (!inString) {
+              // Start of string
+              if (currentPart) {
+                tokens.push({ text: currentPart, color: colors.default });
+                currentPart = '';
+              }
+              currentPart = char;
+              inString = true;
+              stringChar = char;
+            } else {
+              // Different quote inside a string
+              currentPart += char;
+            }
+            continue;
+          }
+          
+          if (inString) {
+            currentPart += char;
+            continue;
+          }
+          
+          // Handle operators and punctuation
+          if (/[=+\-*/<>!&|;:,.{}()[\]]/.test(char)) {
+            if (currentPart) {
+              // Process the part before the operator
+              if (keywords.includes(currentPart)) {
+                tokens.push({ text: currentPart, color: colors.keyword });
+              } else if (/^[A-Z][a-zA-Z0-9]*$/.test(currentPart)) {
+                tokens.push({ text: currentPart, color: colors.class });
+              } else {
+                tokens.push({ text: currentPart, color: colors.default });
+              }
+              currentPart = '';
+            }
+            
+            // Add the operator
+            tokens.push({ text: char, color: /[{}()[\];,.]/.test(char) ? colors.punctuation : colors.operator });
+            continue;
+          }
+          
+          // Handle spaces
+          if (char === ' ' || char === '\t') {
+            if (currentPart) {
+              if (keywords.includes(currentPart)) {
+                tokens.push({ text: currentPart, color: colors.keyword });
+              } else if (/^[A-Z][a-zA-Z0-9]*$/.test(currentPart)) {
+                tokens.push({ text: currentPart, color: colors.class });
+              } else {
+                tokens.push({ text: currentPart, color: colors.default });
+              }
+              currentPart = '';
+            }
+            tokens.push({ text: char, color: colors.default });
+            continue;
+          }
+          
+          // Property names (after dot)
+          if (tokens.length > 0 && tokens[tokens.length - 1].text === '.') {
+            currentPart += char;
+            continue;
+          }
+          
+          // Everything else
+          currentPart += char;
+        }
+        
+        // Process any remaining part
+        if (currentPart) {
+          if (inString) {
+            tokens.push({ text: currentPart, color: colors.string });
+          } else if (keywords.includes(currentPart)) {
+            tokens.push({ text: currentPart, color: colors.keyword });
+          } else if (/^[A-Z][a-zA-Z0-9]*$/.test(currentPart)) {
+            tokens.push({ text: currentPart, color: colors.class });
+          } else if (tokens.length > 0 && tokens[tokens.length - 1].text === '.') {
+            tokens.push({ text: currentPart, color: colors.property });
+          } else {
+            tokens.push({ text: currentPart, color: colors.default });
+          }
+        }
+        
+        return tokens;
+      }
+      
+      // Download the image
+      downloadBtn.addEventListener('click', function() {
+        const link = document.createElement('a');
+        link.download = 'code-banner.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+      
+      // Regenerate the image
+      regenerateBtn.addEventListener('click', generateImage);
+      
+      // Update when inputs change
+      bgColorInput.addEventListener('change', generateImage);
+      textSizeInput.addEventListener('change', generateImage);
+      codeInput.addEventListener('input', generateImage);
+      
+      // Initial generation
+      generateImage();
+    });
+  </script>
+</body>
+</html>

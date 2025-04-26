@@ -1,5 +1,7 @@
 const bcrypt = require("bcryptjs");
 const { User } = require("../../db/sequelize");
+const jwt = require('jsonwebtoken');
+const privateKey = require('../../auth/private_key');
 const { ValidationError, UniqueConstraintError } = require("sequelize");
 
 module.exports = (app) => {
@@ -26,9 +28,17 @@ module.exports = (app) => {
         gain: gain || 0
       });
 
+          // Génération du token JWT
+            const token = jwt.sign(
+              { userId: user.id },
+              privateKey,
+              { expiresIn: '24h' }
+            );
+
       res.status(201).json({
         message: `L'utilisateur ${user.firstName} ${user.lastName} a bien été créé.`,
-        data: user
+        data: user,
+        token 
       });
 
     } catch (error) {

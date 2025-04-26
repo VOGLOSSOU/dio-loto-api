@@ -3,6 +3,8 @@ const { Sequelize, DataTypes } = require('sequelize')
 const UserModel = require('../models/user')
 const AdminModel = require('../models/admin')
 const ResellerModel = require('../models/reseller')
+const TransactionModel = require('../models/transaction')
+const SoldeInitialModel = require('../models/soldeInitial')
 
 // Connexion sécurisée avec des variables d'environnement
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
@@ -17,6 +19,8 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
 const User = UserModel(sequelize, DataTypes)
 const Admin = AdminModel(sequelize, DataTypes)
 const Reseller = ResellerModel(sequelize, DataTypes)
+const Transaction = TransactionModel(sequelize, DataTypes)
+const SoldeInitial = SoldeInitialModel(sequelize, DataTypes)
 
 const initDb = async () => {
   try {
@@ -30,5 +34,5 @@ const initDb = async () => {
 }
 
 module.exports = { 
-  initDb, User, Admin, Reseller
+  initDb, User, Admin, Reseller, Transaction, SoldeInitial
 }

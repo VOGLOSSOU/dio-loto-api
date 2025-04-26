@@ -41,10 +41,104 @@
    - /games/{gameId}/schedules (GET, POST, PUT, DELETE)  
      - id, gameId, startTime, endTime  
 
-6. Rechargements & Transactions  
+Créer un modèle soldeIntial qui va permettre d' initialiser le solde
+courant du système .
+
+Je vais créer la route initialiseSolde qui va permettre à un admin 
+d' initialiser le solde courant du système. 
+
+L' admin doit forcément être connecté , et ensuite je vais récupérer son uniqueUserId. Je vais vérifier si ce uniqueUserId existe dans la table des
+admins de ma base de donnée ( sinon, l' opération s' arrête )
+Ensuite, je vais récupérer le montant et le mettre dans ma table de SoldeInitial . Si il y a déja une 
+ligne dans cette table , alors c' est qu' il y a déja un montant initial , je vais remplacer cette ligne par le nouveau; Donc à tout instant,
+ce n' est qu' une seule ligne que je dois avoir dans cette table.
+
+Maintenant qu' on peut initialiser un montant dans l' appli, on va créer cette route 
+qui va permettre à un admin de recharger un revendeur à partir du solde initial. 
+Nous avons déja construit le modèle transaction et le solde a déja été initialisé. 
+
+Alors, pour recharger un revendeur, l' admin va fourni son email , le montant de recharge et le uniqueUserId de l' admin qui veut faire l' opération.
+Je vérifie d' abord si le userUniqueId existe, ensuite si il est présent dans la table des admins.
+Si le uniqueUserId de l' admin n' est pas trouvé, l' opération s' arrête en même temps. 
+Ensuite , je récupère l' email du revendeur qui a été fourni. Si il existe et est présent dans la table resellers
+de ma base de donnée, alors good ( je récupère toutes ces informations ) , si il n' est pas dans la table
+alors l' opération s' arrête. Une fois que le reseller existe dans ma table resellers et que j' ai pu récupérer toutes les infos qui luis sont liées, 
+je vais voir le montant de recharge entré par l' admin. Ensuite je compare ce montant au montant initial qui estdans ma base de donnée. Le montant dont on veut recharger le revendeur doit être inféreur à ce qu' il y a dans la table SoldeInitials. 
+Et ensuite, je vais faire la recharge du revndeur. Comment ça marche ?
+
+Le montant que va entrer l' admin ( si il est inférieur à ce qu' il y a dans SoldeInitials), alors je crée la transaction ( model transaction ) :
+sender : uniqueUserId de l' admin qui est entrain de faire l' opération
+receiver : uniqueResellerId ( on devrait récupérer les infos du reseller lorsque son email est validé )
+money : le montant dont l' admin veut recharger le reseller ( après avoir vérifié que ce montant est  inférieur ou égal au montant qui est dans la table SoldeInitials )
+date : la date 
+status : validé
+type : recharge
+
+Ensuite, on va mettre à jour le soldeRevendeur du reseller ( on remplace son soldeRevendeur par le montant dont il est rechargé )
+Et aussi, on va mettre à jour le montant initial du système : A chaque fois qu' un admin recharge un reseller, le montant dont il recharge est débité du montant de la table SoldeInitials. 
+Donc si le montant de SoldeInitials était X , après avoir rechargé le reseller de Y , le montant de SoldeInitials revient à X - Y . 
+Ceci permettra de suivre en temps réels ce qui est dépensé, ce qui reste. 
+
+Maintenant, on va créer la route pour la recharge reseller-user :
+Là, ca se passe entre un revendeur ( reseller ) et un user. Pour recharger un user, le revendeur doit entrer le email de l' user, et bien sur doit êtee connecté.
+Donc je vais récupéré l' uniqueResellerId , l' email (de l' user) et le montant entré.
+Je vais d' abord si l' uniqueResellerId existe dans ma table Resellers. Si oui, je continue, sinon,j' arrête.
+Dans le cas où l' uniqueResellerId existe dans ma table et que le Revendeur est bien connecté je vais récupérer ses infos, et je vérifie si l' email de l' user
+qu' il a entré existe dans ma table Users. Si cet email n' existe pas, alors le script s' arrête.
+Si l' email existe bien dans la table Users, alors je vais récupérer les infos qui sont liés à cet user. Ensuite je voir le montant entré par le revendeur. 
+Je verrai si ce montant est inférieur ou égal au montant du soldeRevendeur au niveau du revendeur ( j'  avais déja récupéré ses infos précédement ).
+Si le montant dont on veut recharger l' user est inférieur ou égal au soldeRevendeur du Reseller, alors je crée la transaction.
+sender : uniqueResellerId du Reseller qui est entrain de faire l' opération
+receiver : uniqueUserId ( on devrait récupérer les infos de l' user lorsque son email est validé )
+money : le montant dont le Reseller veut recharger le reseller ( après avoir vérifié que ce montant est inférieur ou égal au montant qui est dans soldeRevendeur du Reseller )
+date : la date 
+status : validé
+type : recharge
+
+Après que la transaction ait été crée avec succès, je vais :
+- Mettre à jour le soldeRevendeur du Reseller ( débiter le montant dont il a rechargé l' user de son soldeRevendeur )
+- Mettre à jour le solde de L' User ( c' st à dire ajouter le montant dont il vient d' être débité à son solde)
+
+Maintenant je vais créer la route qui va permettra à un admin d' annuler une transaction.
+Il peut arriver qu' un revendeur recharge un user au lieu d' un autre. Dans ce cas, il le signale
+et un admin annule cette transaction.
+Pour cela, il doit être fourni l' uniqueTransacId  de la transaction , et quand moi je récupère ça,
+je vérifie si ce uniqueTransacId  est bien présente dans ma table Transactions , et quand je vois ça, je récupère les infos liées à cette transaction. 
+Ensuite : 
+Je rappelle que c' est généralement une recharge qu' on peut annuler.
+Vu que j' ai déja les infos liées à la transaction, je prends le sender ( qui est doit être dans ce cas le uniqueResellerId du Revendeur ) ,
+le receiver ( qui est dans ce cas le uniqueUserId de l' User qui a été rechargé ), le 	money ( l'argent dont on a rechargé l' user ) , et voici ce que je fais :
+Je prends le money et je l' ajoute au soldeRevendeur du Reseller ( dont j' avais le uniqueResellerId : sender ) et ensuite je soustraire ce money du solde de l' User ( dont j' avais déja le uniqueUserId : receiver )
+Et après que ces opérations aient réussi, je change le statut de la transaction de validé en annulé. Et ensuite, j' envoie un essage du succès de l' annulation de la transaction.
+La route va s' appeler : /transactions/recharge/{uniqueTransacId}/cancel (POST)
+
+Maintenant je vais créer la route qui va permettre à un user connecté de se recharger à partir de son gain. Si par exemple
+un user a joué et a gagné une certaine somme, alors il peut se recharger avec son gain.
+Donc voici comment ça va se passer : un user connect décide de se techarger avec son gain. 
+On s' assure d' abord qu' il est connecté, ensuit on récupère son uniqueUserId , le montant de son recharge.
+Avc son uniqueUserId, on vérifie si il existe dans la table Users. Si oui, on continue, sinon on arrête l' opéartion.
+Si il est connecté et existe dans la table, je récupère toutes les infos qui lui sont liées.
+Dans ces infos , je vérifie si son bgain est supérieur à 5000. Si oui, on continue, sion, on arrête.
+Si son gain est supérieur ou égal à 5000, je vérifie le montant dont il veut se recharger. 
+Ce montant doit être inférieur ou égal à ce qu' il a commme gain. Si ce n' est pas le cas, l' opération s' arrête lui notifiant que ce n' est pas possible. Si son gain est supérieur ou égal au montant dont ul veut se 
+recharger, alors l' opération continue. Et ensuite :
+je vais créer la transaction avec les données suivantes : 
+sender : uniqueUserId de l' User qui est entrain de faire l' opération
+receiver : uniqueUserId ( toujours de celui qui est entrain de faire l' opération )
+money : le montant dont l' User veut se recharger  ( après avoir vérifié que ce montant est inférieur ou égal au montant qui est dans gain )
+date : la date 
+status : validé
+type : recharge
+
+Et après ça, je vais mettre à jour son fain et son solde.
+Son gain sera débité du montant de recharge et son solde sera crédité du montant de recharge.
+Et quand tout aura marché, je vais lui envoyer un message de succès.
+L aroute va s' appeler : /recharge-user-to-user
+
+6. Rechargements & Transactions  ( id, uniqueTransacId ( uuid ) , sender ( string ) , receiver ( string ) , money ( Float ) , date , status ( validé , annulé - validé ( par défaut ), type ( recharge, retrait )))
    - /transactions/recharge (POST)  
      - userId, resellerId, montant, date, status (validé, annulé)  
-   - /transactions/recharge/{id}/cancel (POST)  
+   - /transactions/recharge/{uniqueTransacId}/cancel (POST)  
      - pour que l’admin annule une recharge erronée  
    - /transactions/withdrawal (POST)  
      - userId, montant, date, status  

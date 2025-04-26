@@ -5,7 +5,7 @@ const { ValidationError, UniqueConstraintError } = require("sequelize");
 module.exports = (app) => {
   app.post("/api/admins", async (req, res) => {
     try {
-      const { firstName, lastName, email, password, solde } = req.body;
+      const { firstName, lastName, email, password } = req.body;
 
       // Vérification des champs obligatoires
       if (!firstName || !lastName || !email || !password) {
@@ -24,8 +24,7 @@ module.exports = (app) => {
         firstName,
         lastName,
         email: normalizedEmail, // Stocké en minuscule
-        password: hashedPassword, // Haché
-        solde: solde >= 0 ? solde : 0 // Valeur par défaut si non fournie
+        password: hashedPassword
       });
 
       res.status(201).json({

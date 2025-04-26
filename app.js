@@ -48,6 +48,15 @@ require("./src/routes/reseller/findAllReseller")(app)
 require("./src/routes/reseller/findResellerByPk")(app)
 require("./src/routes/reseller/login")(app)
 
+// : SoldeInitial
+require("./src/routes/soldeInitial/initialiseSolde")(app)
+
+// : Transactions
+require("./src/routes/transaction/recharge-admin-reseller")(app)
+require("./src/routes/transaction/recharge-reseller-user")(app)
+require("./src/routes/transaction/recharge-cancel")(app)
+require("./src/routes/transaction/recharge-user-to-user")(app)
+
 
 app.listen(port, () => {
   console.log(`Notre app tourne sur le port ${port}`)

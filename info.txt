@@ -30,16 +30,75 @@
 - email
 - password
 
-   - /auth/register (POST)  
-   - /auth/login (POST) → retourne un JWT / token  
-   - /users/ (GET, POST, PUT, DELETE)  
-     - champ rôle (joueur, revendeur, admin)  
+
 
 4 & 5. Games & Schedules  
    - /games (GET, POST, PUT, DELETE)  
      - id, nom, description, statut (ouvert/fermé)  
    - /games/{gameId}/schedules (GET, POST, PUT, DELETE)  
      - id, gameId, startTime, endTime  
+
+
+
+ Les jeux des pays 
+
+Bénin 
+11h 14h - 10h55
+18h 21h - 17h 55 
+21h 00h - 20h 55
+00h 03h - 01h 55
+Nb: il n'y a pas double chance ici
+
+ TOGO
+8h 11h - 7h 55 il y a double chance ici.pour ceux jeux seul
+
+13h 16h - 12h 55
+18h 21h - 17h 55
+
+CÔTÉ IVOIRE 
+7H 10h - 6h 55
+10H 13h - 9h 55
+13H 16h - 12h 55
+16H 19h - 15h 55
+21H 00h - 20h 55
+23H 02h - 22h 55
+NB1: LES weekends il a jeux  a 1h et 3 h du matin.il faut que les administrateurs aient la main pour programmer des jeux sur le site.tout les jeux de la côte ivoire on double chance 
+
+ GHANA 
+ 2OH 23h - 19h 55
+ 
+ NIGER
+ 15 heure 18h - 14h 55
+ 
+ NB 2: TOUT LES JEUX DOIVENT ÊTRE FERMÉ A MOINS 5 MUNITE DE L'HEURE QUI EST PROGRAMME SUR LE SITE.
+ Les formules de gain des Turbo double chance 
+Double chance nap3.mise multipliée par 3000
+Turbo 2 double chance mise multipliée par 3000
+
+Turbo 3 double chance mise multipliée par 800
+
+Turbo 4 double chance mise multipliée par 500
+
+ Nb.Le principe de gain est le même que précedemment à la difference que si le parieur opte pour la double chance, en cas de victoire, le gain est divisé proportionnellement entre Win (5 premiers numéros tires) et Machine (5 derniers numéros tires). Ainsi le gain en Win représentera 60% du gain normal et le gain en Machine 40%
+[5/12, 6:01 PM] Nathan VOGLOSSOU: ok nathan, oui nathan desolé; vraiment t'as raison d'etre faché.
+Voici le noms des jeux :
+
+Bénin : benin11, benin14, benin18, benin21, benin00, 
+Togo : togo8, togo13, togo18,
+Côte d' Ivoire : coteivoire7, coteivoire10, coteivoire13, coteivoire16, coteivoire21, coteivoire23, coteivoire1, coteivoire3, 
+Ghana : ghana20, 
+Niger :  niger15
+
+
+
+
+
+
+
+
+
+
+
 
 Créer un modèle soldeIntial qui va permettre d' initialiser le solde
 courant du système .

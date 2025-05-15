@@ -1,8 +1,9 @@
-POST http://localhost:3000/api/transactions/recharge-user-to-user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc0NTY5MDE0NSwiZXhwIjoxNzQ1Nzc2NTQ1fQ.ILs1FBdZrTNX3bv0OHj1d4X-p3bbHIt9nZHMgvlWmy4
+GET http://localhost:3000/api/games/all/Ghana
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3NDcxMTEwNjgsImV4cCI6MTc0NzE5NzQ2OH0.5j6riePHFb5p1zAAPQ16FNMnEa1vZgznGUJ6SQ3o_RU
 Content-Type: application/json
 
-{
-  "uniqueUserId" : "a4c72f94-e0b7-44e8-b0e4-2fc3d3935695",
-  "montant" : 5000
-}  
+# {
+#   "email": "resel@gmail.com",
+#   "montant": "100000", 
+#   "uniqueResellerId": "f7f0f476-8092-428f-90d9-cdfed8876ce8"
+# }

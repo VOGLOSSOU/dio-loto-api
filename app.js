@@ -22,6 +22,11 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenue sur notre API !" })
 })
 
+const updateGameStatus = require('./src/scripts/updateGamesStatus');
+
+// Lancer la tâche planifiée
+updateGameStatus();
+
 // Ici nous afficherons nos routes
 
 // : Users
@@ -31,6 +36,8 @@ require("./src/routes/user/createUser")(app)
 require("./src/routes/user/updateUser")(app)
 require("./src/routes/user/deleteUser")(app)
 require("./src/routes/user/login")(app)
+require("./src/routes/user/check-role")(app) // Vérification du rôle de l'utilisateur
+require("./src/scripts/checkAvailableGames")(app) // Vérification des jeux disponibles
 
 // : Admins
 require("./src/routes/admin/findAllAdmins")(app)
@@ -56,6 +63,11 @@ require("./src/routes/transaction/recharge-admin-reseller")(app)
 require("./src/routes/transaction/recharge-reseller-user")(app)
 require("./src/routes/transaction/recharge-cancel")(app)
 require("./src/routes/transaction/recharge-user-to-user")(app)
+
+// : Games
+require("./src/routes/games/updateGamesStatus")(app)
+require("./src/routes/games/gamesAvailbleByCountries")(app)
+require("./src/routes/games/getGamesByCountries")(app)
 
 
 app.listen(port, () => {

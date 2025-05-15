@@ -5,13 +5,15 @@ const AdminModel = require('../models/admin')
 const ResellerModel = require('../models/reseller')
 const TransactionModel = require('../models/transaction')
 const SoldeInitialModel = require('../models/soldeInitial')
+const GameModel = require('../models/game')
+const ScheduleModel = require('../models/schedule')
 
 // Connexion sécurisée avec des variables d'environnement
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
   host: process.env.DB_HOST,
   dialect: 'mariadb',
   dialectOptions: {
-    connectTimeout: 20000,
+    connectTimeout: 40000,
   },
   logging: false
 })
@@ -21,6 +23,12 @@ const Admin = AdminModel(sequelize, DataTypes)
 const Reseller = ResellerModel(sequelize, DataTypes)
 const Transaction = TransactionModel(sequelize, DataTypes)
 const SoldeInitial = SoldeInitialModel(sequelize, DataTypes)
+const Game = GameModel(sequelize, DataTypes)
+const Schedule = ScheduleModel(sequelize, DataTypes)
+
+// Charger les associations
+Game.associate({ Schedule });
+Schedule.associate({ Game });
 
 const initDb = async () => {
   try {
@@ -34,5 +42,5 @@ const initDb = async () => {
 }
 
 module.exports = { 
-  initDb, User, Admin, Reseller, Transaction, SoldeInitial
+  initDb, User, Admin, Reseller, Transaction, SoldeInitial, Game, Schedule
 }

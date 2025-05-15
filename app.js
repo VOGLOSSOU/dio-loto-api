@@ -69,6 +69,10 @@ require("./src/routes/games/updateGamesStatus")(app)
 require("./src/routes/games/gamesAvailbleByCountries")(app)
 require("./src/routes/games/getGamesByCountries")(app)
 
+// : EasyCron
+require("./src/routes/easycron/ping")(app)
+require("./src/routes/easycron/updateStatus")(app)
+
 
 app.listen(port, () => {
   console.log(`Notre app tourne sur le port ${port}`)

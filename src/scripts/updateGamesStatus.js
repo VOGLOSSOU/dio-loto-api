@@ -38,12 +38,12 @@ const updateGameStatus = () => {
         }
 
         // Logs détaillés pour chaque jeu
-        console.log(`Vérification du jeu : ${schedule.game.nom}`);
-        console.log(`Heure actuelle : ${currentTime.format('HH:mm:ss')} (${schedule.timezone})`);
-        console.log(`Plage horaire : ${startTime.format('HH:mm:ss')} - ${endTime.format('HH:mm:ss')}`);
-        console.log(`Statut actuel : ${schedule.game.statut}`);
-        console.log(`Fuseau horaire pour le jeu "${schedule.game.nom}" : ${schedule.timezone}`);
-        console.log(`Est dans la plage horaire : ${isInSchedule}`);
+        // console.log(`Vérification du jeu : ${schedule.game.nom}`);
+        // console.log(`Heure actuelle : ${currentTime.format('HH:mm:ss')} (${schedule.timezone})`);
+        // console.log(`Plage horaire : ${startTime.format('HH:mm:ss')} - ${endTime.format('HH:mm:ss')}`);
+        // console.log(`Statut actuel : ${schedule.game.statut}`);
+        // console.log(`Fuseau horaire pour le jeu "${schedule.game.nom}" : ${schedule.timezone}`);
+        // console.log(`Est dans la plage horaire : ${isInSchedule}`);
       }
 
       console.log('Mise à jour des statuts terminée.');

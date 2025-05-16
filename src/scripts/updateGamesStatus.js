@@ -6,7 +6,7 @@ const { Game, Schedule } = require('../db/sequelize');
 const updateGameStatus = () => {
   cron.schedule('* * * * *', async () => { // Exécution chaque minute
     try {
-      console.log('Mise à jour des statuts des jeux...');
+      console.log(`[${new Date().toISOString()}] Mise à jour des statuts des jeux...`);
 
       // Récupérer tous les horaires et leurs jeux associés
       const schedules = await Schedule.findAll({
@@ -21,7 +21,9 @@ const updateGameStatus = () => {
         const endTime = moment.tz(schedule.endTime, 'HH:mm:ss', schedule.timezone);
 
         // Vérifier si le jeu est dans son horaire
-        const isInSchedule = currentTime.isBetween(startTime, endTime);
+        const isInSchedule = startTime.isBefore(endTime)
+          ? currentTime.isBetween(startTime, endTime) // Cas normal : startTime < endTime
+          : currentTime.isAfter(startTime) || currentTime.isBefore(endTime); // Cas où la plage traverse minuit
 
         // Mettre à jour le statut du jeu
         const game = schedule.game;
@@ -34,11 +36,20 @@ const updateGameStatus = () => {
           await game.save();
           console.log(`Le jeu "${game.nom}" est maintenant fermé.`);
         }
+
+        // Logs détaillés pour chaque jeu
+        console.log(`Vérification du jeu : ${schedule.game.nom}`);
+        console.log(`Heure actuelle : ${currentTime.format('HH:mm:ss')} (${schedule.timezone})`);
+        console.log(`Plage horaire : ${startTime.format('HH:mm:ss')} - ${endTime.format('HH:mm:ss')}`);
+        console.log(`Statut actuel : ${schedule.game.statut}`);
+        console.log(`Fuseau horaire pour le jeu "${schedule.game.nom}" : ${schedule.timezone}`);
+        console.log(`Est dans la plage horaire : ${isInSchedule}`);
       }
 
       console.log('Mise à jour des statuts terminée.');
     } catch (error) {
-      console.error('Erreur lors de la mise à jour des statuts des jeux :', error);
+      console.error('Erreur lors de la mise à jour des statuts des jeux :', error.message);
+      console.error(error.stack);
     }
   });
 };

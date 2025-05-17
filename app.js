@@ -37,7 +37,6 @@ require("./src/routes/user/updateUser")(app)
 require("./src/routes/user/deleteUser")(app)
 require("./src/routes/user/login")(app)
 require("./src/routes/user/check-role")(app) // Vérification du rôle de l'utilisateur
-require("./src/scripts/checkAvailableGames")(app) // Vérification des jeux disponibles
 
 // : Admins
 require("./src/routes/admin/findAllAdmins")(app)

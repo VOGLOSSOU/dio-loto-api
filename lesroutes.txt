@@ -1,0 +1,71 @@
+Il y a 3 types d' users qui vont utiliser l' application mobile : 
+- user simple ( joueur )
+- reseller ( revendeur : ce sont les admins qui décident de nommer un user revendeur 
+ : je gère ça au niveau de la partie admin)
+
+// : Users
+https://dio-loto-api.onrender.com/api/users ( get : pour récupérer la liste de tous les utilisateurs )
+https://dio-loto-api.onrender.com/api/users/:id (get : pour récupérer un utilisateur à l' aide de son id )
+https://dio-loto-api.onrender.com/api/users ( post : je récupère firstName, lastName, email, password 
+pour créer un nouvel user. Lorsque l' inscription marche, un token est généré donc l' user peut être connecté en même temps, plus bésoin de lui demander de se connecter )
+https://dio-loto-api.onrender.com/api/users/:id ( put : pour mettre à jour les infos d' un user )
+https://dio-loto-api.onrender.com/api/users/:id ( delete : pour supprimer un utilisateur )
+https://dio-loto-api.onrender.com/api/users/login ( post : pour se connecter en tant qu' utilisateur )
+https://dio-loto-api.onrender.com/api/auth/check-role ( post : tu me fournis l' email de l' user : cette route vérifie si l' email de l' user qui est connecté se trouve dans la liste des revendeurs
+ et donc le dashboard de cet user sera la dashboard du revendeur )
+
+ Donc en fait, un user lorsqu' il se connecte, on doit pouvoir vérifier si c' est un revendeur avant de pouvoir le diriger vers son dashboard.
+ Car les dashboards ne sont pas les mêmes. 
+ Un revendeur est avant tout un user, donc toutes les routes pour un user lui sont applicables. 
+
+ 
+// : Games
+https://dio-loto-api.onrender.com/api/games/all/:pays ( get : pour obtenir tous les jeux d' un pays . Chaque jeu a un nom qui correspond 
+à l' id que tu as donné au jeu en front )
+https://dio-loto-api.onrender.com/api/games/available/:pays ( get : pour voir les jeux ouverts / disponibles pour chaque pays )
+
+// Opérations dans l' app :
+
+https://dio-loto-api.onrender.com/api/transactions/recharge-reseller-user ( post : pour recharger un user : uniquement dispobiles pour les revendeurs : cette route prends 
+uniqueResellerId, email, montant  . uniqueResellerId : c' est l' uniqueId du revendeur, email : c' est l' email de l' user qu' il veut recharger et le montant : c' est la somme de recharge )
+
+https://dio-loto-api.onrender.com/api/transactions/recharge-user-to-user ( post : pour qu' un user simple ( comme un revendeur aussi car étant avant tout user ) 
+puisse se recgarger lui même à partir de son gain. Cette route prends uniqueUserId , montant ) 
+
+https://dio-loto-api.onrender.com/api/resellers ( get : cette route retourne tous les revendeurs )
+
+ 
+// : Transactions
+require("./src/routes/transaction/recharge-admin-reseller")(app)
+require("./src/routes/transaction/recharge-reseller-user")(app)
+require("./src/routes/transaction/recharge-cancel")(app)
+require("./src/routes/transaction/recharge-user-to-user")(app)
+
+// : Games
+require("./src/routes/games/updateGamesStatus")(app)
+require("./src/routes/games/gamesAvailbleByCountries")(app)
+require("./src/routes/games/getGamesByCountries")(app)
+
+// : EasyCron
+require("./src/routes/easycron/ping")(app)
+require("./src/routes/easycron/updateStatus")(app)
+
+
+// : Admins
+require("./src/routes/admin/findAllAdmins")(app)
+require("./src/routes/admin/findAdminByPk")(app)
+require("./src/routes/admin/createAdmin")(app)
+require("./src/routes/admin/updateAdmin")(app)
+require("./src/routes/admin/deleteAdmin")(app)
+require("./src/routes/admin/login")(app)
+
+// : SoldeInitial
+require("./src/routes/soldeInitial/initialiseSolde")(app)
+
+// : Resellers
+require("./src/routes/reseller/createReseller")(app)
+require("./src/routes/reseller/updateReseller")(app)
+require("./src/routes/reseller/deleteReseller")(app)
+require("./src/routes/reseller/findAllReseller")(app)
+require("./src/routes/reseller/findResellerByPk")(app)
+require("./src/routes/reseller/login")(app)

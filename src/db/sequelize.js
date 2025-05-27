@@ -7,6 +7,7 @@ const TransactionModel = require('../models/transaction')
 const SoldeInitialModel = require('../models/soldeInitial')
 const GameModel = require('../models/game')
 const ScheduleModel = require('../models/schedule')
+const TicketModel = require('../models/ticket')
 
 // Connexion sécurisée avec des variables d'environnement
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
@@ -25,6 +26,7 @@ const Transaction = TransactionModel(sequelize, DataTypes)
 const SoldeInitial = SoldeInitialModel(sequelize, DataTypes)
 const Game = GameModel(sequelize, DataTypes)
 const Schedule = ScheduleModel(sequelize, DataTypes)
+const Ticket = TicketModel(sequelize, DataTypes)
 
 // Charger les associations
 Game.associate({ Schedule });
@@ -42,5 +44,5 @@ const initDb = async () => {
 }
 
 module.exports = { 
-  initDb, User, Admin, Reseller, Transaction, SoldeInitial, Game, Schedule
+  initDb, User, Admin, Reseller, Transaction, SoldeInitial, Game, Schedule, Ticket
 }

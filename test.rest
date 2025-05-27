@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/games/all/Ghana
+GET http://localhost:3000/api/tickets/user/2ea12533-bd19-4928-a26a-4ab189326af6
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3NDcxMTEwNjgsImV4cCI6MTc0NzE5NzQ2OH0.5j6riePHFb5p1zAAPQ16FNMnEa1vZgznGUJ6SQ3o_RU
 Content-Type: application/json
 

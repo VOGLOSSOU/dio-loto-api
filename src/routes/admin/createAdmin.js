@@ -9,7 +9,9 @@ module.exports = (app) => {
 
       // Vérification des champs obligatoires
       if (!firstName || !lastName || !email || !password) {
-        return res.status(400).json({ message: "Tous les champs obligatoires doivent être remplis." });
+        return res
+          .status(400)
+          .json({ message: "Tous les champs obligatoires doivent être remplis." });
       }
 
       // Normalisation de l'email
@@ -24,27 +26,33 @@ module.exports = (app) => {
         firstName,
         lastName,
         email: normalizedEmail, // Stocké en minuscule
-        password: hashedPassword
+        password: hashedPassword,
       });
 
       res.status(201).json({
         message: `L'administrateur ${admin.firstName} ${admin.lastName} a bien été créé.`,
-        data: admin
+        data: admin,
       });
-
     } catch (error) {
-      if (error instanceof ValidationError) {
-        return res.status(400).json({ message: "Validation échouée.", errors: error.errors });
-      }
-
+      // 1) D’abord : si c’est une violation de contrainte UNIQUE (email déjà utilisé)
       if (error instanceof UniqueConstraintError) {
-        return res.status(400).json({ message: "Cet email est déjà utilisé.", errors: error.errors });
+        return res
+          .status(400)
+          .json({ message: "Cet email est déjà utilisé.", errors: error.errors });
       }
 
+      // 2) Ensuite : les autres erreurs de validation (taille, format, notNull, etc.)
+      if (error instanceof ValidationError) {
+        return res
+          .status(400)
+          .json({ message: "Validation échouée.", errors: error.errors });
+      }
+
+      // 3) Enfin, toute autre erreur (base, code, etc.)
       console.error("Erreur lors de la création de l'administrateur :", error);
-      res.status(500).json({
+      return res.status(500).json({
         message: "Une erreur interne est survenue. Veuillez réessayer plus tard.",
-        error: error.message
+        error: error.message,
       });
     }
   });

@@ -20,15 +20,18 @@ module.exports = (app) => {
       // Vérification si l'utilisateur est un revendeur
       const reseller = await Reseller.findOne({ where: { email } });
       if (reseller) {
-        // Si l'utilisateur est un revendeur, renvoyer les informations du revendeur
-        return res.status(200).json({
-          message: "Succès : utilisateur identifié comme revendeur.",
-          role: "reseller",
-          resellerInfo: reseller
-        });
+        // Si le revendeur existe, on vérifie son statut avant de le considérer comme tel
+        if (reseller.status === 'actif') {
+          return res.status(200).json({
+            message: "Succès : utilisateur identifié comme revendeur.",
+            role: "reseller",
+            resellerInfo: reseller
+          });
+        }
+        // Si le revendeur n'est pas actif, on le traite comme un user simple
       }
 
-      // Si l'utilisateur n'est pas un revendeur, renvoyer un message pour un utilisateur simple
+      // Si l'utilisateur n'est pas un revendeur actif, renvoyer un message pour un utilisateur simple
       return res.status(200).json({
         message: "Succès : utilisateur identifié comme utilisateur simple.",
         role: "user",

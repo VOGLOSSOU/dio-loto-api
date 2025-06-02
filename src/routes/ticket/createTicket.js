@@ -1,4 +1,4 @@
-const { sequelize, Ticket, User } = require('../../db/sequelize');
+const { Ticket, User } = require('../../db/sequelize');
 
 module.exports = (app) => {
   app.post('/api/tickets', async (req, res) => {

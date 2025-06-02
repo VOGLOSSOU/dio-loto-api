@@ -1,5 +1,5 @@
-GET http://localhost:3000/api/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3NDg3OTIxNzEsImV4cCI6MTc0ODg3ODU3MX0.d_Kd5p3095Rpx5NJGYUSFn7u2O-floylULBmLKlJnNg
+GET http://localhost:3000/api/resellers?status=bloqué
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3NDg4NzA4NDIsImV4cCI6MTc0ODk1NzI0Mn0.soDVddpbtBZ8T9enfE3cXPBtjqw6Wik89IdJDSE752o
 Content-Type: application/json
 
 {

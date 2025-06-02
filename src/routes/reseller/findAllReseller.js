@@ -20,9 +20,12 @@ module.exports = (app) => {
       if (search && search.trim().length > 0) {
         const term = `%${search.trim()}%`;
         where[Op.or] = [
-          // Remplace `nom` par `name` si ton modèle utilise `name` à la place de `nom`
-          { nom:   { [Op.like]: term } },
-          { email: { [Op.like]: term } }
+          // Recherche dans firstName
+          { firstName: { [Op.like]: term } },
+          // Recherche dans lastName
+          { lastName:  { [Op.like]: term } },
+          // Recherche dans email
+          { email:     { [Op.like]: term } }
         ];
       }
 
@@ -33,10 +36,11 @@ module.exports = (app) => {
       });
 
       // 4. Retourner le résultat
-      const message = 'La liste des Revendeurs a bien été récupérée.';
+      const message = 'La liste des revendeurs a bien été récupérée.';
       res.json({ message, data: resellers });
     } catch (error) {
-      res.status(500).json({ message: 'Une erreur est survenue.', error });
+      // Envoie seulement le message d’erreur pour ne pas exposer la stack en production
+      res.status(500).json({ message: 'Une erreur est survenue.', error: error.message });
     }
   });
 };

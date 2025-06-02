@@ -53,6 +53,7 @@ require("./src/routes/reseller/deleteReseller")(app)
 require("./src/routes/reseller/findAllReseller")(app)
 require("./src/routes/reseller/findResellerByPk")(app)
 require("./src/routes/reseller/login")(app)
+require("./src/routes/reseller/switchStatus")(app) // Bascule le statut d'un revendeur entre "actif" et "bloqué"
 
 // : SoldeInitial
 require("./src/routes/soldeInitial/initialiseSolde")(app)

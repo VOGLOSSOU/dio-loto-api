@@ -44,5 +44,5 @@ const initDb = async () => {
 }
 
 module.exports = { 
-  initDb, User, Admin, Reseller, Transaction, SoldeInitial, Game, Schedule, Ticket
+    sequelize, initDb, User, Admin, Reseller, Transaction, SoldeInitial, Game, Schedule, Ticket
 }

@@ -73,6 +73,12 @@ require("./src/routes/games/getGamesByCountries")(app)
 require("./src/routes/ticket/createTicket")(app)
 require("./src/routes/ticket/getTicketByUser")(app)
 
+// : Withdrawals
+require("./src/routes/withdrawals/createwithdrawals")(app)
+require("./src/routes/withdrawals/getWithdrawalsByUser")(app)
+require("./src/routes/withdrawals/getAllWithdrawals")(app)
+require("./src/routes/withdrawals/markWithdrawalProcessed")(app)
+
 // : EasyCron
 require("./src/routes/easycron/ping")(app)
 require("./src/routes/easycron/updateStatus")(app)

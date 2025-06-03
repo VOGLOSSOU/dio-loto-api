@@ -1,5 +1,5 @@
-GET http://localhost:3000/api/resellers?search=new
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3NDg4NzA4NDIsImV4cCI6MTc0ODk1NzI0Mn0.soDVddpbtBZ8T9enfE3cXPBtjqw6Wik89IdJDSE752o
+GET http://localhost:3000/api/resellers
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3NDg5NzM5NTUsImV4cCI6MTc0OTA2MDM1NX0.Pk9Oq03XprVd-3CVeOwWekeCdhbgNHbaE7AnC7g-tzs
 Content-Type: application/json
 
 {

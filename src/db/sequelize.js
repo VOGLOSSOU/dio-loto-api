@@ -34,6 +34,9 @@ const Withdrawal = WithdrawalModel(sequelize, DataTypes)
 Game.associate({ Schedule });
 Schedule.associate({ Game });
 
+User.hasOne(Reseller, { foreignKey: 'uniqueUserId', sourceKey: 'uniqueUserId', as: 'reseller' });
+Reseller.belongsTo(User, { foreignKey: 'uniqueUserId', targetKey: 'uniqueUserId', as: 'user' });
+
 const initDb = async () => {
   try {
 

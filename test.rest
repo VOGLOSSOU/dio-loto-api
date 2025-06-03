@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/resellers?status=bloqué
+GET http://localhost:3000/api/resellers?search=new
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEzLCJpYXQiOjE3NDg4NzA4NDIsImV4cCI6MTc0ODk1NzI0Mn0.soDVddpbtBZ8T9enfE3cXPBtjqw6Wik89IdJDSE752o
 Content-Type: application/json
 

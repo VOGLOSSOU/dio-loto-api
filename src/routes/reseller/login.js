@@ -1,38 +1,51 @@
-const { User } = require('../../db/sequelize')
-const bcrypt = require('bcryptjs')
+const { User, Reseller } = require('../../db/sequelize');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const privateKey = require('../../auth/private_key')
+const privateKey = require('../../auth/private_key');
 
 module.exports = (app) => {
-  app.post('/api/resellers/login', (req, res) => {
+  app.post('/api/resellers/login', async (req, res) => {
+    try {
+      const { email, password } = req.body;
 
-    User.findOne({ where: { email: req.body.email } }).then(user => {
-
-      if(!user) {
-        const message = `Le revendeur demandé n'existe pas.`
-        return res.status(404).json({ message })
+      // 1. Vérifier que l'utilisateur existe
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        return res.status(404).json({ message: "Le revendeur demandé n'existe pas." });
       }
 
-      return bcrypt.compare(req.body.password, user.password).then(isPasswordValid => {
-        if(!isPasswordValid) {
-          const message = `Le mot de passe est incorrect.`
-          return res.status(401).json({message})
-        }
+      // 2. Vérifier que l'utilisateur est bien revendeur actif
+      const reseller = await Reseller.findOne({ where: { uniqueUserId: user.uniqueUserId, status: 'actif' } });
+      if (!reseller) {
+        return res.status(403).json({ message: "Ce compte utilisateur n'est pas un revendeur actif." });
+      }
 
-        // Générer un jeton JWT valide pendant 24 heures.
-        const token = jwt.sign(
-          { userId: user.id },
-          privateKey,
-          { expiresIn: '24h' }
-        );
+      // 3. Vérifier le mot de passe
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).json({ message: "Le mot de passe est incorrect." });
+      }
 
-        const message = `Le revendeur a été connecté avec succès`;
-        return res.json({ message, data: user, token })
-      })
-    })
-    .catch(error => {
-      const message = `Le revendeur n'a pas pu être connecté. Réessayez dans quelques instants.`
-      res.status(500).json({ message, data: error })
-    })
-  })
-}
+      // 4. Générer le token JWT
+      const token = jwt.sign(
+        { userId: user.id, resellerId: reseller.id },
+        privateKey,
+        { expiresIn: '24h' }
+      );
+
+      // 5. Retourner les infos utiles (sans le mot de passe)
+      const { password: _, ...userSafe } = user.toJSON();
+
+      return res.json({
+        message: "Le revendeur a été connecté avec succès.",
+        data: { user: userSafe, reseller },
+        token
+      });
+    } catch (error) {
+      res.status(500).json({
+        message: "Le revendeur n'a pas pu être connecté. Réessayez dans quelques instants.",
+        error: error.message
+      });
+    }
+  });
+};

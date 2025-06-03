@@ -20,73 +20,15 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: 'L’identifiant revendeur est requis.' }
       }
     },
-    lastName: {
-      type: DataTypes.STRING,
+    uniqueUserId: { // Clé étrangère vers User
+      type: DataTypes.UUID,
       allowNull: false,
-      validate: {
-        len: {
-          args: [2, 50],
-          msg: 'Le nom doit contenir entre 2 et 50 caractères.'
-        },
-        notEmpty: { msg: 'Le nom ne peut pas être vide.' },
-        notNull: { msg: 'Le nom est requis.' }
+      references: {
+        model: 'User',
+        key: 'uniqueUserId'
       }
     },
-    firstName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: {
-          args: [2, 50],
-          msg: 'Le prénom doit contenir entre 2 et 50 caractères.'
-        },
-        notEmpty: { msg: 'Le prénom ne peut pas être vide.' },
-        notNull: { msg: 'Le prénom est requis.' }
-      }
-    },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: {
-        msg: 'Cet email est déjà utilisé.'
-      },
-      validate: {
-        isEmail: { msg: "L'adresse email doit être valide." },
-        notEmpty: { msg: "L'email ne peut pas être vide." },
-        notNull: { msg: "L'email est requis." }
-      }
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      validate: {
-        len: {
-          args: [8, 255],
-          msg: 'Le mot de passe doit contenir entre 8 et 255 caractères.'
-        },
-        notEmpty: { msg: 'Le mot de passe ne peut pas être vide.' },
-        notNull: { msg: 'Le mot de passe est requis.' }
-      }
-    },
-    solde: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-      defaultValue: 0,
-      validate: {
-        isFloat: { msg: 'Le solde doit être un nombre valide.' },
-        notNull: { msg: 'Le solde est requis.' }
-      }
-    },
-    gain: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-      defaultValue: 0,
-      validate: {
-        isFloat: { msg: 'Le gain doit être un nombre valide.' },
-        notNull: { msg: 'Le gain est requis.' }
-      }
-    },
-    soldeRevendeur: {
+    soldeRevendeur: { // Spécifique au revendeur
       type: DataTypes.FLOAT,
       allowNull: false,
       defaultValue: 0,

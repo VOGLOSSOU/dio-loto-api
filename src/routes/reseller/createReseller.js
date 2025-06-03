@@ -1,9 +1,9 @@
 const { Reseller, User } = require('../../db/sequelize');
 const { ValidationError, UniqueConstraintError } = require('sequelize');
-const auth = require("../../auth/auth")
+const auth = require("../../auth/auth");
 
 module.exports = (app) => {
-  app.post('/api/resellers',auth , async (req, res) => {
+  app.post('/api/resellers', auth, async (req, res) => {
     try {
       const { email, whatsapp, pays } = req.body;
 
@@ -13,9 +13,9 @@ module.exports = (app) => {
       }
 
       // Vérification si l'email existe déjà dans la table resellers
-      const existingReseller = await Reseller.findOne({ where: { email } });
+      const existingReseller = await Reseller.findOne({ where: { uniqueUserId: email } });
       if (existingReseller) {
-        return res.status(400).json({ message: "Un revendeur avec cet email existe déjà." });
+        return res.status(400).json({ message: "Un revendeur avec cet utilisateur existe déjà." });
       }
 
       // Vérification si l'email existe dans la table users
@@ -32,20 +32,15 @@ module.exports = (app) => {
 
       // Création du revendeur
       const reseller = await Reseller.create({
-        lastName: user.lastName,
-        firstName: user.firstName,
-        email: user.email,
-        password: user.password, // Le mot de passe est déjà haché dans la table users
-        solde: user.solde,
-        gain: user.gain,
+        uniqueUserId: user.uniqueUserId,
         soldeRevendeur: 0, // Initialisé à 0
         whatsapp,
         pays,
-        status: 'actif' // Statut par défaut
+        status: 'actif'
       });
 
       res.status(201).json({
-        message: `Le revendeur ${reseller.lastName} ${reseller.firstName} a bien été créé.`,
+        message: `Le revendeur lié à ${user.lastName} ${user.firstName} a bien été créé.`,
         data: reseller
       });
     } catch (error) {

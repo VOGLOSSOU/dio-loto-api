@@ -4,15 +4,15 @@ const auth = require('../../auth/auth');
 module.exports = (app) => {
   app.post('/api/transactions/recharge-admin-reseller', auth, async (req, res) => {
     try {
-      const { email, montant, uniqueUserId } = req.body;
+      const { email, montant, adminId } = req.body;
 
       // Vérification des champs obligatoires
-      if (!email || !montant || !uniqueUserId) {
-        return res.status(400).json({ message: 'L\'email, le montant et le uniqueUserId sont requis.' });
+      if (!email || !montant || !adminId) {
+        return res.status(400).json({ message: 'L\'email, le montant et l\'identifiant admin sont requis.' });
       }
 
       // Vérification si l'admin existe
-      const admin = await Admin.findOne({ where: { uniqueUserId } });
+      const admin = await Admin.findOne({ where: { id: adminId } });
       if (!admin) {
         return res.status(403).json({ message: "Vous n'êtes pas autorisé à effectuer cette opération." });
       }
@@ -38,7 +38,7 @@ module.exports = (app) => {
 
       // Création de la transaction (UUID uniquement)
       const transaction = await Transaction.create({
-        sender: admin.uniqueUserId,
+        sender: admin.id,
         receiver: reseller.uniqueResellerId,
         money: montant,
         date: new Date(),

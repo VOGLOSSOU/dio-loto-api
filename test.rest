@@ -1,7 +1,8 @@
-GET http://localhost:3000/api/transactions/reseller-to-user
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDkwNzM2NzIsImV4cCI6MTc0OTE2MDA3Mn0.-q-VwB4RshFpyaunCmLVsfYpRtK0ifAZa_hjQnouUbQ
+GET http://localhost:3000/api/transactions/admin-recharges
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDkxNjE4OTMsImV4cCI6MTc0OTI0ODI5M30.2cGoYb-KuhKaRNIoNLrWXwoyl4yk5D9wQKAZCUQY1cY
 Content-Type: application/json
 
-# { 
-#   "email": "resel2@gmail.com"
-# }
+#  { 
+#    "email": "admin@gmail.com",
+#     "password": "admin123"
+#  }

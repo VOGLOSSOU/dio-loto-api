@@ -55,10 +55,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     statut: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      defaultValue: "en cours de traitement"
-    }
+  type: DataTypes.ENUM('en attente', 'validé', 'invalidé'),
+  allowNull: false,
+  defaultValue: 'en attente',
+  validate: {
+    isIn: {
+      args: [['en attente', 'validé', 'invalidé']],
+      msg: 'Le statut doit être "en attente", "validé" ou "invalidé".'
+    },
+    notNull: { msg: 'Le statut est requis.' }
+  }
+}
   }, {
     timestamps: true,
     createdAt: 'created',

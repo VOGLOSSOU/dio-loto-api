@@ -17,21 +17,17 @@ module.exports = (app) => {
         return res.status(404).json({ message: "Utilisateur introuvable." });
       }
 
-      // Vérification si l'utilisateur est un revendeur
-      const reseller = await Reseller.findOne({ where: { email } });
-      if (reseller) {
-        // Si le revendeur existe, on vérifie son statut avant de le considérer comme tel
-        if (reseller.status === 'actif') {
-          return res.status(200).json({
-            message: "Succès : utilisateur identifié comme revendeur.",
-            role: "reseller",
-            resellerInfo: reseller
-          });
-        }
-        // Si le revendeur n'est pas actif, on le traite comme un user simple
+      // Vérification si l'utilisateur est un revendeur (par uniqueUserId)
+      const reseller = await Reseller.findOne({ where: { uniqueUserId: user.uniqueUserId } });
+      if (reseller && reseller.status === 'actif') {
+        return res.status(200).json({
+          message: "Succès : utilisateur identifié comme revendeur.",
+          role: "reseller",
+          resellerInfo: reseller
+        });
       }
 
-      // Si l'utilisateur n'est pas un revendeur actif, renvoyer un message pour un utilisateur simple
+      // Sinon, utilisateur simple
       return res.status(200).json({
         message: "Succès : utilisateur identifié comme utilisateur simple.",
         role: "user",

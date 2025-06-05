@@ -44,7 +44,7 @@ module.exports = (app) => {
 
       // Création de la transaction (UUID uniquement)
       const transaction = await Transaction.create({
-        sender: admin.id,
+        sender: admin.uniqueUserId,
         receiver: reseller.uniqueResellerId,
         money: montant,
         date: new Date(),

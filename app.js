@@ -57,12 +57,14 @@ require("./src/routes/reseller/switchStatus")(app) // Bascule le statut d'un rev
 
 // : SoldeInitial
 require("./src/routes/soldeInitial/initialiseSolde")(app)
+require("./src/routes/soldeInitial/getAllSolde")(app)
 
 // : Transactions
 require("./src/routes/transaction/recharge-admin-reseller")(app)
 require("./src/routes/transaction/recharge-reseller-user")(app)
 require("./src/routes/transaction/recharge-cancel")(app)
 require("./src/routes/transaction/recharge-user-to-user")(app)
+require("./src/routes/transaction/getAdminToReseller")(app)
 
 // : Games
 require("./src/routes/games/updateGamesStatus")(app)

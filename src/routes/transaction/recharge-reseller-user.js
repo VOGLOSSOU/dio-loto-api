@@ -11,6 +11,11 @@ module.exports = (app) => {
         return res.status(400).json({ message: 'Le uniqueResellerId, l\'email et le montant sont requis.' });
       }
 
+      // Vérification du montant
+      if (montant < 500 || montant > 500000) {
+        return res.status(400).json({ message: 'Le montant doit être compris entre 500 et 500 000.' });
+      }
+
       // Vérification si le revendeur existe
       const reseller = await Reseller.findOne({ where: { uniqueResellerId } });
       if (!reseller) {
@@ -29,18 +34,18 @@ module.exports = (app) => {
       }
 
       // Vérification du solde du revendeur
-      if (reseller.soldeRevendeur <= montant) {
+      if (reseller.soldeRevendeur < montant) {
         return res.status(400).json({ message: "Le solde du revendeur est insuffisant pour effectuer cette opération." });
       }
 
-      // Création de la transaction
+      // Création de la transaction (UUID uniquement)
       const transaction = await Transaction.create({
-        sender: uniqueResellerId,
+        sender: reseller.uniqueResellerId,
         receiver: user.uniqueUserId,
         money: montant,
         date: new Date(),
         status: 'validé',
-        type: 'recharge'
+        type: 'reseller-to-user'
       });
 
       // Mise à jour du soldeRevendeur

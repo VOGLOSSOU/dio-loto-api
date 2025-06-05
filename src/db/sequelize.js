@@ -38,8 +38,10 @@ User.hasOne(Reseller, { foreignKey: 'uniqueUserId', sourceKey: 'uniqueUserId', a
 Reseller.belongsTo(User, { foreignKey: 'uniqueUserId', targetKey: 'uniqueUserId', as: 'user' });
 
 // Associations pour les transactions
-Transaction.belongsTo(Admin, { foreignKey: 'sender', targetKey: 'uniqueUserId', as: 'admin' });
-Transaction.belongsTo(Reseller, { foreignKey: 'receiver', targetKey: 'uniqueResellerId', as: 'reseller' });
+Transaction.belongsTo(Admin, { foreignKey: 'sender', targetKey: 'uniqueUserId', as: 'admin' }); // Pour admin-to-reseller
+Transaction.belongsTo(Reseller, { foreignKey: 'sender', targetKey: 'uniqueResellerId', as: 'reseller' }); // Pour reseller-to-user (expéditeur)
+Transaction.belongsTo(Reseller, { foreignKey: 'receiver', targetKey: 'uniqueResellerId', as: 'receiverReseller' }); // Si besoin de retrouver le revendeur destinataire
+Transaction.belongsTo(User, { foreignKey: 'receiver', targetKey: 'uniqueUserId', as: 'receiverUser' }); // Pour reseller-to-user (destinataire)
 
 const initDb = async () => {
   try {

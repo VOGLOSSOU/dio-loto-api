@@ -4,17 +4,17 @@ const auth = require('../../auth/auth');
 module.exports = (app) => {
   app.post('/api/solde-initial', auth, async (req, res) => {
     try {
-      const { montant, uniqueUserId } = req.body;
+      const { montant, adminId } = req.body;
 
       if (!montant || montant <= 0) {
         return res.status(400).json({ message: 'Un montant valide est requis.' });
       }
-      if (!uniqueUserId) {
-        return res.status(400).json({ message: 'Le uniqueUserId de l\'admin est requis.' });
+      if (!adminId) {
+        return res.status(400).json({ message: "L'identifiant admin est requis." });
       }
 
       // Vérification si l'admin existe
-      const admin = await Admin.findOne({ where: { uniqueUserId } });
+      const admin = await Admin.findOne({ where: { id: adminId } });
       if (!admin) {
         return res.status(403).json({ message: "Vous n'êtes pas autorisé à effectuer cette opération." });
       }

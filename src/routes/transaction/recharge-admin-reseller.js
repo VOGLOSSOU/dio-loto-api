@@ -1,4 +1,4 @@
-const { Admin, Reseller, Transaction, SoldeInitial } = require('../../db/sequelize');
+const { Admin, Reseller, Transaction, SoldeInitial, User } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -17,10 +17,16 @@ module.exports = (app) => {
         return res.status(403).json({ message: "Vous n'êtes pas autorisé à effectuer cette opération." });
       }
 
-      // Vérification si le revendeur existe
-      const reseller = await Reseller.findOne({ where: { email } });
+      // Trouver le user correspondant à l'email
+      const user = await User.findOne({ where: { email } });
+      if (!user) {
+        return res.status(404).json({ message: "Aucun utilisateur trouvé avec cet email." });
+      }
+
+      // Trouver le revendeur lié à ce user
+      const reseller = await Reseller.findOne({ where: { uniqueUserId: user.uniqueUserId } });
       if (!reseller) {
-        return res.status(404).json({ message: "Aucun revendeur trouvé avec cet email." });
+        return res.status(404).json({ message: "Aucun revendeur lié à cet utilisateur." });
       }
 
       // Vérification du solde système

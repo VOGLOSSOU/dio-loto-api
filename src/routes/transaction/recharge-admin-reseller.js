@@ -1,4 +1,4 @@
-const { Admin, Reseller, SoldeInitial, Transaction } = require('../../db/sequelize');
+const { Admin, Reseller, Transaction, SoldeInitial } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -23,32 +23,35 @@ module.exports = (app) => {
         return res.status(404).json({ message: "Aucun revendeur trouvé avec cet email." });
       }
 
-      // Vérification du solde initial
-      const soldeInitial = await SoldeInitial.findOne();
-      if (!soldeInitial || soldeInitial.montant <= montant) {
-        return res.status(400).json({ message: "Le solde initial est insuffisant pour effectuer cette opération." });
+      // Vérification du solde système
+      const montantInjecte = await SoldeInitial.sum('montant');
+      const montantUtilise = await Transaction.sum('money', {
+        where: { type: 'admin-to-reseller', status: 'validé' }
+      });
+      const montantRestant = (montantInjecte || 0) - (montantUtilise || 0);
+
+      if (montantRestant < montant) {
+        return res.status(400).json({
+          message: `Solde insuffisant : il ne reste que ${montantRestant} FCFA dans le système. Veuillez compléter les fonds pour effectuer cette opération.`
+        });
       }
 
-      // Création de la transaction
+      // Création de la transaction (UUID uniquement)
       const transaction = await Transaction.create({
-        sender: uniqueUserId,
+        sender: admin.uniqueUserId,
         receiver: reseller.uniqueResellerId,
         money: montant,
         date: new Date(),
         status: 'validé',
-        type: 'recharge'
+        type: 'admin-to-reseller'
       });
 
       // Mise à jour du soldeRevendeur
       reseller.soldeRevendeur += montant;
       await reseller.save();
 
-      // Mise à jour du solde initial
-      soldeInitial.montant -= montant;
-      await soldeInitial.save();
-
       res.status(201).json({
-        message: `Le revendeur ${reseller.lastName} ${reseller.firstName} a été rechargé avec succès.`,
+        message: `Le revendeur a été rechargé avec succès.`,
         transaction
       });
     } catch (error) {

@@ -1,40 +1,50 @@
-const { Transaction, Reseller, User } = require('../../db/sequelize');
+const { Transaction, Reseller, User, Admin } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
   app.post('/api/transactions/recharge/:uniqueTransacId/cancel', auth, async (req, res) => {
     try {
       const { uniqueTransacId } = req.params;
+      const { uniqueUserId } = req.body;
 
-      // Vérification si la transaction existe
+      // Vérification admin
+      if (!uniqueUserId) {
+        return res.status(400).json({ message: "L'identifiant unique de l'admin est requis." });
+      }
+      const admin = await Admin.findOne({ where: { uniqueUserId } });
+      if (!admin) {
+        return res.status(403).json({ message: "Seul un admin peut annuler une transaction." });
+      }
+
+      // Vérification transaction
       const transaction = await Transaction.findOne({ where: { uniqueTransacId } });
       if (!transaction) {
         return res.status(404).json({ message: "Aucune transaction trouvée avec cet identifiant unique." });
       }
 
-      // Vérification si la transaction est de type recharge et validée
-      if (transaction.type !== 'recharge' || transaction.status !== 'validé') {
-        return res.status(400).json({ message: "Seules les recharges validées peuvent être annulées." });
+      // On n'annule que les transactions reseller-to-user validées
+      if (transaction.type !== 'reseller-to-user' || transaction.status !== 'validé') {
+        return res.status(400).json({ message: "Seules les recharges revendeur vers utilisateur validées peuvent être annulées." });
       }
 
-      // Vérification si le sender est un revendeur valide
+      // Vérification des acteurs
       const reseller = await Reseller.findOne({ where: { uniqueResellerId: transaction.sender } });
-      if (!reseller) {
-        return res.status(404).json({ message: "Le revendeur associé à cette transaction est introuvable." });
+      const user = await User.findOne({ where: { uniqueUserId: transaction.receiver } });
+      if (!reseller || !user) {
+        return res.status(404).json({ message: "Le revendeur ou l'utilisateur associé à cette transaction est introuvable." });
       }
 
-      // Vérification si le receiver est un utilisateur valide
-      const user = await User.findOne({ where: { uniqueUserId: transaction.receiver } });
-      if (!user) {
-        return res.status(404).json({ message: "L'utilisateur associé à cette transaction est introuvable." });
+      // Vérification du solde utilisateur
+      if (user.solde < transaction.money) {
+        return res.status(400).json({ message: "L'utilisateur n'a plus assez de solde pour annuler cette transaction." });
       }
 
       // Mise à jour des soldes
-      reseller.soldeRevendeur += transaction.money; // Ajouter le montant au solde du revendeur
-      await reseller.save();
-
-      user.solde -= transaction.money; // Soustraire le montant du solde de l'utilisateur
+      user.solde -= transaction.money;
       await user.save();
+
+      reseller.soldeRevendeur += transaction.money;
+      await reseller.save();
 
       // Mise à jour du statut de la transaction
       transaction.status = 'annulé';

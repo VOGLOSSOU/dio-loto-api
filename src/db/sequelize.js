@@ -37,6 +37,10 @@ Schedule.associate({ Game });
 User.hasOne(Reseller, { foreignKey: 'uniqueUserId', sourceKey: 'uniqueUserId', as: 'reseller' });
 Reseller.belongsTo(User, { foreignKey: 'uniqueUserId', targetKey: 'uniqueUserId', as: 'user' });
 
+// Associations pour les transactions
+Transaction.belongsTo(Admin, { foreignKey: 'sender', targetKey: 'uniqueUserId', as: 'admin' });
+Transaction.belongsTo(Reseller, { foreignKey: 'receiver', targetKey: 'uniqueResellerId', as: 'reseller' });
+
 const initDb = async () => {
   try {
 

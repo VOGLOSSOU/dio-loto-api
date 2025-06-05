@@ -1,9 +1,9 @@
-POST http://localhost:3000/api/transactions/recharge-admin-reseller
+GET http://localhost:3000/api/tickets
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDkwNzM2NzIsImV4cCI6MTc0OTE2MDA3Mn0.-q-VwB4RshFpyaunCmLVsfYpRtK0ifAZa_hjQnouUbQ
 Content-Type: application/json
 
-{ 
-  "email": "resel2@gmail.com",
-  "montant": 500000,
-  "adminId": 1
-}
+# { 
+#   "email": "resel2@gmail.com",
+#   "montant": 500000,
+#   "adminId": 1
+# }

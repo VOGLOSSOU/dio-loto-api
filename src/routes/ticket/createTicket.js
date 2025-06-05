@@ -49,8 +49,7 @@ module.exports = (app) => {
         numerosJoues: Array.isArray(numerosJoues) ? JSON.stringify(numerosJoues) : numerosJoues,
         formule,
         mise,
-        gain: Number(gainRaw),
-        statut: "en cours de traitement"
+        gain: Number(gainRaw)
       }, { transaction: t });
 
       // 2d) Si tout s’est bien passé, on commit

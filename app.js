@@ -74,6 +74,9 @@ require("./src/routes/games/getGamesByCountries")(app)
 // : Tickets
 require("./src/routes/ticket/createTicket")(app)
 require("./src/routes/ticket/getTicketByUser")(app)
+require("./src/routes/ticket/getAllTickets")(app)
+require("./src/routes/ticket/countTickets")(app)
+require("./src/routes/ticket/deleteTicket")(app)
 
 // : Withdrawals
 require("./src/routes/withdrawals/createwithdrawals")(app)

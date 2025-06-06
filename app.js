@@ -87,6 +87,7 @@ require("./src/routes/withdrawals/createwithdrawals")(app)
 require("./src/routes/withdrawals/getWithdrawalsByUser")(app)
 require("./src/routes/withdrawals/getAllWithdrawals")(app)
 require("./src/routes/withdrawals/markWithdrawalProcessed")(app)
+require("./src/routes/withdrawals/withdrawalsSummary")(app) // Résumé des retraits
 
 // : EasyCron
 require("./src/routes/easycron/ping")(app)

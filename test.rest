@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/withdrawals/summary
+GET http://localhost:3000/api/withdrawals
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDkxNjE4OTMsImV4cCI6MTc0OTI0ODI5M30.2cGoYb-KuhKaRNIoNLrWXwoyl4yk5D9wQKAZCUQY1cY
 Content-Type: application/json
 

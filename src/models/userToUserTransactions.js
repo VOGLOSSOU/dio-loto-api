@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('Transaction', {
+  return sequelize.define('UserToUserTransaction', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -20,24 +20,24 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: 'L’identifiant de transaction est requis.' }
       }
     },
-    sender: { // UUID de l'expéditeur (admin)
+    sender: { // UUID de l'utilisateur émetteur
       type: DataTypes.UUID,
       allowNull: false,
       validate: {
         isUUID: {
           args: 4,
-          msg: 'L\'identifiant de l\'expéditeur doit être un UUID valide.'
+          msg: 'L\'identifiant de l\'expéditeur est invalide.'
         },
         notNull: { msg: 'L\'identifiant de l\'expéditeur est requis.' }
       }
     },
-    receiver: { // UUID du destinataire (reseller)
+    receiver: { // UUID du destinataire utilisateur
       type: DataTypes.UUID,
       allowNull: false,
       validate: {
         isUUID: {
           args: 4,
-          msg: 'L\'identifiant du destinataire est requis.'
+          msg: 'L\'identifiant du destinataire est invalide.'
         },
         notNull: { msg: 'L\'identifiant du destinataire est requis.' }
       }
@@ -48,8 +48,8 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isFloat: { msg: 'Le montant doit être un nombre valide.' },
         min(value) {
-          if (value < 500 || value > 500000) {
-            throw new Error('Pour une recharge, le montant doit être compris entre 500 et 500 000.');
+          if (value < 50 || value > 50000) {
+            throw new Error('Pour une transaction user-to-user, le montant doit être entre 50 et 50 000.');
           }
         },
         notNull: { msg: 'Le montant est requis.' }
@@ -65,25 +65,25 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     status: {
-  type: DataTypes.ENUM('validé', 'invalidé', 'en attente'),
-  allowNull: false,
-  defaultValue: 'validé',
-  validate: {
-    isIn: {
-      args: [['validé', 'invalidé', 'en attente']],
-      msg: 'Le statut doit être "validé", "invalidé" ou "en attente".'
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'validé',
+      validate: {
+        isIn: {
+          args: [['validé']],
+          msg: 'Le statut doit être "validé".'
+        },
+        notNull: { msg: 'Le statut est requis.' }
+      }
     },
-    notNull: { msg: 'Le statut est requis.' }
-  }
-},
     type: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'admin-to-reseller',
+      defaultValue: 'user-to-user',
       validate: {
         isIn: {
-          args: [['admin-to-reseller']],
-          msg: 'Le type doit être "admin-to-reseller".'
+          args: [['user-to-user']],
+          msg: 'Le type doit être "user-to-user".'
         },
         notNull: { msg: 'Le type est requis.' }
       }

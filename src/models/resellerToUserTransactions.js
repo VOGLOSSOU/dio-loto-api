@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define('Transaction', {
+  return sequelize.define('ResellerToUserTransaction', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -20,24 +20,24 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: 'L’identifiant de transaction est requis.' }
       }
     },
-    sender: { // UUID de l'expéditeur (admin)
+    sender: { // UUID du revendeur (reseller)
       type: DataTypes.UUID,
       allowNull: false,
       validate: {
         isUUID: {
           args: 4,
-          msg: 'L\'identifiant de l\'expéditeur doit être un UUID valide.'
+          msg: 'L\'identifiant de l\'expéditeur est invalide.'
         },
         notNull: { msg: 'L\'identifiant de l\'expéditeur est requis.' }
       }
     },
-    receiver: { // UUID du destinataire (reseller)
+    receiver: { // UUID de l’utilisateur final
       type: DataTypes.UUID,
       allowNull: false,
       validate: {
         isUUID: {
           args: 4,
-          msg: 'L\'identifiant du destinataire est requis.'
+          msg: 'L\'identifiant du destinataire est invalide.'
         },
         notNull: { msg: 'L\'identifiant du destinataire est requis.' }
       }
@@ -48,8 +48,8 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isFloat: { msg: 'Le montant doit être un nombre valide.' },
         min(value) {
-          if (value < 500 || value > 500000) {
-            throw new Error('Pour une recharge, le montant doit être compris entre 500 et 500 000.');
+          if (value < 100 || value > 100000) {
+            throw new Error('Pour une transaction reseller-to-user, le montant doit être entre 100 et 100 000.');
           }
         },
         notNull: { msg: 'Le montant est requis.' }
@@ -79,11 +79,11 @@ module.exports = (sequelize, DataTypes) => {
     type: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: 'admin-to-reseller',
+      defaultValue: 'reseller-to-user',
       validate: {
         isIn: {
-          args: [['admin-to-reseller']],
-          msg: 'Le type doit être "admin-to-reseller".'
+          args: [['reseller-to-user']],
+          msg: 'Le type doit être "reseller-to-user".'
         },
         notNull: { msg: 'Le type est requis.' }
       }

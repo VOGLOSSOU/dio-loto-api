@@ -1,4 +1,4 @@
-const { Reseller, User, Transaction } = require('../../db/sequelize');
+const { Reseller, User, ResellerToUserTransaction } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -39,14 +39,14 @@ module.exports = (app) => {
       }
 
       // Création de la transaction (UUID uniquement)
-      const transaction = await Transaction.create({
-        sender: reseller.uniqueResellerId,
-        receiver: user.uniqueUserId,
-        money: montant,
-        date: new Date(),
-        status: 'validé',
-        type: 'reseller-to-user'
-      });
+      const transaction = await ResellerToUserTransaction.create({
+  sender: reseller.uniqueResellerId,
+  receiver: user.uniqueUserId,
+  money: montant,
+  date: new Date(),
+  status: 'validé',
+});
+
 
       // Mise à jour du soldeRevendeur
       reseller.soldeRevendeur -= montant;

@@ -1,4 +1,4 @@
-const { User, Transaction } = require('../../db/sequelize');
+const { User, UserToUserTransaction } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -23,13 +23,12 @@ module.exports = (app) => {
       }
 
       // Création de la transaction
-      const transaction = await Transaction.create({
+      const transaction = await UserToUserTransaction.create({
         sender: user.uniqueUserId,
         receiver: user.uniqueUserId,
         money: montant,
         date: new Date(),
-        status: 'validé',
-        type: 'user-to-user'
+        status: 'validé'
       });
 
       // Mise à jour du gain et du solde de l'utilisateur

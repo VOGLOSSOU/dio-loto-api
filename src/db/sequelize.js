@@ -9,6 +9,8 @@ const GameModel = require('../models/game')
 const ScheduleModel = require('../models/schedule')
 const TicketModel = require('../models/ticket')
 const WithdrawalModel = require('../models/withdrawal')
+const ResellerToUserTransactionModel = require('../models/resellerToUserTransactions')
+const UserToUserTransactionModel = require('../models/userToUserTransactions')
 
 // Connexion sécurisée avec des variables d'environnement
 const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
@@ -29,6 +31,8 @@ const Game = GameModel(sequelize, DataTypes)
 const Schedule = ScheduleModel(sequelize, DataTypes)
 const Ticket = TicketModel(sequelize, DataTypes)
 const Withdrawal = WithdrawalModel(sequelize, DataTypes)
+const ResellerToUserTransaction = ResellerToUserTransactionModel(sequelize, DataTypes)
+const UserToUserTransaction = UserToUserTransactionModel(sequelize, DataTypes)
 
 // Charger les associations
 Game.associate({ Schedule });
@@ -40,6 +44,33 @@ Reseller.belongsTo(User, { foreignKey: 'uniqueUserId', targetKey: 'uniqueUserId'
 // Associations pour les transactions
 Transaction.belongsTo(Admin, { foreignKey: 'sender', targetKey: 'uniqueUserId', as: 'admin' });
 Transaction.belongsTo(Reseller, { foreignKey: 'receiver', targetKey: 'uniqueResellerId', as: 'reseller' }); 
+
+// une transaction entre un revendeur et un utilisateur)
+ResellerToUserTransaction.belongsTo(Reseller, {
+  foreignKey: 'sender',
+  targetKey: 'uniqueResellerId',
+  as: 'reseller'
+});
+
+ResellerToUserTransaction.belongsTo(User, {
+  foreignKey: 'receiver',
+  targetKey: 'uniqueUserId',
+  as: 'user'
+});
+
+// une transaction entre deu user ( oser to user )
+UserToUserTransaction.belongsTo(User, {
+  foreignKey: 'sender',
+  targetKey: 'uniqueUserId',
+  as: 'senderUser'
+});
+
+UserToUserTransaction.belongsTo(User, {
+  foreignKey: 'receiver',
+  targetKey: 'uniqueUserId',
+  as: 'receiverUser'
+});
+
 
 const initDb = async () => {
   try {
@@ -53,5 +84,5 @@ const initDb = async () => {
 }
 
 module.exports = { 
-    sequelize, initDb, User, Admin, Reseller, Transaction, SoldeInitial, Game, Schedule, Ticket, Withdrawal
+    sequelize, initDb, User, Admin, Reseller, Transaction, SoldeInitial, Game, Schedule, Ticket, Withdrawal,   ResellerToUserTransaction, UserToUserTransaction 
 }

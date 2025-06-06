@@ -66,6 +66,7 @@ require("./src/routes/transaction/recharge-cancel")(app)
 require("./src/routes/transaction/recharge-user-to-user")(app)
 require("./src/routes/transaction/getAdminToReseller")(app)
 require("./src/routes/transaction/getResellerToUser")(app)
+require("./src/routes/transaction/getUserToUser")(app)
 require("./src/routes/transaction/getRechargeSummary")(app)
 
 // : Games

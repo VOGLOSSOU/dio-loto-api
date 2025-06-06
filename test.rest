@@ -1,8 +1,9 @@
-GET http://localhost:3000/api/transactions/admin-recharges
+GET http://localhost:3000/api/transactions/reseller-to-user
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDkxNjE4OTMsImV4cCI6MTc0OTI0ODI5M30.2cGoYb-KuhKaRNIoNLrWXwoyl4yk5D9wQKAZCUQY1cY
 Content-Type: application/json
 
 #  { 
-#    "email": "admin@gmail.com",
-#     "password": "admin123"
+#    "uniqueResellerId": "6de4c95e-3cee-4005-a290-2e3e7dada4bb",
+#     "email": "hello@gmail.com",
+#      "montant" : 5000
 #  }

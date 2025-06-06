@@ -4,7 +4,9 @@ module.exports = (app) => {
   app.get('/api/transactions/reseller-to-user/summary', async (req, res) => {
     try {
       const count = await ResellerToUserTransaction.count();
-      const total = await ResellerToUserTransaction.sum('money');
+      const total = await ResellerToUserTransaction.sum('money', {
+        where: { status: 'validé' }
+      });
 
       const nombreValide = await ResellerToUserTransaction.count({
         where: { status: 'validé' }
@@ -19,7 +21,6 @@ module.exports = (app) => {
         nombreTransactions: count,
         sommeTotale: total || 0,
         nombreTransactionsValidees: nombreValide,
-        // On remplace la clé accentuée par une version sans accent :
         nombreTransactionsInvalidatees: nombreInvalidé
       });
     } catch (error) {

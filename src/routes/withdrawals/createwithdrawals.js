@@ -3,7 +3,7 @@ const { Withdrawal, User, sequelize } = require('../../db/sequelize');
 module.exports = (app) => {
   app.post('/api/withdrawals', async (req, res) => {
     const {
-      userUniqueId,
+      uniqueUserId,
       fullName,
       pays,
       reseauMobile,
@@ -13,7 +13,7 @@ module.exports = (app) => {
 
     // 1) Vérification rapide des champs
     if (
-      !userUniqueId ||
+      !uniqueUserId ||
       !fullName ||
       !pays ||
       !reseauMobile ||
@@ -55,7 +55,7 @@ module.exports = (app) => {
       // 2d) On crée la demande de retrait
       const withdrawal = await Withdrawal.create(
         {
-          userUniqueId,
+          uniqueUserId,
           fullName,
           pays,
           reseauMobile,

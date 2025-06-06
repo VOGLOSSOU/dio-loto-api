@@ -4,13 +4,13 @@ const { Withdrawal, User } = require('../../db/sequelize');
 
 module.exports = (app) => {
   /**
-   * GET /api/withdrawals/user/:userUniqueId
-   * Récupère tous les retraits associés à un utilisateur donné (via userUniqueId).
+   * GET /api/withdrawals/user/:uniqueUserId
+   * Récupère tous les retraits associés à un utilisateur donné (via uniqueUserId).
    * Exemple d’URL :
    *   /api/withdrawals/user/123e4567-e89b-12d3-a456-426614174000
    */
-  app.get('/api/withdrawals/user/:userUniqueId', async (req, res) => {
-    const { userUniqueId } = req.params;
+  app.get('/api/withdrawals/user/:uniqueUserId', async (req, res) => {
+    const { uniqueUserId } = req.params;
 
     try {
       // Vérifier qu’un utilisateur existe (facultatif mais recommandé)
@@ -21,11 +21,11 @@ module.exports = (app) => {
 
       // Récupérer tous les retraits pour cet utilisateur
       const withdrawals = await Withdrawal.findAll({
-        where: { userUniqueId }
+        where: { uniqueUserId }
       });
 
       return res.status(200).json({
-        message: `Retraits de l'utilisateur ${userUniqueId} récupérés avec succès.`,
+        message: `Retraits de l'utilisateur ${uniqueUserId} récupérés avec succès.`,
         withdrawals: withdrawals.map(w => ({
           id: w.id,
           uniqueId: w.uniqueId,
@@ -38,7 +38,7 @@ module.exports = (app) => {
         }))
       });
     } catch (error) {
-      console.error(`Erreur lors de la récupération des retraits pour l'utilisateur ${userUniqueId} :`, error);
+      console.error(`Erreur lors de la récupération des retraits pour l'utilisateur ${uniqueUserId} :`, error);
       return res.status(500).json({ message: 'Erreur interne du serveur.' });
     }
   });

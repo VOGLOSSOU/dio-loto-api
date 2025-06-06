@@ -41,6 +41,21 @@ Schedule.associate({ Game });
 User.hasOne(Reseller, { foreignKey: 'uniqueUserId', sourceKey: 'uniqueUserId', as: 'reseller' });
 Reseller.belongsTo(User, { foreignKey: 'uniqueUserId', targetKey: 'uniqueUserId', as: 'user' });
 
+// Association : un Ticket appartient à un User,
+//   en se basant sur uniqueUserId dans Ticket ↔ uniqueUserId dans User
+Ticket.belongsTo(User, {
+  foreignKey: 'uniqueUserId',
+  targetKey:  'uniqueUserId',
+  as:         'User'            // on pourra accéder via ticket.User
+});
+
+// (Optionnel) Si vous voulez naviguer aussi dans l’autre sens :
+User.hasMany(Ticket, {
+  foreignKey: 'uniqueUserId',
+  sourceKey:  'uniqueUserId',
+  as:         'Tickets'
+});
+
 // Associations pour les transactions
 Transaction.belongsTo(Admin, { foreignKey: 'sender', targetKey: 'uniqueUserId', as: 'admin' });
 Transaction.belongsTo(Reseller, { foreignKey: 'receiver', targetKey: 'uniqueResellerId', as: 'reseller' }); 

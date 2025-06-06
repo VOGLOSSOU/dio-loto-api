@@ -1,10 +1,6 @@
-POST http://localhost:3000/api/transactions/recharge/85698b65-1ff8-4f51-b166-373158f71aa0/cancel
+GET http://localhost:3000/api/withdrawals/summary
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDkxNjE4OTMsImV4cCI6MTc0OTI0ODI5M30.2cGoYb-KuhKaRNIoNLrWXwoyl4yk5D9wQKAZCUQY1cY
 Content-Type: application/json
-
- { 
-   "adminId": 1
- }
 
 #  { 
 #    "uniqueUserId": "52672738-d164-4b24-a458-e94c0ccf9cc4",

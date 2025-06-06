@@ -34,6 +34,8 @@ module.exports = (app) => {
           reseauMobile: w.reseauMobile,
           phoneNumber: w.phoneNumber,
           montant: w.montant,
+          statut: w.statut,
+          date: w.date,
           created: w.created
         }))
       });

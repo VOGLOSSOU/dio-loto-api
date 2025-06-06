@@ -30,12 +30,22 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  // Définir l'association avec Schedule
+  // VOICI la seule méthode associate pour Game :
   Game.associate = (models) => {
+    // 1. Un jeu peut avoir plusieurs créneaux (Schedule)
     Game.hasMany(models.Schedule, {
       foreignKey: 'gameId',
-      as: 'schedules', // Alias pour l'association
+      as: 'schedules'
     });
+
+    // 2. Un jeu peut avoir un seul résultat (Result)
+    Game.hasOne(models.Result, {
+      foreignKey: 'gameId',
+      as: 'result'
+    });
+
+    // Si tu devais ajouter d'autres associations (Ticket, Transaction…),
+    // les déclarer ici aussi.
   };
 
   return Game;

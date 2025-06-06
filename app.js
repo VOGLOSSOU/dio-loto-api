@@ -90,6 +90,11 @@ require("./src/routes/withdrawals/markWithdrawalProcessed")(app)
 require("./src/routes/withdrawals/withdrawalsSummary")(app) // Résumé des retraits
 require("./src/routes/withdrawals/deleteprocessedwithdrawals")(app) // Suppression des retraits traités
 
+// : Results
+require("./src/routes/results/createResult")(app)
+require("./src/routes/results/getResultByGame")(app)
+require("./src/routes/results/getAllResults")(app)
+
 // : EasyCron
 require("./src/routes/easycron/ping")(app)
 require("./src/routes/easycron/updateStatus")(app)

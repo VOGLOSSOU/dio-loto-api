@@ -6,14 +6,14 @@ module.exports = (app) => {
     const t = await sequelize.transaction();
     try {
       const { uniqueTransacId } = req.params;
-      const { uniqueUserId } = req.body;
+      const { adminId } = req.body;
 
-      if (!uniqueUserId) {
+      if (!adminId) {
         await t.rollback();
         return res.status(400).json({ message: "L'identifiant unique de l'admin est requis." });
       }
 
-      const admin = await Admin.findOne({ where: { uniqueUserId }, transaction: t });
+      const admin = await Admin.findOne({ where: { id: adminId }, transaction: t });
       if (!admin) {
         await t.rollback();
         return res.status(403).json({ message: "Seul un admin peut annuler une transaction." });
@@ -51,7 +51,7 @@ module.exports = (app) => {
       await reseller.save({ transaction: t });
 
       // Mise à jour du statut de la transaction
-      transaction.status = 'annulé';
+      transaction.status = 'invalidé';
       await transaction.save({ transaction: t });
 
       await t.commit();

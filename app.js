@@ -68,6 +68,7 @@ require("./src/routes/transaction/getAdminToReseller")(app)
 require("./src/routes/transaction/getResellerToUser")(app)
 require("./src/routes/transaction/getUserToUser")(app)
 require("./src/routes/transaction/getRechargeSummary")(app)
+require("./src/routes/transaction/deleteTransaction")(app) 
 
 // : Games
 require("./src/routes/games/updateGamesStatus")(app)

@@ -46,8 +46,8 @@ module.exports = (app) => {
       const result = withdrawals.map(w => ({
         id: w.id,
         uniqueId: w.uniqueId,
-        userUniqueId: w.userUniqueId,
-        fullName: w.fullName,
+        uniqueUserId: w.uniqueUserId,
+        fullName: w.fullName,       
         pays: w.pays,
         reseauMobile: w.reseauMobile,
         phoneNumber: w.phoneNumber,

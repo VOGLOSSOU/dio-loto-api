@@ -1,9 +1,12 @@
-GET http://localhost:3000/api/transactions/reseller-to-user/summary
+POST http://localhost:3000/api/withdrawals
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDkxNjE4OTMsImV4cCI6MTc0OTI0ODI5M30.2cGoYb-KuhKaRNIoNLrWXwoyl4yk5D9wQKAZCUQY1cY
 Content-Type: application/json
 
-#  { 
-#    "uniqueResellerId": "6de4c95e-3cee-4005-a290-2e3e7dada4bb",
-#     "email": "hello@gmail.com",
-#      "montant" : 5000
-#  }
+ { 
+   "uniqueUserId": "52672738-d164-4b24-a458-e94c0ccf9cc4",
+    "fullName": "Juste Le Test",
+    "pays" : "Niger",
+    "reseauMobile": "MTN",
+    "phoneNumber": "0123456789",
+    "montant": 10000
+ }

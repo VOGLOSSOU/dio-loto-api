@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: 'L’identifiant de retrait est requis.' }
       }
     },
-    userUniqueId: {
+    uniqueUserId: {
       type: DataTypes.UUID,
       allowNull: false,
       validate: {

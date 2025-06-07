@@ -95,6 +95,11 @@ require("./src/routes/results/createResult")(app)
 require("./src/routes/results/getResultByGame")(app)
 require("./src/routes/results/getAllResults")(app)
 
+// : Dashboard
+require("./src/routes/dashboard/dashboard")(app)
+require("./src/routes/dashboard/topResellers")(app)
+require("./src/routes/dashboard/recentActivity")(app)
+
 // : EasyCron
 require("./src/routes/easycron/ping")(app)
 require("./src/routes/easycron/updateStatus")(app)

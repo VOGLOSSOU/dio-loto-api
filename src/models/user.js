@@ -82,10 +82,6 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 0,
       validate: {
         isFloat: { msg: 'Le solde doit être un nombre valide.' },
-        min: {
-          args: [0],
-          msg: 'Le solde ne peut pas être négatif.'
-        },
         notNull: { msg: 'Le solde est requis.' }
       }
     },

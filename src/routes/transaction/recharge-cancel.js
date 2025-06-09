@@ -38,26 +38,21 @@ module.exports = (app) => {
         return res.status(404).json({ message: "Le revendeur ou l'utilisateur associé à cette transaction est introuvable." });
       }
 
-      // if (user.solde < transaction.money) {
-      //   await t.rollback();
-      //   return res.status(400).json({ message: "L'utilisateur n'a plus assez de solde pour annuler cette transaction." });
-      // }
-
-      // Mise à jour des soldes
-      user.solde -= transaction.money;
+      // ✅ Mise à jour des soldes : autoriser solde négatif
+      user.solde -= transaction.money; // peut devenir négatif
       await user.save({ transaction: t });
 
       reseller.soldeRevendeur += transaction.money;
       await reseller.save({ transaction: t });
 
-      // Mise à jour du statut de la transaction
+      // ✅ Mise à jour du statut
       transaction.status = 'invalidé';
       await transaction.save({ transaction: t });
 
       await t.commit();
 
       res.status(200).json({
-        message: "La transaction a été annulée avec succès.",
+        message: "La transaction a été annulée avec succès, même si l'utilisateur n'avait plus le solde requis.",
         transaction
       });
     } catch (error) {

@@ -38,10 +38,10 @@ module.exports = (app) => {
         return res.status(404).json({ message: "Le revendeur ou l'utilisateur associé à cette transaction est introuvable." });
       }
 
-      if (user.solde < transaction.money) {
-        await t.rollback();
-        return res.status(400).json({ message: "L'utilisateur n'a plus assez de solde pour annuler cette transaction." });
-      }
+      // if (user.solde < transaction.money) {
+      //   await t.rollback();
+      //   return res.status(400).json({ message: "L'utilisateur n'a plus assez de solde pour annuler cette transaction." });
+      // }
 
       // Mise à jour des soldes
       user.solde -= transaction.money;

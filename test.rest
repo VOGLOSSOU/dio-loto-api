@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/dashboard/latest
+GET http://localhost:3000/api/games/3/result
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDkyNTIzMjMsImV4cCI6MTc0OTMzODcyM30.995DX5zEDh80j6K2PNJ0Jedik4I3WUVNzUB4ORaB4Hc
 Content-Type: application/json
 

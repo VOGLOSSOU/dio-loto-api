@@ -53,7 +53,7 @@ if (montantRestant < montant) {
       });
 
       // Mise à jour du solde de l'utilisateur
-      user.soldeUser += montant;
+      user.solde += montant;
       await user.save();
 
       res.status(201).json({

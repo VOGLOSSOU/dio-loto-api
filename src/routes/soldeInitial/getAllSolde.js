@@ -1,4 +1,4 @@
-const { SoldeInitial, Transaction, adminToUserTransaction } = require('../../db/sequelize');
+const { SoldeInitial, Transaction, AdminToUserTransaction } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -13,7 +13,7 @@ module.exports = (app) => {
       });
 
       // 3. Dépenses vers les utilisateurs
-      const montantDepenseUser = await adminToUserTransaction.sum('money', {
+      const montantDepenseUser = await AdminToUserTransaction.sum('money', {
         where: { status: 'validé' }
       });
 
@@ -31,9 +31,13 @@ module.exports = (app) => {
           montantDisponible
         }
       });
+
     } catch (error) {
-      console.error("Erreur lors du calcul du solde système :", error);
-      res.status(500).json({ message: "Erreur lors du calcul du solde système.", error });
-    }
+  console.error("Erreur dans /api/solde-systeme :", error);
+  res.status(500).json({
+    message: "Erreur lors du calcul du solde système.",
+    error: error.message
+  });
+}
   });
 };

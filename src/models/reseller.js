@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: { msg: 'L’identifiant revendeur est requis.' }
       }
     },
-    uniqueUserId: { // Clé étrangère vers User
+    uniqueUserId: {
       type: DataTypes.UUID,
       allowNull: false,
       references: {
@@ -28,7 +28,7 @@ module.exports = (sequelize, DataTypes) => {
         key: 'uniqueUserId'
       }
     },
-    soldeRevendeur: { // Spécifique au revendeur
+    soldeRevendeur: {
       type: DataTypes.FLOAT,
       allowNull: false,
       defaultValue: 0,
@@ -68,6 +68,18 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Le statut doit être soit "actif", soit "bloqué".'
         },
         notNull: { msg: 'Le statut est requis.' }
+      }
+    },
+    // -------- Ajout du champ pseudo --------
+    pseudo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: { msg: 'Le pseudo ne peut pas être vide.' },
+        notNull: { msg: 'Le pseudo est requis.' }
+      },
+      unique: {
+        msg: 'Ce pseudo est déjà utilisé.'
       }
     }
   }, {

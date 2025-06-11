@@ -8,13 +8,13 @@ module.exports = (app) => {
         include: [
           {
             model: Admin,
-            as: 'adminSender',
-            attributes: ['id', 'name', 'email']
+            as: 'admin',
+            attributes: ['id', 'firstName', 'lastName', 'email']
           },
           {
             model: User,
-            as: 'userReceiver',
-            attributes: ['id', 'name', 'email']
+            as: 'user',
+            attributes: ['id', 'firstName', 'lastName', 'email']
           }
         ],
         order: [['date', 'DESC']]

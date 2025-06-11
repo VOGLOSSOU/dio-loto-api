@@ -1,4 +1,4 @@
-const { Admin, Reseller, Transaction, SoldeInitial, User } = require('../../db/sequelize');
+const { Admin, Reseller, Transaction, SoldeInitial, User, AdminToUserTransaction } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -31,9 +31,16 @@ module.exports = (app) => {
 
       // Vérification du solde système
       const montantInjecte = await SoldeInitial.sum('montant');
-      const montantUtilise = await Transaction.sum('money', {
-        where: { type: 'admin-to-reseller', status: 'validé' }
-      });
+      const montantAdminToReseller = await Transaction.sum('money', {
+  where: { type: 'admin-to-reseller', status: 'validé' }
+});
+
+const montantAdminToUser = await AdminToUserTransaction.sum('montant', {
+  where: { status: 'validé' }
+});
+
+const montantUtilise = (montantAdminToReseller || 0) + (montantAdminToUser || 0);
+
       const montantRestant = (montantInjecte || 0) - (montantUtilise || 0);
 
       if (montantRestant < montant) {

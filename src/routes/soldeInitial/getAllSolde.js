@@ -1,4 +1,4 @@
-const { SoldeInitial, Transaction } = require('../../db/sequelize');
+const { SoldeInitial, Transaction, adminToUserTransaction } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -7,23 +7,32 @@ module.exports = (app) => {
       // 1. Total injecté
       const montantInjecte = await SoldeInitial.sum('montant');
 
-      // 2. Total dépensé (toutes les recharges admin-to-reseller validées)
-      const montantDepense = await Transaction.sum('money', {
+      // 2. Dépenses vers les revendeurs
+      const montantDepenseReseller = await Transaction.sum('money', {
         where: { type: 'admin-to-reseller', status: 'validé' }
       });
 
-      // 3. Solde disponible
-      const montantDisponible = (montantInjecte || 0) - (montantDepense || 0);
+      // 3. Dépenses vers les utilisateurs
+      const montantDepenseUser = await adminToUserTransaction.sum('money', {
+        where: { status: 'validé' }
+      });
+
+      // 4. Montant total dépensé
+      const montantDepense = (montantDepenseReseller || 0) + (montantDepenseUser || 0);
+
+      // 5. Solde disponible
+      const montantDisponible = (montantInjecte || 0) - montantDepense;
 
       res.json({
-        message: 'Solde du système',
+        message: 'Solde du système mis à jour',
         data: {
           montantInjecte: montantInjecte || 0,
-          montantDepense: montantDepense || 0,
+          montantDepense,
           montantDisponible
         }
       });
     } catch (error) {
+      console.error("Erreur lors du calcul du solde système :", error);
       res.status(500).json({ message: "Erreur lors du calcul du solde système.", error });
     }
   });

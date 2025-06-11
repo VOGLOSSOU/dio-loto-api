@@ -69,6 +69,8 @@ require("./src/routes/transaction/getResellerToUser")(app)
 require("./src/routes/transaction/getUserToUser")(app)
 require("./src/routes/transaction/getRechargeSummary")(app)
 require("./src/routes/transaction/deleteTransaction")(app) 
+require("./src/routes/transaction/recharge-admin-to-user")(app)
+require("./src/routes/transaction/getAllAdminToUser")(app) // Récupérer les transactions d'un admin vers un utilisateur
 
 // : Games
 require("./src/routes/games/updateGamesStatus")(app)

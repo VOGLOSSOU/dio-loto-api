@@ -15,6 +15,7 @@ const TicketModel                      = require('../models/ticket');
 const WithdrawalModel                  = require('../models/withdrawal');
 const ResellerToUserTransactionModel   = require('../models/resellerToUserTransactions');
 const UserToUserTransactionModel       = require('../models/userToUserTransactions');
+const AdminToUserTransactionModel = require('../models/adminToUserTransaction');
 const ResultModel                      = require('../models/result');
 
 // 2) Création de la connexion Sequelize
@@ -42,6 +43,7 @@ const Ticket                     = TicketModel(sequelize, DataTypes);
 const Withdrawal                 = WithdrawalModel(sequelize, DataTypes);
 const ResellerToUserTransaction  = ResellerToUserTransactionModel(sequelize, DataTypes);
 const UserToUserTransaction      = UserToUserTransactionModel(sequelize, DataTypes);
+const AdminToUserTransaction     = AdminToUserTransactionModel(sequelize, DataTypes);
 const Result                     = ResultModel(sequelize, DataTypes);
 
 // ───────────────────────────────────────────────────────────────────────────────
@@ -139,6 +141,18 @@ UserToUserTransaction.belongsTo(User, {
   as: 'receiverUser'
 });
 
+AdminToUserTransaction.belongsTo(Admin, {
+  foreignKey: 'adminSender',          // Doit correspondre au champ de ta table
+  targetKey: 'uniqueUserId',
+  as: 'admin'
+});
+
+AdminToUserTransaction.belongsTo(User, {
+  foreignKey: 'userReceiver',         // Doit correspondre au champ de ta table
+  targetKey: 'uniqueUserId',
+  as: 'user'
+});
+
 // Si vous avez d’autres associations pour SoldeInitial ou Withdrawal, etc.,
 // vous les laissez telles quelles :
 // Par exemple :
@@ -160,7 +174,7 @@ Withdrawal.belongsTo(User, {
 // ───────────────────────────────────────────────────────────────────────────────
 const initDb = async () => {
   try {
-    await sequelize.sync({ alter: false });
+    await sequelize.sync({ alter: true });
     console.log('La base de données a bien été initialisée !');
   } catch (error) {
     console.error("Erreur lors de l'initialisation :", error);
@@ -182,5 +196,6 @@ module.exports = {
   Withdrawal,
   ResellerToUserTransaction,
   UserToUserTransaction,
+  AdminToUserTransaction,
   Result
 };

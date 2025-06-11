@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/transactions/admin-to-user
+POST http://localhost:3000/api/transactions/admin-to-user
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDk2Mjc0NzcsImV4cCI6MTc0OTcxMzg3N30.Gi5DmbwJQBdZ4PkoeeYIh1LL_CzeOtfZRsnB91blV18
 Content-Type: application/json
 
@@ -6,3 +6,8 @@ Content-Type: application/json
 #    "email": "admin@gmail.com",
 #    "password": "admin123"
 #  }
+{
+  "email": "newuser@gmail.com",
+  "montant": 5000,
+  "adminId": 1
+}

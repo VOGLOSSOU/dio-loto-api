@@ -35,7 +35,7 @@ module.exports = (app) => {
   where: { type: 'admin-to-reseller', status: 'validé' }
 });
 
-const montantAdminToUser = await AdminToUserTransaction.sum('montant', {
+const montantAdminToUser = await AdminToUserTransaction.sum('money', {
   where: { status: 'validé' }
 });
 

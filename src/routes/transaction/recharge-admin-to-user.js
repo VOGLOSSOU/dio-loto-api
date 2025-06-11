@@ -30,7 +30,7 @@ const montantAdminToReseller = await Transaction.sum('money', {
   where: { type: 'admin-to-reseller', status: 'validé' }
 });
 
-const montantAdminToUser = await AdminToUserTransaction.sum('montant', {
+const montantAdminToUser = await AdminToUserTransaction.sum('money', {
   where: { status: 'validé' }
 });
 
@@ -47,7 +47,7 @@ if (montantRestant < montant) {
       const transaction = await AdminToUserTransaction.create({
         adminSender: admin.uniqueUserId,
         userReceiver: user.uniqueUserId,
-        montant: montant,
+        money: montant,
         status: 'validé',
         date: new Date()
       });

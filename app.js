@@ -106,6 +106,7 @@ require("./src/routes/dashboard/recentActivity")(app)
 // : EasyCron
 require("./src/routes/easycron/ping")(app)
 require("./src/routes/easycron/updateStatus")(app)
+require("./src/routes/easycron/cleanupOldTicketsRoute")(app)
 
 
 app.listen(port, () => {

@@ -1,4 +1,4 @@
-POST http://localhost:3000/api/transactions/admin-to-user
+GET http://localhost:3000/api/transactions/reseller-to-user/summary/e74c823c-2182-4ca7-9553-d144eea14979
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDk2Mjc0NzcsImV4cCI6MTc0OTcxMzg3N30.Gi5DmbwJQBdZ4PkoeeYIh1LL_CzeOtfZRsnB91blV18
 Content-Type: application/json
 

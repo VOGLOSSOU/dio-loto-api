@@ -1,4 +1,4 @@
-// scripts/cleanupOldTickets.js
+// src/scripts/cleanupOldTickets.js
 
 const cron = require('node-cron');
 const moment = require('moment-timezone');

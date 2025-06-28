@@ -21,17 +21,22 @@ const schedules = [
   { nom: 'benin18', startTime: '21:00:00', endTime: '17:55:00', pays: 'Benin', timezone: 'Africa/Porto-Novo' },
   { nom: 'benin21', startTime: '00:00:00', endTime: '20:55:00', pays: 'Benin', timezone: 'Africa/Porto-Novo' },
   { nom: 'benin00', startTime: '03:00:00', endTime: '23:55:00', pays: 'Benin', timezone: 'Africa/Porto-Novo' },
+
   { nom: 'togo8', startTime: '11:00:00', endTime: '07:55:00', pays: 'Togo', timezone: 'Africa/Lome' },
   { nom: 'togo13', startTime: '16:00:00', endTime: '12:55:00', pays: 'Togo', timezone: 'Africa/Lome' },
   { nom: 'togo18', startTime: '21:00:00', endTime: '17:55:00', pays: 'Togo', timezone: 'Africa/Lome' },
-  { nom: 'coteivoire7', startTime: '10:00:00', endTime: '06:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
+
+  { nom: 'coteivoire7',  startTime: '10:00:00', endTime: '06:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
+  { nom: 'coteivoire8',  startTime: '11:00:00', endTime: '07:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' }, // Nouveau jeu 8h
   { nom: 'coteivoire10', startTime: '13:00:00', endTime: '09:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
   { nom: 'coteivoire13', startTime: '16:00:00', endTime: '12:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
   { nom: 'coteivoire16', startTime: '19:00:00', endTime: '15:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
   { nom: 'coteivoire21', startTime: '00:00:00', endTime: '20:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
+  { nom: 'coteivoire22', startTime: '01:00:00', endTime: '21:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' }, // Nouveau jeu 22h
   { nom: 'coteivoire23', startTime: '02:00:00', endTime: '22:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
-  { nom: 'coteivoire1', startTime: '04:00:00', endTime: '00:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
-  { nom: 'coteivoire3', startTime: '06:00:00', endTime: '02:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
+  { nom: 'coteivoire1',  startTime: '04:00:00', endTime: '00:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
+  { nom: 'coteivoire3',  startTime: '06:00:00', endTime: '02:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
+
   { nom: 'ghana20', startTime: '23:00:00', endTime: '19:55:00', pays: 'Ghana', timezone: 'Africa/Accra' },
   { nom: 'niger15', startTime: '18:00:00', endTime: '14:55:00', pays: 'Niger', timezone: 'Africa/Niamey' },
 ];

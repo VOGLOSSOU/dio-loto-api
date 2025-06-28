@@ -18,6 +18,14 @@ module.exports = (sequelize, DataTypes) => {
           notNull: { msg: 'Le champ "numbers" est requis.' }
         }
       },
+      // Nouveau champ pour la double chance
+      numbers2: {
+        type: DataTypes.STRING,
+        allowNull: true, // Peut rester null pour les jeux sans double chance
+        validate: {
+          // Optionnel : tu peux ajouter une validation si besoin
+        }
+      },
       // Clé étrangère vers le jeu concerné
       gameId: {
         type: DataTypes.INTEGER,

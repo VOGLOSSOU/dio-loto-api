@@ -27,6 +27,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         notNull: { msg: 'Le pays est requis.' }
       }
+    },
+     doubleChance: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   });
 

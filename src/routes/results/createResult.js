@@ -1,4 +1,3 @@
-// routes/results.js
 const { Game, Result } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
@@ -7,7 +6,8 @@ module.exports = (app) => {
   app.post('/api/games/:gameId/result', auth, async (req, res) => {
     try {
       const { gameId } = req.params;
-      const { numbers, numbers2 } = req.body;
+      // Accepte numbers, numbers1 et numbers2
+      const { numbers, numbers1, numbers2 } = req.body;
 
       // 1) Vérifier que le jeu existe
       const game = await Game.findByPk(gameId, {
@@ -27,8 +27,13 @@ module.exports = (app) => {
         return res.status(400).json({ message: 'Le résultat a déjà été saisi pour ce jeu.' });
       }
 
-      // 4) Valider la chaîne de numéros
-      if (!numbers || typeof numbers !== 'string' || numbers.trim().length === 0) {
+      // 4) Déterminer le champ principal à utiliser
+      // Pour double chance, le frontend envoie numbers1 et numbers2
+      // Pour simple, il envoie numbers
+      const mainNumbers = numbers || numbers1;
+
+      // 5) Valider la chaîne de numéros
+      if (!mainNumbers || typeof mainNumbers !== 'string' || mainNumbers.trim().length === 0) {
         return res.status(400).json({ message: 'Les numéros gagnants sont requis.' });
       }
       // Optionnel : valider numbers2 si fourni
@@ -36,10 +41,10 @@ module.exports = (app) => {
         return res.status(400).json({ message: 'Le second résultat doit être une chaîne.' });
       }
 
-      // 5) Créer l’enregistrement dans Result
+      // 6) Créer l’enregistrement dans Result
       const newResult = await Result.create({
         gameId: game.id,
-        numbers: numbers.trim(),
+        numbers: mainNumbers.trim(),
         numbers2: numbers2 ? numbers2.trim() : null
       });
 

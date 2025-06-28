@@ -7,7 +7,7 @@ module.exports = (app) => {
   app.post('/api/games/:gameId/result', auth, async (req, res) => {
     try {
       const { gameId } = req.params;
-      const { numbers } = req.body;
+      const { numbers, numbers2 } = req.body;
 
       // 1) Vérifier que le jeu existe
       const game = await Game.findByPk(gameId, {
@@ -31,11 +31,16 @@ module.exports = (app) => {
       if (!numbers || typeof numbers !== 'string' || numbers.trim().length === 0) {
         return res.status(400).json({ message: 'Les numéros gagnants sont requis.' });
       }
+      // Optionnel : valider numbers2 si fourni
+      if (numbers2 && typeof numbers2 !== 'string') {
+        return res.status(400).json({ message: 'Le second résultat doit être une chaîne.' });
+      }
 
       // 5) Créer l’enregistrement dans Result
       const newResult = await Result.create({
         gameId: game.id,
-        numbers: numbers.trim()
+        numbers: numbers.trim(),
+        numbers2: numbers2 ? numbers2.trim() : null
       });
 
       return res.status(201).json({

@@ -34,6 +34,7 @@ const updateGameStatus = () => {
 
           // Nouvelle fonctionnalité : suppression du résultat si le jeu s'ouvre
           const deleted = await Result.destroy({ where: { gameId: game.id } });
+          console.log(`Suppression tentée pour gameId=${game.id}, deleted=${deleted}`);
           if (deleted > 0) {
             console.log(`Résultat supprimé pour le jeu "${game.nom}" (id=${game.id})`);
           }
@@ -50,6 +51,14 @@ const updateGameStatus = () => {
         // console.log(`Statut actuel : ${schedule.game.statut}`);
         // console.log(`Fuseau horaire pour le jeu "${schedule.game.nom}" : ${schedule.timezone}`);
         // console.log(`Est dans la plage horaire : ${isInSchedule}`);
+      }
+
+            // Suppression globale des résultats pour tous les jeux ouverts
+      const openGames = await Game.findAll({ where: { statut: 'ouvert' } });
+      const openGameIds = openGames.map(g => g.id);
+      if (openGameIds.length > 0) {
+        const deleted = await Result.destroy({ where: { gameId: openGameIds } });
+        console.log(`Suppression globale : ${deleted} résultat(s) supprimé(s) pour les jeux ouverts.`);
       }
 
       console.log('Mise à jour des statuts terminée.');

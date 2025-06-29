@@ -1,6 +1,6 @@
 const cron = require('node-cron');
 const moment = require('moment-timezone');
-const { Game, Schedule } = require('../db/sequelize');
+const { Game, Schedule, Result } = require('../db/sequelize'); 
 
 // Tâche planifiée pour mettre à jour le statut des jeux
 const updateGameStatus = () => {
@@ -31,13 +31,19 @@ const updateGameStatus = () => {
           game.statut = 'ouvert';
           await game.save();
           console.log(`Le jeu "${game.nom}" est maintenant ouvert.`);
+
+          // Nouvelle fonctionnalité : suppression du résultat si le jeu s'ouvre
+          const deleted = await Result.destroy({ where: { gameId: game.id } });
+          if (deleted > 0) {
+            console.log(`Résultat supprimé pour le jeu "${game.nom}" (id=${game.id})`);
+          }
         } else if (!isInSchedule && game.statut !== 'fermé') {
           game.statut = 'fermé';
           await game.save();
           console.log(`Le jeu "${game.nom}" est maintenant fermé.`);
         }
 
-        // Logs détaillés pour chaque jeu
+        // Logs détaillés pour chaque jeu (désactivés)
         // console.log(`Vérification du jeu : ${schedule.game.nom}`);
         // console.log(`Heure actuelle : ${currentTime.format('HH:mm:ss')} (${schedule.timezone})`);
         // console.log(`Plage horaire : ${startTime.format('HH:mm:ss')} - ${endTime.format('HH:mm:ss')}`);

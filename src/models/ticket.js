@@ -49,10 +49,21 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
       allowNull: false
     },
-    gain: {
-      type: DataTypes.FLOAT,
-      allowNull: false
-    },
+    gains: {
+  type: DataTypes.TEXT,
+  allowNull: false,
+  get() {
+    const rawValue = this.getDataValue('gains');
+    try {
+      return JSON.parse(rawValue);
+    } catch {
+      return rawValue;
+    }
+  },
+  set(val) {
+    this.setDataValue('gains', JSON.stringify(val));
+  }
+},
     statut: {
   type: DataTypes.ENUM('en attente', 'validé', 'invalidé'),
   allowNull: false,

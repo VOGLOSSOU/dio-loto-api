@@ -75,7 +75,7 @@ isCart: {
   defaultValue: 'en attente',
   validate: {
     isIn: {
-      args: [['en attente', 'validé', 'invalidé']],
+      args: [['en attente', 'validé', 'invalidé', 'attribué']],
       msg: 'Le statut doit être "en attente", "validé" ou "invalidé".'
     },
     notNull: { msg: 'Le statut est requis.' }

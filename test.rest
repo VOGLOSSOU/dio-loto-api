@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/games/all/Côte d'Ivoire
+GET http://localhost:3000/api/tickets/winners?country=Côte d'Ivoire
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDk2Mjc0NzcsImV4cCI6MTc0OTcxMzg3N30.Gi5DmbwJQBdZ4PkoeeYIh1LL_CzeOtfZRsnB91blV18
 Content-Type: application/json
 

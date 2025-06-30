@@ -86,6 +86,7 @@ require("./src/routes/ticket/getTicketInCartByUser")(app)   // Récupérer les t
 require("./src/routes/ticket/getAllTickets")(app)
 require("./src/routes/ticket/countTickets")(app)
 require("./src/routes/ticket/deleteTicket")(app)
+require("./src/routes/ticket/getAllWinnedTickets")(app) // Récupérer tous les tickets gagnants
 
 // : Withdrawals
 require("./src/routes/withdrawals/createwithdrawals")(app)

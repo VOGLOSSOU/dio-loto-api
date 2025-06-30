@@ -10,7 +10,8 @@ module.exports = (app) => {
       numerosJoues,
       formule,
       mise: miseRaw,
-      gain: gainRaw
+      gain: gainRaw,
+      isCart 
     } = req.body;
 
     // 1) Vérification rapide des champs (à adapter ou extraire en middleware)
@@ -49,7 +50,8 @@ module.exports = (app) => {
         numerosJoues: Array.isArray(numerosJoues) ? JSON.stringify(numerosJoues) : numerosJoues,
         formule,
         mise,
-        gain: Number(gainRaw)
+        gain: Number(gainRaw),
+        isCart: isCart === undefined ? false : isCart // par défaut false si non fourni
       }, { transaction: t });
 
       // 2d) Si tout s’est bien passé, on commit

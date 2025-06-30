@@ -64,6 +64,11 @@ module.exports = (sequelize, DataTypes) => {
     this.setDataValue('gains', JSON.stringify(val));
   }
 },
+isCart: {
+  type: DataTypes.BOOLEAN,
+  allowNull: false,
+  defaultValue: false
+},
     statut: {
   type: DataTypes.ENUM('en attente', 'validé', 'invalidé'),
   allowNull: false,

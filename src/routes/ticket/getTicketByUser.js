@@ -15,9 +15,9 @@ module.exports = (app) => {
         return res.status(404).json({ message: "Utilisateur non trouvé." });
       }
 
-      // Récupérer les tickets
+      // Récupérer les tickets (hors panier)
       const tickets = await Ticket.findAll({
-        where: { uniqueUserId },
+        where: { uniqueUserId, isCart: false },
         order: [['created', 'DESC']]
       });
 

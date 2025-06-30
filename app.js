@@ -87,6 +87,7 @@ require("./src/routes/ticket/getAllTickets")(app)
 require("./src/routes/ticket/countTickets")(app)
 require("./src/routes/ticket/deleteTicket")(app)
 require("./src/routes/ticket/getAllWinnedTickets")(app) // Récupérer tous les tickets gagnants
+require("./src/routes/ticket/attributeGain")(app) // Attribuer un gain à un ticket
 
 // : Withdrawals
 require("./src/routes/withdrawals/createwithdrawals")(app)

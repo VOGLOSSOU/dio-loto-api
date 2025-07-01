@@ -178,7 +178,7 @@ Withdrawal.belongsTo(User, {
 // ───────────────────────────────────────────────────────────────────────────────
 const initDb = async () => {
   try {
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: false });
     console.log('La base de données a bien été initialisée !');
   } catch (error) {
     console.error("Erreur lors de l'initialisation :", error);

@@ -1,10 +1,10 @@
-const { Annonce } = require('../../db/sequelize');
+const { Announce } = require('../../db/sequelize');
 
 module.exports = (app) => {
   app.delete('/api/annonces/:id', async (req, res) => {
     try {
       const { id } = req.params;
-      const annonce = await Annonce.findByPk(id);
+      const annonce = await Announce.findByPk(id);
       if (!annonce) {
         return res.status(404).json({ message: "Annonce non trouvée." });
       }

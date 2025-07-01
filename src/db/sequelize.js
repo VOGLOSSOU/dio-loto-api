@@ -17,6 +17,8 @@ const ResellerToUserTransactionModel   = require('../models/resellerToUserTransa
 const UserToUserTransactionModel       = require('../models/userToUserTransactions');
 const AdminToUserTransactionModel = require('../models/adminToUserTransaction');
 const ResultModel                      = require('../models/result');
+const NotificationModel                = require('../models/notification');
+const AnnounceModel                    = require('../models/announce');
 
 // 2) Création de la connexion Sequelize
 const sequelize = new Sequelize(
@@ -45,6 +47,8 @@ const ResellerToUserTransaction  = ResellerToUserTransactionModel(sequelize, Dat
 const UserToUserTransaction      = UserToUserTransactionModel(sequelize, DataTypes);
 const AdminToUserTransaction     = AdminToUserTransactionModel(sequelize, DataTypes);
 const Result                     = ResultModel(sequelize, DataTypes);
+const Notification               = NotificationModel(sequelize, DataTypes);
+const Announce                   = AnnounceModel(sequelize, DataTypes);
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 4) Associations **SEULEMENT** pour Game, Schedule et Result (manuelles ici)
@@ -197,5 +201,7 @@ module.exports = {
   ResellerToUserTransaction,
   UserToUserTransaction,
   AdminToUserTransaction,
-  Result
+  Result,
+  Notification,
+  Announce
 };

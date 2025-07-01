@@ -10,7 +10,7 @@ module.exports = (app) => {
       numerosJoues,
       formule,
       mise: miseRaw,
-      gain: gainRaw,
+      gains: gainRaw,
       isCart 
     } = req.body;
 
@@ -50,7 +50,7 @@ module.exports = (app) => {
         numerosJoues: Array.isArray(numerosJoues) ? JSON.stringify(numerosJoues) : numerosJoues,
         formule,
         mise,
-        gain: Number(gainRaw),
+        gains: Number(gainRaw),
         isCart: isCart === undefined ? false : isCart // par défaut false si non fourni
       }, { transaction: t });
 
@@ -63,7 +63,7 @@ module.exports = (app) => {
           heureJeu: ticket.heureJeu,
           nomJeu: ticket.nomJeu,
           mise: ticket.mise,
-          gain: ticket.gain,
+          gains: ticket.gain,
           statut: ticket.statut
         },
         newSolde: user.solde

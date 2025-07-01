@@ -108,6 +108,11 @@ require("./src/routes/dashboard/dashboard")(app)
 require("./src/routes/dashboard/topResellers")(app)
 require("./src/routes/dashboard/recentActivity")(app)
 
+// : Announces
+require("./src/routes/announce/createAnnounce")(app)
+require("./src/routes/announce/getAllAnnounces")(app)
+require("./src/routes/announce/deleteAnnounce")(app)
+
 // : EasyCron
 require("./src/routes/easycron/ping")(app)
 require("./src/routes/easycron/updateStatus")(app)

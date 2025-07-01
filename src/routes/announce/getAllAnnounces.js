@@ -1,9 +1,9 @@
-const { Annonce } = require('../../db/sequelize');
+const { Announce } = require('../../db/sequelize');
 
 module.exports = (app) => {
   app.get('/api/annonces', async (req, res) => {
     try {
-      const annonces = await Annonce.findAll({
+      const annonces = await Announce.findAll({
         order: [['created', 'DESC']] // les plus récentes en premier
       });
 

@@ -1,8 +1,16 @@
-get http://localhost:3000/api/annonces/
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NDk2Mjc0NzcsImV4cCI6MTc0OTcxMzg3N30.Gi5DmbwJQBdZ4PkoeeYIh1LL_CzeOtfZRsnB91blV18
+post http://localhost:3000/api/tickets
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc1MTM3MDMxMCwiZXhwIjoxNzUxNDU2NzEwfQ.YdKml5ar1tMUe9xnDa0MqILx50mhyqaqEPltoDOriIc
 Content-Type: application/json
 
- { 
-   "titre": "hello_ troisième teste",
-   "description": "helloooo  ????"
- }
+{
+  "uniqueUserId": "52672738-d164-4b24-a458-e94c0ccf9cc4",
+  "heureJeu": "16",
+  "nomJeu": "benin11",
+  "typeJeu": "anagramme",
+  "numerosJoues": [1, 2, 3, 4, 5],
+  "formule": "simple",
+  "mise": 1000,
+  "gains": 5000,
+  "isCart": true
+}
+

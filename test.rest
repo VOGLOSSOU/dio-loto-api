@@ -13,4 +13,3 @@ Content-Type: application/json
   "gains": 5000,
   "isCart": true
 }
-

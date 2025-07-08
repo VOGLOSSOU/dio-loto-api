@@ -1,5 +1,6 @@
 const { Game, Result, Ticket } = require("../../db/sequelize")
 const auth = require("../../auth/auth")
+const { validateSingleTicket } = require("../../scripts/validation") // ✅ Import corrigé
 
 module.exports = (app) => {
   app.post("/api/games/:gameId/result", auth, async (req, res) => {
@@ -56,7 +57,7 @@ module.exports = (app) => {
       }
 
       try {
-        console.log(`🎯 === DÉBUT VALIDATION AUTOMATIQUE POUR JEU ${game.nom} ===`)
+        console.log(`🎯 Début de la validation automatique pour le jeu ${game.nom}...`)
 
         // Récupérer tous les tickets "en attente" pour ce jeu
         const tickets = await Ticket.findAll({
@@ -81,32 +82,33 @@ module.exports = (app) => {
             ? newResult.numbers2.split(",").map((num) => Number.parseInt(num.trim()))
             : null
 
-          console.log(`🎲 Numéros gagnants Win: [${winningNumbers.join(", ")}]`)
+          console.log(`🎲 Numéros gagnants: ${winningNumbers.join(", ")}`)
           if (winningNumbers2) {
-            console.log(`🎲 Numéros gagnants Machine: [${winningNumbers2.join(", ")}]`)
+            console.log(`🎲 Numéros gagnants 2 (double chance): ${winningNumbers2.join(", ")}`)
           }
 
-          // Valider chaque ticket
+          // Valider chaque ticket et collecter les détails
           const détailsValidation = []
           const validationErrors = []
 
           for (const ticket of tickets) {
             try {
-              // ✅ VALIDATION CORRIGÉE
-              const validationDetail = await validateAndProcessTicket(ticket, winningNumbers, winningNumbers2, game)
+              // ✅ Utiliser notre fonction de validation corrigée
+              const isValid = validateSingleTicket(ticket, winningNumbers, winningNumbers2, game)
 
-              détailsValidation.push(validationDetail)
+              // Mettre à jour le statut
+              const nouveauStatut = isValid ? "validé" : "invalidé"
+              await ticket.update({ statut: nouveauStatut })
 
-              // Compter les résultats
-              if (validationDetail.isGagnant) {
-                validationResult.validés++
-              } else {
-                validationResult.invalidés++
-              }
+              // Compter
+              isValid ? validationResult.validés++ : validationResult.invalidés++
 
-              console.log(
-                `${validationDetail.isGagnant ? "✅" : "❌"} Ticket ${ticket.numeroTicket}: ${validationDetail.nouveauStatut}`,
-              )
+              // ✅ Collecter les détails avec logique corrigée
+              const détail = await getTicketValidationDetail(ticket, winningNumbers, winningNumbers2, game, isValid)
+              détailsValidation.push(détail)
+
+              // Log pour suivi
+              console.log(`${isValid ? "✅" : "❌"} Ticket ${ticket.numeroTicket}: ${nouveauStatut}`)
             } catch (ticketError) {
               console.error(`❌ Erreur validation ticket ${ticket.id}:`, ticketError)
 
@@ -208,57 +210,26 @@ module.exports = (app) => {
 }
 
 // =====================================================
-// ✅ FONCTION PRINCIPALE DE VALIDATION CORRIGÉE
+// ✅ FONCTION POUR DÉTAILS DE VALIDATION CORRIGÉE
 // =====================================================
 
-/**
- * Valide un ticket et met à jour son statut en base
- * @param {Object} ticket - Le ticket à valider
- * @param {Array} winningNumbers - Numéros gagnants principaux (Win)
- * @param {Array|null} winningNumbers2 - Numéros gagnants secondaires (Machine)
- * @param {Object} game - Informations du jeu
- * @returns {Object} - Détails de la validation
- */
-async function validateAndProcessTicket(ticket, winningNumbers, winningNumbers2, game) {
-  console.log(`\n🔍 === VALIDATION TICKET ${ticket.numeroTicket} ===`)
-
-  // ✅ PARSING CORRIGÉ - ticket.numerosJoues est déjà un tableau grâce au getter Sequelize
+async function getTicketValidationDetail(ticket, winningNumbers, winningNumbers2, game, isValid) {
+  // ✅ Parse des numéros corrigé - ticket.numerosJoues est déjà un tableau grâce au getter Sequelize
   let numerosJoues = []
   try {
     if (Array.isArray(ticket.numerosJoues)) {
       numerosJoues = ticket.numerosJoues.map((num) => Number.parseInt(num))
     } else {
-      console.warn(`⚠️ numerosJoues n'est pas un tableau:`, ticket.numerosJoues)
+      console.warn(`⚠️ numerosJoues n'est pas un tableau pour ticket ${ticket.id}:`, ticket.numerosJoues)
       numerosJoues = []
     }
   } catch (error) {
-    console.error(`❌ Erreur parsing numerosJoues:`, error)
+    console.error(`❌ Erreur parsing numerosJoues pour ticket ${ticket.id}:`, error)
     numerosJoues = []
   }
 
-  console.log(`📋 Type: "${ticket.typeJeu}", Formule: "${ticket.formule}"`)
-  console.log(`🎯 Numéros joués: [${numerosJoues.join(", ")}]`)
-  console.log(`🎲 Numéros Win: [${winningNumbers.join(", ")}]`)
-  if (winningNumbers2) {
-    console.log(`🎲 Numéros Machine: [${winningNumbers2.join(", ")}]`)
-  }
-
-  // ✅ VALIDATION SELON LE TYPE ET LA FORMULE
-  const isGagnant = validateTicketByTypeAndFormula(
-    ticket.typeJeu,
-    ticket.formule,
-    numerosJoues,
-    winningNumbers,
-    winningNumbers2,
-    game.doubleChance,
-  )
-
-  // Mettre à jour le statut en base
-  const nouveauStatut = isGagnant ? "validé" : "invalidé"
-  await ticket.update({ statut: nouveauStatut })
-
-  // Calculer les correspondances pour les détails
-  const correspondances = calculateCorrespondances(
+  // ✅ Calculer les correspondances selon le type de jeu
+  const correspondances = getCorrespondancesParType(
     ticket.typeJeu,
     ticket.formule,
     numerosJoues,
@@ -266,16 +237,14 @@ async function validateAndProcessTicket(ticket, winningNumbers, winningNumbers2,
     winningNumbers2,
   )
 
-  // Générer la raison de validation
-  const raisonValidation = generateValidationReason(
+  // ✅ Raison de validation améliorée
+  const raisonValidation = getRaisonValidationCorrigee(
     ticket.typeJeu,
     ticket.formule,
     correspondances,
-    isGagnant,
+    isValid,
     game.doubleChance,
   )
-
-  console.log(`🏆 RÉSULTAT: ${isGagnant ? "GAGNANT" : "PERDANT"} - ${raisonValidation}`)
 
   return {
     ticketId: ticket.id,
@@ -286,486 +255,17 @@ async function validateAndProcessTicket(ticket, winningNumbers, winningNumbers2,
     numerosJoues: numerosJoues,
     mise: ticket.mise,
     ancienStatut: "en attente",
-    nouveauStatut: nouveauStatut,
-    isGagnant: isGagnant,
+    nouveauStatut: isValid ? "validé" : "invalidé",
+    isGagnant: isValid,
     correspondances: correspondances,
     raisonValidation: raisonValidation,
   }
 }
 
 // =====================================================
-// ✅ FONCTION DE VALIDATION PAR TYPE ET FORMULE
+// ✅ FONCTION POUR CALCULER CORRESPONDANCES PAR TYPE - CORRIGÉE
 // =====================================================
-
-/**
- * Valide un ticket selon son type et sa formule
- * @param {string} typeJeu - Type de jeu (FirstouonBK, NAP, etc.)
- * @param {string} formule - Formule (Directe, Turbo2, etc.)
- * @param {Array} numerosJoues - Numéros joués par l'utilisateur
- * @param {Array} winningNumbers - Numéros gagnants Win
- * @param {Array|null} winningNumbers2 - Numéros gagnants Machine
- * @param {boolean} doubleChance - Si le jeu a la double chance
- * @returns {boolean} - true si gagnant, false sinon
- */
-function validateTicketByTypeAndFormula(typeJeu, formule, numerosJoues, winningNumbers, winningNumbers2, doubleChance) {
-  console.log(`  🎯 Validation: ${typeJeu} + ${formule} ${doubleChance ? "(Double Chance)" : ""}`)
-
-  // Gestion de la double chance
-  if (doubleChance && winningNumbers2) {
-    console.log(`  🔄 Mode double chance - Test sur Win ET Machine`)
-
-    const winOnWin = validateSingleCombination(typeJeu, formule, numerosJoues, winningNumbers)
-    const winOnMachine = validateSingleCombination(typeJeu, formule, numerosJoues, winningNumbers2)
-
-    console.log(`  📊 Résultat Win: ${winOnWin ? "GAGNANT" : "PERDANT"}`)
-    console.log(`  📊 Résultat Machine: ${winOnMachine ? "GAGNANT" : "PERDANT"}`)
-
-    const finalResult = winOnWin || winOnMachine
-    console.log(`  🏆 RÉSULTAT FINAL DOUBLE CHANCE: ${finalResult ? "GAGNANT" : "PERDANT"}`)
-
-    return finalResult
-  }
-
-  // Validation simple (sans double chance)
-  return validateSingleCombination(typeJeu, formule, numerosJoues, winningNumbers)
-}
-
-/**
- * Valide une combinaison unique (type + formule + numéros)
- * @param {string} typeJeu - Type de jeu
- * @param {string} formule - Formule
- * @param {Array} numerosJoues - Numéros joués
- * @param {Array} winningNumbers - Numéros gagnants à tester
- * @returns {boolean} - true si gagnant
- */
-function validateSingleCombination(typeJeu, formule, numerosJoues, winningNumbers) {
-  // Construire la clé de combinaison exacte comme le frontend
-  const combinaison = `${typeJeu}:${formule}`
-  console.log(`    🔍 Test combinaison: "${combinaison}"`)
-
-  switch (combinaison) {
-    // ==========================================
-    // === FIRSTOUONBK
-    // ==========================================
-    case "FirstouonBK:Directe":
-      return validateFirstBKDirecte(numerosJoues, winningNumbers)
-
-    case "FirstouonBK:Position1":
-      return validatePosition(numerosJoues, winningNumbers, 1)
-
-    case "FirstouonBK:Position2":
-      return validatePosition(numerosJoues, winningNumbers, 2)
-
-    case "FirstouonBK:Position3":
-      return validatePosition(numerosJoues, winningNumbers, 3)
-
-    case "FirstouonBK:Position4":
-      return validatePosition(numerosJoues, winningNumbers, 4)
-
-    case "FirstouonBK:Position5":
-      return validatePosition(numerosJoues, winningNumbers, 5)
-
-    // ==========================================
-    // === TWOSÛRS
-    // ==========================================
-    case "Twosûrs:Directe":
-      return validateTwoSureDirecte(numerosJoues, winningNumbers)
-
-    case "Twosûrs:Turbo2":
-      return validateTurbo(numerosJoues, winningNumbers, 2)
-
-    case "Twosûrs:Turbo3":
-      return validateTurbo(numerosJoues, winningNumbers, 3)
-
-    case "Twosûrs:Turbo4":
-      return validateTurbo(numerosJoues, winningNumbers, 4)
-
-    // Variantes Double Chance pour Twosûrs
-    case "Twosûrs:Turbo2DoubleChance":
-      return validateTurbo(numerosJoues, winningNumbers, 2)
-
-    case "Twosûrs:Turbo3DoubleChance":
-      return validateTurbo(numerosJoues, winningNumbers, 3)
-
-    case "Twosûrs:Turbo4DoubleChance":
-      return validateTurbo(numerosJoues, winningNumbers, 4)
-
-    // ==========================================
-    // === PERMUTATIONS
-    // ==========================================
-    case "Permutations:Directe":
-      return validatePermutation(numerosJoues, winningNumbers)
-
-    case "Permutations:Turbo2":
-      return validateTurboPermutation(numerosJoues, winningNumbers, 2)
-
-    case "Permutations:Turbo3":
-      return validateTurboPermutation(numerosJoues, winningNumbers, 3)
-
-    case "Permutations:Turbo4":
-      return validateTurboPermutation(numerosJoues, winningNumbers, 4)
-
-    // Variantes Double Chance pour Permutations
-    case "Permutations:DirecteDoubleChance":
-      return validatePermutation(numerosJoues, winningNumbers)
-
-    case "Permutations:Turbo2DoubleChance":
-      return validateTurboPermutation(numerosJoues, winningNumbers, 2)
-
-    case "Permutations:Turbo3DoubleChance":
-      return validateTurboPermutation(numerosJoues, winningNumbers, 3)
-
-    case "Permutations:Turbo4DoubleChance":
-      return validateTurboPermutation(numerosJoues, winningNumbers, 4)
-
-    // ==========================================
-    // === NAP
-    // ==========================================
-    case "NAP:NAP3":
-      return validateNAP(numerosJoues, winningNumbers, 3)
-
-    case "NAP:NAP4":
-      return validateNAP(numerosJoues, winningNumbers, 4)
-
-    case "NAP:NAP5":
-      return validateNAP(numerosJoues, winningNumbers, 5)
-
-    // Variantes Double Chance pour NAP
-    case "NAP:NAP3DoubleChance":
-      return validateNAP(numerosJoues, winningNumbers, 3)
-
-    case "NAP:NAP4DoubleChance":
-      return validateNAP(numerosJoues, winningNumbers, 4)
-
-    case "NAP:NAP5DoubleChance":
-      return validateNAP(numerosJoues, winningNumbers, 5)
-
-    // ==========================================
-    // === DOUBLENUMBER (numéros automatiques)
-    // ==========================================
-    case "DoubleNumber:Directe":
-      return validateDoubleNumber(winningNumbers, "Directe")
-
-    case "DoubleNumber:Turbo2":
-      return validateDoubleNumber(winningNumbers, "Turbo2")
-
-    case "DoubleNumber:Turbo3":
-      return validateDoubleNumber(winningNumbers, "Turbo3")
-
-    case "DoubleNumber:Turbo4":
-      return validateDoubleNumber(winningNumbers, "Turbo4")
-
-    // Variantes Double Chance pour DoubleNumber
-    case "DoubleNumber:Turbo2DoubleChance":
-      return validateDoubleNumber(winningNumbers, "Turbo2")
-
-    case "DoubleNumber:Turbo3DoubleChance":
-      return validateDoubleNumber(winningNumbers, "Turbo3")
-
-    case "DoubleNumber:Turbo4DoubleChance":
-      return validateDoubleNumber(winningNumbers, "Turbo4")
-
-    // ==========================================
-    // === ANNAGRAMMESIMPLE (binômes automatiques)
-    // ==========================================
-    case "Annagrammesimple:Directe":
-      return validateAnagramme(winningNumbers, "Directe")
-
-    case "Annagrammesimple:Turbo2":
-      return validateAnagramme(winningNumbers, "Turbo2")
-
-    case "Annagrammesimple:Turbo3":
-      return validateAnagramme(winningNumbers, "Turbo3")
-
-    case "Annagrammesimple:Turbo4":
-      return validateAnagramme(winningNumbers, "Turbo4")
-
-    // Variantes Double Chance pour Anagramme
-    case "Annagrammesimple:DirecteDoubleChance":
-      return validateAnagramme(winningNumbers, "Directe")
-
-    case "Annagrammesimple:Turbo2DoubleChance":
-      return validateAnagramme(winningNumbers, "Turbo2")
-
-    case "Annagrammesimple:Turbo3DoubleChance":
-      return validateAnagramme(winningNumbers, "Turbo3")
-
-    case "Annagrammesimple:Turbo4DoubleChance":
-      return validateAnagramme(winningNumbers, "Turbo4")
-
-    case "Annagrammesimple:AnnagrammesimpleDoubleChance":
-      return validateAnagramme(winningNumbers, "Directe")
-
-    // ==========================================
-    // === FALLBACK POUR COMPATIBILITÉ
-    // ==========================================
-    default:
-      console.log(`    ❌ COMBINAISON NON RECONNUE: "${combinaison}"`)
-      console.log(`    📝 Types supportés: FirstouonBK, NAP, Twosûrs, Permutations, DoubleNumber, Annagrammesimple`)
-      console.log(`    📝 Formules supportées: Directe, Position1-5, NAP3-5, Turbo2-4, *DoubleChance`)
-      return false
-  }
-}
-
-// =====================================================
-// ✅ FONCTIONS DE VALIDATION SPÉCIFIQUES
-// =====================================================
-
-/**
- * Validation First BK Directe
- * RÈGLE: Le numéro joué doit être présent parmi tous les numéros tirés
- */
-function validateFirstBKDirecte(numerosJoues, winningNumbers) {
-  console.log(`    🔍 First BK Directe: [${numerosJoues.join(", ")}] dans [${winningNumbers.join(", ")}]`)
-
-  if (numerosJoues.length !== 1) {
-    console.log(`    ❌ First BK exige exactement 1 numéro (reçu: ${numerosJoues.length})`)
-    return false
-  }
-
-  const numeroJoue = numerosJoues[0]
-  const isFound = winningNumbers.includes(numeroJoue)
-
-  console.log(`    ${isFound ? "✅" : "❌"} Numéro ${numeroJoue} ${isFound ? "trouvé" : "NON trouvé"}`)
-
-  return isFound
-}
-
-/**
- * Validation Position
- * RÈGLE: Le numéro joué doit être exactement à la position demandée
- */
-function validatePosition(numerosJoues, winningNumbers, position) {
-  console.log(`    🔍 Position ${position}: [${numerosJoues.join(", ")}] vs position ${position}`)
-
-  const index = position - 1
-  if (index >= winningNumbers.length) {
-    console.log(`    ❌ Position ${position} n'existe pas (seulement ${winningNumbers.length} résultats)`)
-    return false
-  }
-
-  const numeroAtPosition = winningNumbers[index]
-  const isValid = numerosJoues.includes(numeroAtPosition)
-
-  console.log(
-    `    ${isValid ? "✅" : "❌"} Numéro à position ${position}: ${numeroAtPosition} ${isValid ? "trouvé" : "NON trouvé"} dans joués`,
-  )
-
-  return isValid
-}
-
-/**
- * Validation Two Sure Directe
- * RÈGLE: LES DEUX numéros joués doivent être présents parmi tous les numéros tirés
- */
-function validateTwoSureDirecte(numerosJoues, winningNumbers) {
-  console.log(`    🔍 Two Sure Directe: [${numerosJoues.join(", ")}] dans [${winningNumbers.join(", ")}]`)
-
-  if (numerosJoues.length !== 2) {
-    console.log(`    ❌ Two Sure exige exactement 2 numéros (reçu: ${numerosJoues.length})`)
-    return false
-  }
-
-  const foundNumbers = numerosJoues.filter((num) => winningNumbers.includes(num))
-  const allFound = foundNumbers.length === numerosJoues.length
-
-  console.log(`    ${allFound ? "✅" : "❌"} ${foundNumbers.length}/${numerosJoues.length} numéros trouvés`)
-  console.log(`    📊 Numéros trouvés: [${foundNumbers.join(", ")}]`)
-
-  return allFound
-}
-
-/**
- * Validation Turbo
- * RÈGLE: LES numéros joués doivent être présents dans les X premiers tirés
- */
-function validateTurbo(numerosJoues, winningNumbers, topCount) {
-  console.log(`    🔍 Turbo ${topCount}: [${numerosJoues.join(", ")}] dans les ${topCount} premiers`)
-
-  const topNumbers = winningNumbers.slice(0, topCount)
-  console.log(`    📊 ${topCount} premiers tirés: [${topNumbers.join(", ")}]`)
-
-  const foundNumbers = numerosJoues.filter((num) => topNumbers.includes(num))
-  const allFound = foundNumbers.length === numerosJoues.length
-
-  console.log(
-    `    ${allFound ? "✅" : "❌"} ${foundNumbers.length}/${numerosJoues.length} numéros trouvés dans les ${topCount} premiers`,
-  )
-
-  return allFound
-}
-
-/**
- * Validation Permutation
- * RÈGLE: Au moins 2 numéros joués doivent être présents parmi tous les tirés
- */
-function validatePermutation(numerosJoues, winningNumbers) {
-  console.log(`    🔍 Permutation: [${numerosJoues.join(", ")}] dans [${winningNumbers.join(", ")}]`)
-
-  const foundNumbers = numerosJoues.filter((num) => winningNumbers.includes(num))
-  const isValid = foundNumbers.length >= 2
-
-  console.log(`    ${isValid ? "✅" : "❌"} ${foundNumbers.length} correspondances (min requis: 2)`)
-  console.log(`    📊 Numéros trouvés: [${foundNumbers.join(", ")}]`)
-
-  return isValid
-}
-
-/**
- * Validation Turbo Permutation
- * RÈGLE: Au moins 2 numéros joués doivent être présents dans les X premiers tirés
- */
-function validateTurboPermutation(numerosJoues, winningNumbers, topCount) {
-  console.log(`    🔍 Turbo Permutation ${topCount}: [${numerosJoues.join(", ")}] dans les ${topCount} premiers`)
-
-  const topNumbers = winningNumbers.slice(0, topCount)
-  console.log(`    📊 ${topCount} premiers tirés: [${topNumbers.join(", ")}]`)
-
-  const foundNumbers = numerosJoues.filter((num) => topNumbers.includes(num))
-  const isValid = foundNumbers.length >= 2
-
-  console.log(
-    `    ${isValid ? "✅" : "❌"} ${foundNumbers.length} correspondances dans les ${topCount} premiers (min requis: 2)`,
-  )
-
-  return isValid
-}
-
-/**
- * Validation NAP
- * RÈGLE: TOUS les numéros NAP doivent être présents parmi les tirés
- */
-function validateNAP(numerosJoues, winningNumbers, requiredCount) {
-  console.log(`    🔍 NAP ${requiredCount}: [${numerosJoues.join(", ")}] dans [${winningNumbers.join(", ")}]`)
-
-  if (numerosJoues.length !== requiredCount) {
-    console.log(`    ❌ NAP ${requiredCount} exige exactement ${requiredCount} numéros (reçu: ${numerosJoues.length})`)
-    return false
-  }
-
-  const foundNumbers = numerosJoues.filter((num) => winningNumbers.includes(num))
-  const allFound = foundNumbers.length === numerosJoues.length
-
-  console.log(`    ${allFound ? "✅" : "❌"} ${foundNumbers.length}/${numerosJoues.length} numéros NAP trouvés`)
-
-  return allFound
-}
-
-/**
- * Validation Double Number
- * RÈGLE: Au moins 2 des 8 doubles automatiques doivent respecter la formule
- */
-function validateDoubleNumber(winningNumbers, formule) {
-  console.log(`    🔍 Double Number + ${formule}: 8 doubles automatiques`)
-
-  // Les 8 doubles automatiques (toujours les mêmes)
-  const autoDoubles = [11, 22, 33, 44, 55, 66, 77, 88]
-  console.log(`    📊 Doubles automatiques: [${autoDoubles.join(", ")}]`)
-
-  let numbersToCheck = winningNumbers
-
-  // Appliquer la logique de la formule
-  if (formule.startsWith("Turbo")) {
-    const turboCount = Number.parseInt(formule.replace(/[^0-9]/g, ""))
-    numbersToCheck = winningNumbers.slice(0, turboCount)
-    console.log(`    📊 ${turboCount} premiers tirés: [${numbersToCheck.join(", ")}]`)
-  }
-
-  const foundDoubles = autoDoubles.filter((num) => numbersToCheck.includes(num))
-  const isValid = foundDoubles.length >= 2
-
-  console.log(`    ${isValid ? "✅" : "❌"} ${foundDoubles.length}/8 doubles trouvés (min requis: 2)`)
-  console.log(`    📊 Doubles gagnants: [${foundDoubles.join(", ")}]`)
-
-  return isValid
-}
-
-/**
- * Validation Anagramme
- * RÈGLE: Au moins 1 binôme complet doit respecter la formule
- */
-function validateAnagramme(winningNumbers, formule) {
-  console.log(`    🔍 Anagramme + ${formule}: 37 binômes automatiques`)
-
-  // Les 37 binômes automatiques selon votre liste
-  const anagrammes = [
-    [1, 10],
-    [2, 20],
-    [3, 30],
-    [4, 40],
-    [5, 50],
-    [6, 60],
-    [7, 70],
-    [8, 80],
-    [9, 90],
-    [10, 1],
-    [11, 12],
-    [12, 21],
-    [13, 31],
-    [14, 41],
-    [15, 51],
-    [16, 61],
-    [17, 71],
-    [18, 81],
-    [19, 91],
-    [20, 2],
-    [21, 12],
-    [22, 23],
-    [23, 32],
-    [24, 42],
-    [25, 52],
-    [26, 62],
-    [27, 72],
-    [28, 82],
-    [29, 92],
-    [30, 3],
-    [31, 13],
-    [32, 23],
-    [33, 34],
-    [34, 43],
-    [35, 53],
-    [36, 63],
-    [37, 73],
-  ]
-
-  let numbersToCheck = winningNumbers
-
-  // Appliquer la logique de la formule
-  if (formule.startsWith("Turbo")) {
-    const turboCount = Number.parseInt(formule.replace(/[^0-9]/g, ""))
-    numbersToCheck = winningNumbers.slice(0, turboCount)
-    console.log(`    📊 ${turboCount} premiers tirés: [${numbersToCheck.join(", ")}]`)
-  }
-
-  const binomesGagnants = anagrammes.filter(
-    ([num1, num2]) => numbersToCheck.includes(num1) && numbersToCheck.includes(num2),
-  )
-
-  const isValid = binomesGagnants.length > 0
-
-  if (isValid) {
-    console.log(`    ✅ ${binomesGagnants.length}/37 binôme(s) gagnant(s):`)
-    binomesGagnants.slice(0, 3).forEach(([num1, num2]) => {
-      console.log(`      - [${num1}, ${num2}]`)
-    })
-    if (binomesGagnants.length > 3) {
-      console.log(`      ... et ${binomesGagnants.length - 3} autres`)
-    }
-  } else {
-    console.log(`    ❌ Aucun binôme gagnant trouvé parmi les 37 possibles`)
-  }
-
-  return isValid
-}
-
-// =====================================================
-// ✅ FONCTIONS AUXILIAIRES POUR LES DÉTAILS
-// =====================================================
-
-/**
- * Calcule les correspondances pour les détails de validation
- */
-function calculateCorrespondances(typeJeu, formule, numerosJoues, winningNumbers, winningNumbers2) {
+function getCorrespondancesParType(typeJeu, formule, numerosJoues, winningNumbers, winningNumbers2) {
   let principal = 0
   let secondaire = 0
   let details = {}
@@ -782,6 +282,7 @@ function calculateCorrespondances(typeJeu, formule, numerosJoues, winningNumbers
 
   switch (typeJeu) {
     case "DoubleNumber":
+      // Pour DoubleNumber, on compte les doubles automatiques trouvés
       const autoDoubles = [11, 22, 33, 44, 55, 66, 77, 88]
       principal = autoDoubles.filter((num) => numbersToCheck.includes(num)).length
       if (numbersToCheck2) {
@@ -795,6 +296,7 @@ function calculateCorrespondances(typeJeu, formule, numerosJoues, winningNumbers
       break
 
     case "Annagrammesimple":
+      // Pour Anagramme, on compte les binômes gagnants
       const anagrammes = [
         [1, 10],
         [2, 20],
@@ -876,10 +378,10 @@ function calculateCorrespondances(typeJeu, formule, numerosJoues, winningNumbers
   }
 }
 
-/**
- * Génère la raison de validation pour les détails
- */
-function generateValidationReason(typeJeu, formule, correspondances, isValid, doubleChance) {
+// =====================================================
+// ✅ RAISON DE VALIDATION CORRIGÉE
+// =====================================================
+function getRaisonValidationCorrigee(typeJeu, formule, correspondances, isValid, doubleChance) {
   const { principal, secondaire } = correspondances
 
   if (!isValid) {

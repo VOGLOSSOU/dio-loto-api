@@ -1,6 +1,6 @@
 const { Game, Result, Ticket } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
-const { validateSingleTicket, getMatchingCount } = require('../../scripts/validation'); 
+const { validateSingleTicket } = require('../../scripts/validation'); // ✅ Import corrigé
 
 module.exports = (app) => {
   app.post('/api/games/:gameId/result', auth, async (req, res) => {
@@ -90,7 +90,7 @@ module.exports = (app) => {
 
           for (const ticket of tickets) {
             try {
-              // Utiliser la fonction de validation
+              // ✅ Utiliser notre fonction de validation corrigée
               const isValid = validateSingleTicket(ticket, winningNumbers, winningNumbers2, game);
               
               // Mettre à jour le statut
@@ -100,35 +100,12 @@ module.exports = (app) => {
               // Compter
               isValid ? validationResult.validés++ : validationResult.invalidés++;
               
-              // Collecter les détails pour la réponse
-              const numerosJoues = Array.isArray(ticket.numerosJoues) ? 
-                ticket.numerosJoues : JSON.parse(ticket.numerosJoues);
-              
-              const matchingCount = getMatchingCount(numerosJoues, winningNumbers);
-              const matchingCount2 = winningNumbers2 ? getMatchingCount(numerosJoues, winningNumbers2) : 0;
-              
-              const détail = {
-                ticketId: ticket.id,
-                numeroTicket: ticket.numeroTicket,
-                userId: ticket.uniqueUserId,
-                formule: ticket.formule,
-                typeJeu: ticket.typeJeu,
-                numerosJoues: numerosJoues,
-                mise: ticket.mise,
-                ancienStatut: 'en attente',
-                nouveauStatut: nouveauStatut,
-                isGagnant: isValid,
-                correspondances: {
-                  principal: matchingCount,
-                  secondaire: matchingCount2
-                },
-                raisonValidation: getRaisonValidation(ticket.formule, matchingCount, matchingCount2, isValid, game.doubleChance)
-              };
-              
+              // ✅ Collecter les détails avec logique corrigée
+              const détail = await getTicketValidationDetail(ticket, winningNumbers, winningNumbers2, game, isValid);
               détailsValidation.push(détail);
               
               // Log pour suivi
-              console.log(`${isValid ? '✅' : '❌'} Ticket ${ticket.numeroTicket}: ${nouveauStatut} (${matchingCount} correspondances)`);
+              console.log(`${isValid ? '✅' : '❌'} Ticket ${ticket.numeroTicket}: ${nouveauStatut}`);
               
             } catch (ticketError) {
               console.error(`❌ Erreur validation ticket ${ticket.id}:`, ticketError);
@@ -229,52 +206,183 @@ module.exports = (app) => {
 };
 
 // =====================================================
-// FONCTION UTILITAIRE POUR EXPLIQUER LA VALIDATION
+// ✅ NOUVELLE FONCTION POUR DÉTAILS DE VALIDATION CORRIGÉE
 // =====================================================
 
-function getRaisonValidation(formule, matchingCount, matchingCount2, isValid, doubleChance) {
-  if (!isValid) {
-    if (doubleChance && matchingCount2 > 0) {
-      return `Pas assez de correspondances: ${matchingCount} en principal, ${matchingCount2} en secondaire pour la formule ${formule}`;
-    }
-    return `Pas assez de correspondances (${matchingCount}) pour la formule ${formule}`;
-  }
-  
-  // Si gagnant avec double chance
-  if (doubleChance && (matchingCount > 0 || matchingCount2 > 0)) {
-    if (matchingCount > 0 && matchingCount2 > 0) {
-      return `Gagnant sur les deux tirages: ${matchingCount} correspondances (principal) + ${matchingCount2} correspondances (secondaire)`;
-    } else if (matchingCount > 0) {
-      return `Gagnant sur le tirage principal: ${matchingCount} correspondances`;
-    } else {
-      return `Gagnant sur le tirage secondaire: ${matchingCount2} correspondances`;
-    }
-  }
-  
-  // Cas normal (sans double chance)
-  switch (formule.toLowerCase()) {
-    case 'directe':
-      return 'Numéros sortis dans l\'ordre exact';
-    case 'nap 3':
-    case 'nap 4':
-    case 'nap 5':
-      return `Tous les numéros NAP trouvés (${matchingCount} correspondances)`;
-    case 'turbo 2':
-    case 'turbo 3':
-    case 'turbo 4':
-      return `${matchingCount} correspondances trouvées (minimum requis atteint)`;
-    case 'two sûr directe':
-      return 'Paire de numéros trouvée dans l\'ordre';
-    case 'anagramme simple':
-      return 'Au moins un anagramme gagnant trouvé';
-    case 'double number':
-      return `${matchingCount} doubles trouvés parmi les numéros gagnants`;
-    default:
-      if (formule.includes('perm')) {
-        return `${matchingCount} correspondances trouvées pour la permutation`;
-      } else if (formule.includes('position')) {
-        return `Numéro trouvé à la position demandée`;
+async function getTicketValidationDetail(ticket, winningNumbers, winningNumbers2, game, isValid) {
+  // Parse des numéros (même logique que validateSingleTicket)
+  let numerosJoues;
+  try {
+    if (Array.isArray(ticket.numerosJoues)) {
+      numerosJoues = ticket.numerosJoues.map(num => parseInt(num));
+    } else if (typeof ticket.numerosJoues === 'string') {
+      if (ticket.numerosJoues.startsWith('[')) {
+        numerosJoues = JSON.parse(ticket.numerosJoues).map(num => parseInt(num));
+      } else {
+        numerosJoues = ticket.numerosJoues.split(',').map(num => parseInt(num.trim()));
       }
-      return `${matchingCount} correspondances trouvées - ticket gagnant`;
+    } else {
+      numerosJoues = JSON.parse(ticket.numerosJoues).map(num => parseInt(num));
+    }
+  } catch (error) {
+    numerosJoues = [];
+  }
+
+  // ✅ Calculer les correspondances selon le type de jeu
+  const correspondances = getCorrespondancesParType(ticket.typeJeu, ticket.formule, numerosJoues, winningNumbers, winningNumbers2);
+  
+  // ✅ Raison de validation améliorée
+  const raisonValidation = getRaisonValidationCorrigee(ticket.typeJeu, ticket.formule, correspondances, isValid, game.doubleChance);
+
+  return {
+    ticketId: ticket.id,
+    numeroTicket: ticket.numeroTicket,
+    userId: ticket.uniqueUserId,
+    formule: ticket.formule,
+    typeJeu: ticket.typeJeu,
+    numerosJoues: numerosJoues,
+    mise: ticket.mise,
+    ancienStatut: 'en attente',
+    nouveauStatut: isValid ? 'validé' : 'invalidé',
+    isGagnant: isValid,
+    correspondances: correspondances,
+    raisonValidation: raisonValidation
+  };
+}
+
+// =====================================================
+// ✅ FONCTION POUR CALCULER CORRESPONDANCES PAR TYPE
+// =====================================================
+
+function getCorrespondancesParType(typeJeu, formule, numerosJoues, winningNumbers, winningNumbers2) {
+  let principal = 0;
+  let secondaire = 0;
+  let details = {};
+
+  switch (typeJeu) {
+    case 'DoubleNumber':
+      // Pour DoubleNumber, on compte les doubles automatiques trouvés
+      const autoDoubles = [11, 22, 33, 44, 55, 66, 77, 88];
+      principal = autoDoubles.filter(num => winningNumbers.includes(num)).length;
+      if (winningNumbers2) {
+        secondaire = autoDoubles.filter(num => winningNumbers2.includes(num)).length;
+      }
+      details = {
+        doublesJoues: autoDoubles,
+        doublesToruvesWin: autoDoubles.filter(num => winningNumbers.includes(num)),
+        doublesToruvesWin: winningNumbers2 ? autoDoubles.filter(num => winningNumbers2.includes(num)) : []
+      };
+      break;
+
+    case 'Annagrammesimple':
+      // Pour Anagramme, on compte les binômes gagnants
+      const anagrammes = [
+        [1, 10], [2, 20], [3, 30], [4, 40], [5, 50], [6, 60], [7, 70], [8, 80], [9, 90],
+        [10, 1], [11, 12], [12, 21], [13, 31], [14, 41], [15, 51], [16, 61], [17, 71],
+        [18, 81], [19, 91], [20, 2], [21, 12], [22, 23], [23, 32], [24, 42], [25, 52],
+        [26, 62], [27, 72], [28, 82], [29, 92], [30, 3], [31, 13], [32, 23], [33, 34],
+        [34, 43], [35, 53], [36, 63], [37, 73]
+      ];
+      
+      const binomesGagnantsWin = anagrammes.filter(([num1, num2]) => 
+        winningNumbers.includes(num1) && winningNumbers.includes(num2)
+      );
+      principal = binomesGagnantsWin.length;
+      
+      if (winningNumbers2) {
+        const binomesGagnantsMachine = anagrammes.filter(([num1, num2]) => 
+          winningNumbers2.includes(num1) && winningNumbers2.includes(num2)
+        );
+        secondaire = binomesGagnantsMachine.length;
+      }
+      
+      details = {
+        binomesGagnantsWin: binomesGagnantsWin,
+        binomesGagnantsMachine: winningNumbers2 ? anagrammes.filter(([num1, num2]) => 
+          winningNumbers2.includes(num1) && winningNumbers2.includes(num2)) : []
+      };
+      break;
+
+    default:
+      // Pour les autres types, comptage classique
+      principal = numerosJoues.filter(num => winningNumbers.includes(num)).length;
+      if (winningNumbers2) {
+        secondaire = numerosJoues.filter(num => winningNumbers2.includes(num)).length;
+      }
+      details = {
+        numerosJoues: numerosJoues,
+        numerosTrouvesWin: numerosJoues.filter(num => winningNumbers.includes(num)),
+        numerosTrouvesMachine: winningNumbers2 ? numerosJoues.filter(num => winningNumbers2.includes(num)) : []
+      };
+      break;
+  }
+
+  return {
+    principal: principal,
+    secondaire: secondaire,
+    details: details
+  };
+}
+
+// =====================================================
+// ✅ RAISON DE VALIDATION CORRIGÉE
+// =====================================================
+
+function getRaisonValidationCorrigee(typeJeu, formule, correspondances, isValid, doubleChance) {
+  const { principal, secondaire } = correspondances;
+  
+  if (!isValid) {
+    if (doubleChance && secondaire > 0) {
+      return `Échec: ${principal} en Win, ${secondaire} en Machine pour ${typeJeu}:${formule}`;
+    }
+    return `Échec: ${principal} correspondance(s) pour ${typeJeu}:${formule}`;
+  }
+  
+  // Messages de succès par type de jeu
+  switch (typeJeu) {
+    case 'DoubleNumber':
+      if (doubleChance) {
+        if (principal >= 2 && secondaire >= 2) {
+          return `Gagnant sur Win (${principal} doubles) et Machine (${secondaire} doubles)`;
+        } else if (principal >= 2) {
+          return `Gagnant sur Win: ${principal} doubles trouvés`;
+        } else {
+          return `Gagnant sur Machine: ${secondaire} doubles trouvés`;
+        }
+      }
+      return `${principal} doubles trouvés pour ${formule}`;
+
+    case 'Annagrammesimple':
+      if (doubleChance) {
+        if (principal > 0 && secondaire > 0) {
+          return `Gagnant sur Win (${principal} binômes) et Machine (${secondaire} binômes)`;
+        } else if (principal > 0) {
+          return `Gagnant sur Win: ${principal} binôme(s) gagnant(s)`;
+        } else {
+          return `Gagnant sur Machine: ${secondaire} binôme(s) gagnant(s)`;
+        }
+      }
+      return `${principal} binôme(s) gagnant(s) pour ${formule}`;
+
+    case 'FirstouonBK':
+      if (formule.startsWith('Position')) {
+        return `Numéro trouvé à la ${formule}`;
+      }
+      return `Numéro trouvé parmi les tirés (Directe)`;
+
+    case 'NAP':
+      return `Tous les numéros NAP trouvés (${principal} correspondances)`;
+
+    case 'Twosûrs':
+      if (formule.includes('Turbo')) {
+        return `Paire trouvée dans les premiers tirés (${formule})`;
+      }
+      return `Paire de numéros trouvée (Directe)`;
+
+    case 'Permutations':
+      return `${principal} correspondances trouvées pour permutation (${formule})`;
+
+    default:
+      return `${principal} correspondance(s) - ticket gagnant`;
   }
 }

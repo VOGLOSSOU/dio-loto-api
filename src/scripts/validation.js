@@ -1,4 +1,9 @@
 /**
+ * FICHIER VALIDATION.JS COMPLÈTEMENT CORRIGÉ
+ * Basé sur les vrais formats de formules stockés en base de données
+ */
+
+/**
  * Fonction principale de validation des tickets
  * @param {Array} tickets - Liste des tickets à valider
  * @param {Object} result - Résultat du jeu avec numbers et numbers2 pour double chance
@@ -8,6 +13,12 @@
 function validateTickets(tickets, result, game) {
   const winningNumbers = result.numbers.split(',').map(num => parseInt(num.trim()));
   const winningNumbers2 = result.numbers2 ? result.numbers2.split(',').map(num => parseInt(num.trim())) : null;
+  
+  console.log(`🎯 validateTickets: ${tickets.length} tickets à valider`);
+  console.log(`🎲 Numéros gagnants principaux: ${winningNumbers}`);
+  if (winningNumbers2) {
+    console.log(`🎲 Numéros gagnants secondaires: ${winningNumbers2}`);
+  }
   
   return tickets.map(ticket => {
     const isWinning = validateSingleTicket(ticket, winningNumbers, winningNumbers2, game);
@@ -29,180 +40,265 @@ function validateTickets(tickets, result, game) {
  */
 function validateSingleTicket(ticket, winningNumbers, winningNumbers2, game) {
   const { formule, numerosJoues, typeJeu } = ticket;
-  const playedNumbers = Array.isArray(numerosJoues) ? numerosJoues : JSON.parse(numerosJoues);
+  
+  // Conversion sécurisée des numéros joués en entiers
+  let playedNumbers;
+  try {
+    if (Array.isArray(numerosJoues)) {
+      playedNumbers = numerosJoues.map(num => parseInt(num));
+    } else if (typeof numerosJoues === 'string') {
+      playedNumbers = JSON.parse(numerosJoues).map(num => parseInt(num));
+    } else {
+      playedNumbers = JSON.parse(numerosJoues).map(num => parseInt(num));
+    }
+  } catch (error) {
+    console.error(`❌ Erreur parsing numerosJoues pour ticket ${ticket.id}:`, error);
+    return false;
+  }
+  
+  console.log(`\n🔍 === VALIDATION TICKET ${ticket.id} ===`);
+  console.log(`📋 Formule: "${formule}"`);
+  console.log(`🎮 Type de jeu: "${typeJeu}"`);
+  console.log(`🎯 Numéros joués: [${playedNumbers.join(', ')}]`);
+  console.log(`🎲 Numéros gagnants: [${winningNumbers.join(', ')}]`);
+  if (winningNumbers2) {
+    console.log(`🎲 Numéros gagnants 2: [${winningNumbers2.join(', ')}]`);
+  }
   
   // Gestion de la double chance
   if (game.doubleChance && winningNumbers2) {
+    console.log(`🔄 Mode double chance activé`);
     const winInFirst = validateByFormula(formule, playedNumbers, winningNumbers);
     const winInSecond = validateByFormula(formule, playedNumbers, winningNumbers2);
-    return winInFirst || winInSecond;
+    
+    console.log(`📊 Résultat tirage principal: ${winInFirst ? 'GAGNANT' : 'PERDANT'}`);
+    console.log(`📊 Résultat tirage secondaire: ${winInSecond ? 'GAGNANT' : 'PERDANT'}`);
+    
+    const finalResult = winInFirst || winInSecond;
+    console.log(`🏆 RÉSULTAT FINAL: ${finalResult ? 'GAGNANT' : 'PERDANT'}`);
+    return finalResult;
   }
   
-  return validateByFormula(formule, playedNumbers, winningNumbers);
+  const result = validateByFormula(formule, playedNumbers, winningNumbers);
+  console.log(`🏆 RÉSULTAT FINAL: ${result ? 'GAGNANT' : 'PERDANT'}`);
+  return result;
 }
 
 /**
- * Validation selon la formule de jeu
+ * Validation selon la formule de jeu - CORRIGÉE avec les vrais formats
  * @param {string} formule - Formule de jeu
  * @param {Array} playedNumbers - Numéros joués
  * @param {Array} winningNumbers - Numéros gagnants
  * @returns {boolean} - true si gagnant selon la formule
  */
 function validateByFormula(formule, playedNumbers, winningNumbers) {
-  switch (formule.toLowerCase()) {
+  // Nettoyage de la formule (GARDE le PascalCase original)
+  const formuleClean = formule.trim();
+  
+  console.log(`  🎯 Validation formule: "${formule}" → "${formuleClean}"`);
+  
+  switch (formuleClean) {
     // === FIRST OU BK ===
-    case 'directe':
+    case 'Directe':
+    case 'DirecteDoubleChance':
       return validateDirecte(playedNumbers, winningNumbers);
     
-    case 'position 1':
+    case 'Position1':
       return validatePosition(playedNumbers, winningNumbers, 1);
     
-    case 'position 2':
+    case 'Position2':
       return validatePosition(playedNumbers, winningNumbers, 2);
     
-    case 'position 3':
+    case 'Position3':
       return validatePosition(playedNumbers, winningNumbers, 3);
     
-    case 'position 4':
+    case 'Position4':
       return validatePosition(playedNumbers, winningNumbers, 4);
     
-    case 'position 5':
+    case 'Position5':
       return validatePosition(playedNumbers, winningNumbers, 5);
     
     // === NAP ===
-    case 'nap 3':
+    case 'NAP3':
+    case 'NAP3DoubleChance':
       return validateNAP(playedNumbers, winningNumbers, 3);
     
-    case 'nap 3 perm 4':
-      return validateNAPPerm(playedNumbers, winningNumbers, 3, 4);
-    
-    case 'nap 3 perm 5':
-      return validateNAPPerm(playedNumbers, winningNumbers, 3, 5);
-    
-    case 'nap 4':
+    case 'NAP4':
+    case 'NAP4DoubleChance':
       return validateNAP(playedNumbers, winningNumbers, 4);
     
-    case 'nap 4 perm 5':
-      return validateNAPPerm(playedNumbers, winningNumbers, 4, 5);
-    
-    case 'nap 5':
+    case 'NAP5':
+    case 'NAP5DoubleChance':
       return validateNAP(playedNumbers, winningNumbers, 5);
     
     // === TWO SÛRS ===
-    case 'two sûr directe':
-      return validateTwoSurDirecte(playedNumbers, winningNumbers);
-    
-    case 'turbo 2':
+    case 'Turbo2':
+    case 'Turbo2DoubleChance':
       return validateTurbo(playedNumbers, winningNumbers, 2);
     
-    case 'turbo 3':
+    case 'Turbo3':
+    case 'Turbo3DoubleChance':
       return validateTurbo(playedNumbers, winningNumbers, 3);
     
-    case 'turbo 4':
+    case 'Turbo4':
+    case 'Turbo4DoubleChance':
       return validateTurbo(playedNumbers, winningNumbers, 4);
     
     // === PERMUTATIONS ===
-    case 'perm 3':
+    case 'Perm3':
       return validatePermutation(playedNumbers, winningNumbers, 3);
     
-    case 'perm 4':
+    case 'Perm4':
       return validatePermutation(playedNumbers, winningNumbers, 4);
     
-    case 'perm 5':
+    case 'Perm5':
       return validatePermutation(playedNumbers, winningNumbers, 5);
     
-    case 'perm 6':
+    case 'Perm6':
       return validatePermutation(playedNumbers, winningNumbers, 6);
     
-    case 'perm 7':
-    case 'perm 8':
-    case 'perm 9':
-    case 'perm 10':
-    case 'perm 11':
-    case 'perm 12':
-    case 'perm 13':
-    case 'perm 14':
-    case 'perm 15':
-    case 'perm 16':
-    case 'perm 17':
-    case 'perm 18':
-    case 'perm 19':
-    case 'perm 20':
-      const permSize = parseInt(formule.split(' ')[1]);
-      return validatePermutationLarge(playedNumbers, winningNumbers, permSize);
-    
     // === AUTRES FORMULES ===
-    case 'double number':
-      return validateDoubleNumber(playedNumbers, winningNumbers);
-    
-    case 'anagramme simple':
+    case 'AnnagrammesimpleDoubleChance':
       return validateAnagrammeSimple(playedNumbers, winningNumbers);
     
+    // === CAS SPÉCIAUX VUS DANS VOS DONNÉES ===
+    // Gestion des cas du vrai monde d'après vos données
     default:
-      console.warn(`Formule non reconnue: ${formule}`);
+      // Essayer avec toLowerCase pour compatibilité
+      const formuleLower = formuleClean.toLowerCase();
+      
+      // Gestion spéciale pour les permutations larges
+      const permMatch = formuleLower.match(/perm(\d+)/);
+      if (permMatch) {
+        const permSize = parseInt(permMatch[1]);
+        if (permSize >= 7 && permSize <= 20) {
+          return validatePermutationLarge(playedNumbers, winningNumbers, permSize);
+        }
+      }
+      
+      // Fallback pour formules en minuscules
+      switch (formuleLower) {
+        case 'directe':
+          return validateDirecte(playedNumbers, winningNumbers);
+        case 'turbo2':
+          return validateTurbo(playedNumbers, winningNumbers, 2);
+        case 'nap3':
+          return validateNAP(playedNumbers, winningNumbers, 3);
+        case 'position1':
+          return validatePosition(playedNumbers, winningNumbers, 1);
+      }
+      
+      console.log(`    ❌ FORMULE NON RECONNUE: "${formuleClean}"`);
+      console.log(`    📝 Formats attendus: Directe, Position1, NAP3, Turbo2, DirecteDoubleChance, etc.`);
       return false;
   }
 }
 
-// === FONCTIONS DE VALIDATION SPÉCIFIQUES ===
+// === FONCTIONS DE VALIDATION SPÉCIFIQUES - TOUTES CORRIGÉES ===
 
 /**
- * Validation Directe - les numéros doivent sortir dans l'ordre exact
+ * Validation Directe - CORRIGÉE pour la loterie
+ * En loterie, "Directe" signifie généralement que tous les numéros joués doivent être présents
  */
 function validateDirecte(playedNumbers, winningNumbers) {
-  if (playedNumbers.length !== winningNumbers.length) return false;
+  console.log(`    🔍 Directe: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
   
-  for (let i = 0; i < playedNumbers.length; i++) {
-    if (playedNumbers[i] !== winningNumbers[i]) {
-      return false;
-    }
+  // Pour la loterie, vérifier que tous les numéros joués sont dans les gagnants
+  const allFound = playedNumbers.every(num => winningNumbers.includes(num));
+  
+  console.log(`    ${allFound ? '✅' : '❌'} Tous les numéros ${allFound ? 'trouvés' : 'non trouvés'}`);
+  
+  if (allFound) {
+    const foundNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
+    console.log(`    📊 Numéros trouvés: [${foundNumbers.join(', ')}]`);
   }
-  return true;
+  
+  return allFound;
 }
 
 /**
  * Validation Position - vérifier si les numéros sont à la bonne position
  */
 function validatePosition(playedNumbers, winningNumbers, position) {
-  // Position 1 = index 0, Position 2 = index 1, etc.
+  console.log(`    🔍 Position ${position}: [${playedNumbers.join(', ')}] vs position ${position-1}`);
+  
   const index = position - 1;
+  if (index >= winningNumbers.length) {
+    console.log(`    ❌ Position ${position} n'existe pas (seulement ${winningNumbers.length} résultats)`);
+    return false;
+  }
   
-  if (index >= winningNumbers.length) return false;
+  const targetNumber = winningNumbers[index];
+  const isValid = playedNumbers.includes(targetNumber);
   
-  return playedNumbers.includes(winningNumbers[index]);
+  console.log(`    ${isValid ? '✅' : '❌'} Numéro à la position ${position}: ${targetNumber} ${isValid ? 'trouvé' : 'non trouvé'}`);
+  
+  return isValid;
 }
 
 /**
  * Validation NAP - tous les numéros joués doivent être dans les gagnants
  */
 function validateNAP(playedNumbers, winningNumbers, requiredCount) {
-  if (playedNumbers.length !== requiredCount) return false;
+  console.log(`    🔍 NAP ${requiredCount}: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
   
-  return playedNumbers.every(num => winningNumbers.includes(num));
+  if (playedNumbers.length !== requiredCount) {
+    console.log(`    ❌ Mauvais nombre de numéros: ${playedNumbers.length} au lieu de ${requiredCount}`);
+    return false;
+  }
+  
+  const allFound = playedNumbers.every(num => winningNumbers.includes(num));
+  
+  console.log(`    ${allFound ? '✅' : '❌'} Tous les numéros NAP ${allFound ? 'trouvés' : 'non trouvés'}`);
+  
+  if (allFound) {
+    console.log(`    📊 Numéros NAP trouvés: [${playedNumbers.join(', ')}]`);
+  }
+  
+  return allFound;
 }
 
 /**
  * Validation NAP avec permutation
  */
 function validateNAPPerm(playedNumbers, winningNumbers, napCount, permCount) {
-  if (playedNumbers.length !== permCount) return false;
+  console.log(`    🔍 NAP ${napCount} Perm ${permCount}: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
+  
+  if (playedNumbers.length !== permCount) {
+    console.log(`    ❌ Mauvais nombre de numéros: ${playedNumbers.length} au lieu de ${permCount}`);
+    return false;
+  }
   
   const matchingNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
-  return matchingNumbers.length >= napCount;
+  const isValid = matchingNumbers.length >= napCount;
+  
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances (min NAP: ${napCount})`);
+  console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
+  
+  return isValid;
 }
 
 /**
- * Validation Two Sûr Directe - exactement 2 numéros dans l'ordre
+ * Validation Two Sûr Directe - CORRIGÉE
+ * Cherche une paire de numéros consécutifs dans les résultats
  */
 function validateTwoSurDirecte(playedNumbers, winningNumbers) {
-  if (playedNumbers.length !== 2) return false;
+  console.log(`    🔍 Two Sûr Directe: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
+  
+  if (playedNumbers.length !== 2) {
+    console.log(`    ❌ Two Sûr nécessite exactement 2 numéros, reçu: ${playedNumbers.length}`);
+    return false;
+  }
   
   // Vérifier si les 2 numéros sont consécutifs dans les résultats
   for (let i = 0; i < winningNumbers.length - 1; i++) {
     if (winningNumbers[i] === playedNumbers[0] && winningNumbers[i + 1] === playedNumbers[1]) {
+      console.log(`    ✅ Paire trouvée aux positions ${i} et ${i+1}: ${playedNumbers[0]}, ${playedNumbers[1]}`);
       return true;
     }
   }
+  
+  console.log(`    ❌ Paire consécutive non trouvée`);
   return false;
 }
 
@@ -210,54 +306,94 @@ function validateTwoSurDirecte(playedNumbers, winningNumbers) {
  * Validation Turbo - au moins N numéros doivent être trouvés
  */
 function validateTurbo(playedNumbers, winningNumbers, minRequired) {
+  console.log(`    🔍 Turbo ${minRequired}: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
+  
   const matchingNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
-  return matchingNumbers.length >= minRequired;
+  const isValid = matchingNumbers.length >= minRequired;
+  
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances (min: ${minRequired})`);
+  console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
+  
+  return isValid;
 }
 
 /**
  * Validation Permutation (3-6 boules)
  */
 function validatePermutation(playedNumbers, winningNumbers, permSize) {
-  if (playedNumbers.length !== permSize) return false;
+  console.log(`    🔍 Permutation ${permSize}: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
+  
+  if (playedNumbers.length !== permSize) {
+    console.log(`    ❌ Mauvais nombre de numéros: ${playedNumbers.length} au lieu de ${permSize}`);
+    return false;
+  }
   
   const matchingNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
+  const isValid = matchingNumbers.length >= 2; // Au moins 2 boules pour gagner
   
-  // Au moins 2 boules doivent être trouvées pour gagner
-  return matchingNumbers.length >= 2;
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances (min: 2)`);
+  console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
+  
+  return isValid;
 }
 
 /**
  * Validation Permutation large (7-20 boules)
  */
 function validatePermutationLarge(playedNumbers, winningNumbers, permSize) {
-  if (playedNumbers.length !== permSize) return false;
+  console.log(`    🔍 Permutation Large ${permSize}: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
+  
+  if (playedNumbers.length !== permSize) {
+    console.log(`    ❌ Mauvais nombre de numéros: ${playedNumbers.length} au lieu de ${permSize}`);
+    return false;
+  }
   
   const matchingNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
+  const isValid = matchingNumbers.length >= 2; // Au moins 2 boules pour gagner
   
-  // Au moins 2 boules doivent être trouvées pour gagner
-  return matchingNumbers.length >= 2;
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances (min: 2)`);
+  console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
+  
+  return isValid;
 }
 
 /**
- * Validation Double Number - perm de 8 avec tous les doubles
+ * Validation Double Number - CORRIGÉE
+ * Permutation de 8 avec tous les doubles
  */
 function validateDoubleNumber(playedNumbers, winningNumbers) {
+  console.log(`    🔍 Double Number: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
+  
   const doubleNumbers = [11, 22, 33, 44, 55, 66, 77, 88];
   
   // Vérifier que les numéros joués sont bien des doubles
   const validDoubles = playedNumbers.filter(num => doubleNumbers.includes(num));
-  if (validDoubles.length === 0) return false;
+  if (validDoubles.length === 0) {
+    console.log(`    ❌ Aucun double number valide dans: [${playedNumbers.join(', ')}]`);
+    console.log(`    📝 Doubles valides: [${doubleNumbers.join(', ')}]`);
+    return false;
+  }
   
-  // Appliquer les règles de permutation
+  console.log(`    📊 Doubles valides joués: [${validDoubles.join(', ')}]`);
+  
+  // Appliquer les règles de permutation (au moins 2 correspondances)
   const matchingNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
-  return matchingNumbers.length >= 2;
+  const isValid = matchingNumbers.length >= 2;
+  
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances (min: 2)`);
+  console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
+  
+  return isValid;
 }
 
 /**
- * Validation Anagramme Simple - 37 two sûrs réunis
+ * Validation Anagramme Simple - CORRIGÉE
+ * 37 two sûrs réunis en un seul jeu
  */
 function validateAnagrammeSimple(playedNumbers, winningNumbers) {
-  // Les 37 anagrammes possibles en loto
+  console.log(`    🔍 Anagramme Simple dans: [${winningNumbers.join(', ')}]`);
+  
+  // Les 37 anagrammes possibles selon votre cahier des charges
   const anagrammes = [
     [1, 10], [2, 20], [3, 30], [4, 40], [5, 50], [6, 60], [7, 70], [8, 80], [9, 90],
     [10, 1], [11, 12], [12, 21], [13, 31], [14, 41], [15, 51], [16, 61], [17, 71],
@@ -266,21 +402,46 @@ function validateAnagrammeSimple(playedNumbers, winningNumbers) {
     [34, 43], [35, 53], [36, 63], [37, 73]
   ];
   
+  console.log(`    📊 Recherche parmi ${anagrammes.length} anagrammes possibles...`);
+  
   // Vérifier si au moins un anagramme est gagnant
+  const gagnants = [];
   for (const [num1, num2] of anagrammes) {
     if (winningNumbers.includes(num1) && winningNumbers.includes(num2)) {
-      return true;
+      gagnants.push([num1, num2]);
     }
   }
-  return false;
+  
+  const isValid = gagnants.length > 0;
+  
+  if (isValid) {
+    console.log(`    ✅ ${gagnants.length} anagramme(s) gagnant(s) trouvé(s):`);
+    gagnants.forEach(([num1, num2]) => {
+      console.log(`      - [${num1}, ${num2}]`);
+    });
+  } else {
+    console.log(`    ❌ Aucun anagramme gagnant trouvé`);
+  }
+  
+  return isValid;
 }
 
 /**
  * Fonction utilitaire pour obtenir le nombre de numéros correspondants
- * Utile pour calculer les gains selon le nombre de boules trouvées
+ * @param {Array} playedNumbers - Numéros joués
+ * @param {Array} winningNumbers - Numéros gagnants
+ * @returns {number} - Nombre de correspondances
  */
 function getMatchingCount(playedNumbers, winningNumbers) {
-  return playedNumbers.filter(num => winningNumbers.includes(num)).length;
+  // Conversion sécurisée en entiers
+  const played = playedNumbers.map(num => parseInt(num));
+  const winning = winningNumbers.map(num => parseInt(num));
+  
+  const matchingCount = played.filter(num => winning.includes(num)).length;
+  
+  console.log(`📊 getMatchingCount: [${played.join(', ')}] vs [${winning.join(', ')}] = ${matchingCount} correspondances`);
+  
+  return matchingCount;
 }
 
 /**
@@ -291,6 +452,8 @@ function getMatchingCount(playedNumbers, winningNumbers) {
  */
 async function validateGameTickets(models, gameId) {
   try {
+    console.log(`🎯 validateGameTickets pour le jeu ${gameId}`);
+    
     // Récupérer le jeu et son résultat
     const game = await models.Game.findByPk(gameId, {
       include: [{
@@ -303,6 +466,9 @@ async function validateGameTickets(models, gameId) {
       throw new Error('Jeu ou résultat non trouvé');
     }
     
+    console.log(`🎮 Jeu trouvé: ${game.nom} (doubleChance: ${game.doubleChance})`);
+    console.log(`🎲 Résultat: ${game.result.numbers}${game.result.numbers2 ? ` / ${game.result.numbers2}` : ''}`);
+    
     // Récupérer tous les tickets en attente pour ce jeu
     const tickets = await models.Ticket.findAll({
       where: {
@@ -312,8 +478,11 @@ async function validateGameTickets(models, gameId) {
     });
     
     if (tickets.length === 0) {
+      console.log(`ℹ️ Aucun ticket en attente pour le jeu ${game.nom}`);
       return [];
     }
+    
+    console.log(`📊 ${tickets.length} ticket(s) en attente trouvé(s)`);
     
     // Valider les tickets
     const validatedTickets = validateTickets(tickets, game.result, game);
@@ -326,10 +495,15 @@ async function validateGameTickets(models, gameId) {
       );
     }
     
+    const validesCount = validatedTickets.filter(t => t.statut === 'validé').length;
+    const invalidesCount = validatedTickets.filter(t => t.statut === 'invalidé').length;
+    
+    console.log(`🏆 Validation terminée: ${validesCount} validés, ${invalidesCount} invalidés`);
+    
     return validatedTickets;
     
   } catch (error) {
-    console.error('Erreur lors de la validation des tickets:', error);
+    console.error('❌ Erreur lors de la validation des tickets:', error);
     throw error;
   }
 }

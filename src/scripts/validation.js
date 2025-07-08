@@ -1,6 +1,30 @@
 /**
  * FICHIER VALIDATION.JS COMPLÈTEMENT CORRIGÉ
  * Basé sur les vrais formats de formules stockés en base de données
+ * ET sur les vraies règles métier de la loterie
+ * 
+ * === RÈGLES MÉTIER CORRECTES ===
+ * 
+ * 1. FIRST OU BK:
+ *    - Directe: Un seul numéro qui doit être PARMI les numéros tirés
+ *    - Position1-5: Le numéro doit être à la position EXACTE (1=premier, 2=deuxième, etc.)
+ * 
+ * 2. TWO SURE:
+ *    - Directe: Deux numéros qui doivent TOUS être parmi les numéros tirés
+ *    - Turbo2: Les 2 numéros doivent être dans les 2 PREMIERS numéros tirés
+ *    - Turbo3: Les 2 numéros doivent être dans les 3 PREMIERS numéros tirés
+ *    - Turbo4: Les 2 numéros doivent être dans les 4 PREMIERS numéros tirés
+ * 
+ * 3. PERMUTATION:
+ *    - Directe: Au moins 2 numéros trouvés parmi la liste choisie
+ *    - Turbo2/3/4: Au moins 2 numéros trouvés dans les X premiers tirés
+ * 
+ * 4. NAP (3,4,5):
+ *    - Tous les numéros NAP doivent être parmi les numéros tirés (ordre non important)
+ * 
+ * 5. DOUBLE CHANCE:
+ *    - Win = 5 premiers numéros tirés (60% des gains)
+ *    - Machine = 5 derniers numéros tirés (40% des gains)
  */
 
 /**
@@ -68,8 +92,8 @@ function validateSingleTicket(ticket, winningNumbers, winningNumbers2, game) {
   // Gestion de la double chance
   if (game.doubleChance && winningNumbers2) {
     console.log(`🔄 Mode double chance activé`);
-    const winInFirst = validateByFormula(formule, playedNumbers, winningNumbers);
-    const winInSecond = validateByFormula(formule, playedNumbers, winningNumbers2);
+    const winInFirst = validateByFormula(formule, playedNumbers, winningNumbers, typeJeu);
+    const winInSecond = validateByFormula(formule, playedNumbers, winningNumbers2, typeJeu);
     
     console.log(`📊 Résultat tirage principal: ${winInFirst ? 'GAGNANT' : 'PERDANT'}`);
     console.log(`📊 Résultat tirage secondaire: ${winInSecond ? 'GAGNANT' : 'PERDANT'}`);
@@ -79,7 +103,7 @@ function validateSingleTicket(ticket, winningNumbers, winningNumbers2, game) {
     return finalResult;
   }
   
-  const result = validateByFormula(formule, playedNumbers, winningNumbers);
+  const result = validateByFormula(formule, playedNumbers, winningNumbers, typeJeu);
   console.log(`🏆 RÉSULTAT FINAL: ${result ? 'GAGNANT' : 'PERDANT'}`);
   return result;
 }
@@ -89,18 +113,126 @@ function validateSingleTicket(ticket, winningNumbers, winningNumbers2, game) {
  * @param {string} formule - Formule de jeu
  * @param {Array} playedNumbers - Numéros joués
  * @param {Array} winningNumbers - Numéros gagnants
+ * @param {string} typeJeu - Type de jeu (optionnel)
  * @returns {boolean} - true si gagnant selon la formule
  */
-function validateByFormula(formule, playedNumbers, winningNumbers) {
+function validateByFormula(formule, playedNumbers, winningNumbers, typeJeu = null) {
   // Nettoyage de la formule (GARDE le PascalCase original)
   const formuleClean = formule.trim();
   
-  console.log(`  🎯 Validation formule: "${formule}" → "${formuleClean}"`);
+  console.log(`  🎯 Validation: typeJeu="${typeJeu}" + formule="${formule}" → "${formuleClean}"`);
   
-  switch (formuleClean) {
+  // VALIDATION BASÉE SUR LA COMBINAISON typeJeu + formule (comme le frontend !)
+  const combinaison = typeJeu ? `${typeJeu}:${formuleClean}` : formuleClean;
+  console.log(`  🔍 Combinaison analysée: "${combinaison}"`);
+  
+  switch (combinaison) {
     // === FIRST OU BK ===
+    case 'FirstouonBK:Directe':
+      return validateDirecte(playedNumbers, winningNumbers);
+    
+    case 'FirstouonBK:Position1':
+      return validatePosition(playedNumbers, winningNumbers, 1);
+    
+    case 'FirstouonBK:Position2':
+      return validatePosition(playedNumbers, winningNumbers, 2);
+    
+    case 'FirstouonBK:Position3':
+      return validatePosition(playedNumbers, winningNumbers, 3);
+    
+    case 'FirstouonBK:Position4':
+      return validatePosition(playedNumbers, winningNumbers, 4);
+    
+    case 'FirstouonBK:Position5':
+      return validatePosition(playedNumbers, winningNumbers, 5);
+    
+    // === NAP ===
+    case 'NAP:NAP3':
+    case 'NAP:NAP3DoubleChance':
+      return validateNAP(playedNumbers, winningNumbers, 3);
+    
+    case 'NAP:NAP4':
+    case 'NAP:NAP4DoubleChance':
+      return validateNAP(playedNumbers, winningNumbers, 4);
+    
+    case 'NAP:NAP5':
+    case 'NAP:NAP5DoubleChance':
+      return validateNAP(playedNumbers, winningNumbers, 5);
+    
+    // === TWO SÛRS ===
+    case 'Twosûrs:Directe':
+    case 'Twosûrs:DirecteDoubleChance':
+      // RÈGLE : Deux numéros qui doivent TOUS être parmi les numéros tirés
+      return validateDirecte(playedNumbers, winningNumbers);
+    
+    case 'Twosûrs:Turbo2':
+    case 'Twosûrs:Turbo2DoubleChance':
+      // RÈGLE : Les 2 numéros doivent être dans les 2 PREMIERS tirés
+      return validateTurbo(playedNumbers, winningNumbers, 2);
+    
+    case 'Twosûrs:Turbo3':
+    case 'Twosûrs:Turbo3DoubleChance':
+      // RÈGLE : Les 2 numéros doivent être dans les 3 PREMIERS tirés
+      return validateTurbo(playedNumbers, winningNumbers, 3);
+    
+    case 'Twosûrs:Turbo4':
+    case 'Twosûrs:Turbo4DoubleChance':
+      // RÈGLE : Les 2 numéros doivent être dans les 4 PREMIERS tirés
+      return validateTurbo(playedNumbers, winningNumbers, 4);
+    
+    // === PERMUTATIONS ===
+    case 'Permutations:Directe':
+    case 'Permutations:DirecteDoubleChance':
+      // RÈGLE : Au moins 2 numéros trouvés parmi ceux choisis
+      return validatePermutation(playedNumbers, winningNumbers, playedNumbers.length);
+    
+    case 'Permutations:Turbo2':
+    case 'Permutations:Turbo2DoubleChance':
+      // RÈGLE : Au moins 2 numéros trouvés dans les 2 PREMIERS tirés
+      return validateTurboPermutation(playedNumbers, winningNumbers, 2);
+    
+    case 'Permutations:Turbo3':
+    case 'Permutations:Turbo3DoubleChance':
+      // RÈGLE : Au moins 2 numéros trouvés dans les 3 PREMIERS tirés
+      return validateTurboPermutation(playedNumbers, winningNumbers, 3);
+    
+    case 'Permutations:Turbo4':
+    case 'Permutations:Turbo4DoubleChance':
+      // RÈGLE : Au moins 2 numéros trouvés dans les 4 PREMIERS tirés
+      return validateTurboPermutation(playedNumbers, winningNumbers, 4);
+    
+    // === DOUBLE NUMBER ===
+    case 'DoubleNumber:Directe':
+    case 'DoubleNumber:DirecteDoubleChance':
+      // RÈGLE : Permutation de 8 avec tous les doubles, au moins 2 trouvés
+      return validateDoubleNumber(playedNumbers, winningNumbers);
+    
+    case 'DoubleNumber:Turbo2':
+    case 'DoubleNumber:Turbo2DoubleChance':
+      // RÈGLE : Au moins 2 doubles trouvés dans les 2 PREMIERS tirés
+      return validateDoubleNumberTurbo(playedNumbers, winningNumbers, 2);
+    
+    case 'DoubleNumber:Turbo3':
+    case 'DoubleNumber:Turbo3DoubleChance':
+      // RÈGLE : Au moins 2 doubles trouvés dans les 3 PREMIERS tirés
+      return validateDoubleNumberTurbo(playedNumbers, winningNumbers, 3);
+    
+    case 'DoubleNumber:Turbo4':
+    case 'DoubleNumber:Turbo4DoubleChance':
+      // RÈGLE : Au moins 2 doubles trouvés dans les 4 PREMIERS tirés
+      return validateDoubleNumberTurbo(playedNumbers, winningNumbers, 4);
+    
+    // === ANAGRAMME SIMPLE ===
+    case 'Annagrammesimple:Directe':
+    case 'Annagrammesimple:AnnagrammesimpleDoubleChance':
+      return validateAnagrammeSimple(playedNumbers, winningNumbers);
+  }
+  
+  // Fallback pour les anciennes formules sans typeJeu
+  switch (formuleClean) {
     case 'Directe':
     case 'DirecteDoubleChance':
+      // Fallback : traiter comme First BK Directe
       return validateDirecte(playedNumbers, winningNumbers);
     
     case 'Position1':
@@ -118,7 +250,6 @@ function validateByFormula(formule, playedNumbers, winningNumbers) {
     case 'Position5':
       return validatePosition(playedNumbers, winningNumbers, 5);
     
-    // === NAP ===
     case 'NAP3':
     case 'NAP3DoubleChance':
       return validateNAP(playedNumbers, winningNumbers, 3);
@@ -131,65 +262,29 @@ function validateByFormula(formule, playedNumbers, winningNumbers) {
     case 'NAP5DoubleChance':
       return validateNAP(playedNumbers, winningNumbers, 5);
     
-    // === TWO SÛRS ===
     case 'Turbo2':
     case 'Turbo2DoubleChance':
+      // Fallback : traiter comme Two Sure Turbo2
       return validateTurbo(playedNumbers, winningNumbers, 2);
     
     case 'Turbo3':
     case 'Turbo3DoubleChance':
+      // Fallback : traiter comme Two Sure Turbo3
       return validateTurbo(playedNumbers, winningNumbers, 3);
     
     case 'Turbo4':
     case 'Turbo4DoubleChance':
+      // Fallback : traiter comme Two Sure Turbo4
       return validateTurbo(playedNumbers, winningNumbers, 4);
     
-    // === PERMUTATIONS ===
-    case 'Perm3':
-      return validatePermutation(playedNumbers, winningNumbers, 3);
-    
-    case 'Perm4':
-      return validatePermutation(playedNumbers, winningNumbers, 4);
-    
-    case 'Perm5':
-      return validatePermutation(playedNumbers, winningNumbers, 5);
-    
-    case 'Perm6':
-      return validatePermutation(playedNumbers, winningNumbers, 6);
-    
-    // === AUTRES FORMULES ===
     case 'AnnagrammesimpleDoubleChance':
       return validateAnagrammeSimple(playedNumbers, winningNumbers);
     
-    // === CAS SPÉCIAUX VUS DANS VOS DONNÉES ===
-    // Gestion des cas du vrai monde d'après vos données
     default:
-      // Essayer avec toLowerCase pour compatibilité
-      const formuleLower = formuleClean.toLowerCase();
-      
-      // Gestion spéciale pour les permutations larges
-      const permMatch = formuleLower.match(/perm(\d+)/);
-      if (permMatch) {
-        const permSize = parseInt(permMatch[1]);
-        if (permSize >= 7 && permSize <= 20) {
-          return validatePermutationLarge(playedNumbers, winningNumbers, permSize);
-        }
-      }
-      
-      // Fallback pour formules en minuscules
-      switch (formuleLower) {
-        case 'directe':
-          return validateDirecte(playedNumbers, winningNumbers);
-        case 'turbo2':
-          return validateTurbo(playedNumbers, winningNumbers, 2);
-        case 'nap3':
-          return validateNAP(playedNumbers, winningNumbers, 3);
-        case 'position1':
-          return validatePosition(playedNumbers, winningNumbers, 1);
-      }
-      
-      console.log(`    ❌ FORMULE NON RECONNUE: "${formuleClean}"`);
-      console.log(`    📝 Formats attendus: Directe, Position1, NAP3, Turbo2, DirecteDoubleChance, etc.`);
+      console.log(`    ❌ COMBINAISON NON RECONNUE: "${combinaison}"`);
+      console.log(`    📝 Formats attendus: "typeJeu:formule" ou formule seule`);
+      console.log(`    📋 typeJeu possibles: FirstouonBK, NAP, Twosûrs, Permutations, DoubleNumber, Annagrammesimple`);
+      console.log(`    📋 formules possibles: Directe, Position1-5, NAP3-5, Turbo2-4, DirecteDoubleChance, etc.`);
       return false;
   }
 }
@@ -197,16 +292,18 @@ function validateByFormula(formule, playedNumbers, winningNumbers) {
 // === FONCTIONS DE VALIDATION SPÉCIFIQUES - TOUTES CORRIGÉES ===
 
 /**
- * Validation Directe - CORRIGÉE pour la loterie
- * En loterie, "Directe" signifie généralement que tous les numéros joués doivent être présents
+ * Validation Directe - CORRIGÉE selon les vraies règles métier
+ * Pour First BK : Le numéro doit être PARMI les numéros tirés (pas en ordre exact)
+ * Pour Two Sure : Les deux numéros doivent TOUS être parmi les numéros tirés
+ * Pour Permutations : Au moins 2 numéros trouvés parmi ceux choisis
  */
 function validateDirecte(playedNumbers, winningNumbers) {
   console.log(`    🔍 Directe: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
   
-  // Pour la loterie, vérifier que tous les numéros joués sont dans les gagnants
+  // RÈGLE CORRECTE : Tous les numéros joués doivent être PARMI les gagnants
   const allFound = playedNumbers.every(num => winningNumbers.includes(num));
   
-  console.log(`    ${allFound ? '✅' : '❌'} Tous les numéros ${allFound ? 'trouvés' : 'non trouvés'}`);
+  console.log(`    ${allFound ? '✅' : '❌'} Tous les numéros ${allFound ? 'trouvés' : 'non trouvés'} parmi les tirés`);
   
   if (allFound) {
     const foundNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
@@ -279,46 +376,32 @@ function validateNAPPerm(playedNumbers, winningNumbers, napCount, permCount) {
 }
 
 /**
- * Validation Two Sûr Directe - CORRIGÉE
- * Cherche une paire de numéros consécutifs dans les résultats
+ * Validation Turbo - CORRIGÉE selon les vraies règles métier
+ * Turbo2 : Les numéros doivent être dans les 2 PREMIERS tirés
+ * Turbo3 : Les numéros doivent être dans les 3 PREMIERS tirés  
+ * Turbo4 : Les numéros doivent être dans les 4 PREMIERS tirés
  */
-function validateTwoSurDirecte(playedNumbers, winningNumbers) {
-  console.log(`    🔍 Two Sûr Directe: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
+function validateTurbo(playedNumbers, winningNumbers, topCount) {
+  console.log(`    🔍 Turbo ${topCount}: [${playedNumbers.join(', ')}] dans les ${topCount} premiers de [${winningNumbers.join(', ')}]`);
   
-  if (playedNumbers.length !== 2) {
-    console.log(`    ❌ Two Sûr nécessite exactement 2 numéros, reçu: ${playedNumbers.length}`);
-    return false;
-  }
+  // Prendre seulement les X premiers numéros tirés
+  const topWinningNumbers = winningNumbers.slice(0, topCount);
   
-  // Vérifier si les 2 numéros sont consécutifs dans les résultats
-  for (let i = 0; i < winningNumbers.length - 1; i++) {
-    if (winningNumbers[i] === playedNumbers[0] && winningNumbers[i + 1] === playedNumbers[1]) {
-      console.log(`    ✅ Paire trouvée aux positions ${i} et ${i+1}: ${playedNumbers[0]}, ${playedNumbers[1]}`);
-      return true;
-    }
-  }
+  console.log(`    📊 ${topCount} premiers numéros tirés: [${topWinningNumbers.join(', ')}]`);
   
-  console.log(`    ❌ Paire consécutive non trouvée`);
-  return false;
-}
-
-/**
- * Validation Turbo - au moins N numéros doivent être trouvés
- */
-function validateTurbo(playedNumbers, winningNumbers, minRequired) {
-  console.log(`    🔍 Turbo ${minRequired}: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
+  // RÈGLE CORRECTE : Les numéros joués doivent être dans les X premiers tirés
+  const matchingNumbers = playedNumbers.filter(num => topWinningNumbers.includes(num));
+  const isValid = matchingNumbers.length === playedNumbers.length; // TOUS les numéros joués doivent être trouvés
   
-  const matchingNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
-  const isValid = matchingNumbers.length >= minRequired;
-  
-  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances (min: ${minRequired})`);
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length}/${playedNumbers.length} numéros trouvés dans les ${topCount} premiers`);
   console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
   
   return isValid;
 }
 
 /**
- * Validation Permutation (3-6 boules)
+ * Validation Permutation (3-6 boules) - CORRIGÉE
+ * RÈGLE : Au moins 2 numéros trouvés parmi ceux choisis
  */
 function validatePermutation(playedNumbers, winningNumbers, permSize) {
   console.log(`    🔍 Permutation ${permSize}: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
@@ -331,7 +414,29 @@ function validatePermutation(playedNumbers, winningNumbers, permSize) {
   const matchingNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
   const isValid = matchingNumbers.length >= 2; // Au moins 2 boules pour gagner
   
-  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances (min: 2)`);
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances parmi tous les tirés (min: 2)`);
+  console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
+  
+  return isValid;
+}
+
+/**
+ * Validation Turbo pour Permutations - NOUVELLE
+ * Pour permutations : Au moins 2 numéros doivent être trouvés dans les X premiers tirés
+ */
+function validateTurboPermutation(playedNumbers, winningNumbers, topCount) {
+  console.log(`    🔍 Turbo Permutation ${topCount}: [${playedNumbers.join(', ')}] dans les ${topCount} premiers de [${winningNumbers.join(', ')}]`);
+  
+  // Prendre seulement les X premiers numéros tirés
+  const topWinningNumbers = winningNumbers.slice(0, topCount);
+  
+  console.log(`    📊 ${topCount} premiers numéros tirés: [${topWinningNumbers.join(', ')}]`);
+  
+  // RÈGLE : Au moins 2 numéros doivent être trouvés dans les X premiers
+  const matchingNumbers = playedNumbers.filter(num => topWinningNumbers.includes(num));
+  const isValid = matchingNumbers.length >= 2;
+  
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances dans les ${topCount} premiers (min: 2)`);
   console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
   
   return isValid;
@@ -359,7 +464,7 @@ function validatePermutationLarge(playedNumbers, winningNumbers, permSize) {
 
 /**
  * Validation Double Number - CORRIGÉE
- * Permutation de 8 avec tous les doubles
+ * RÈGLE : Permutation de 8 avec tous les doubles, au moins 2 trouvés parmi tous les tirés
  */
 function validateDoubleNumber(playedNumbers, winningNumbers) {
   console.log(`    🔍 Double Number: [${playedNumbers.join(', ')}] dans [${winningNumbers.join(', ')}]`);
@@ -376,11 +481,44 @@ function validateDoubleNumber(playedNumbers, winningNumbers) {
   
   console.log(`    📊 Doubles valides joués: [${validDoubles.join(', ')}]`);
   
-  // Appliquer les règles de permutation (au moins 2 correspondances)
+  // RÈGLE : Au moins 2 doubles doivent être trouvés parmi tous les tirés
   const matchingNumbers = playedNumbers.filter(num => winningNumbers.includes(num));
   const isValid = matchingNumbers.length >= 2;
   
-  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances (min: 2)`);
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances parmi tous les tirés (min: 2)`);
+  console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
+  
+  return isValid;
+}
+
+/**
+ * Validation Double Number Turbo - NOUVELLE
+ * Au moins 2 doubles trouvés dans les X premiers tirés
+ */
+function validateDoubleNumberTurbo(playedNumbers, winningNumbers, topCount) {
+  console.log(`    🔍 Double Number Turbo ${topCount}: [${playedNumbers.join(', ')}] dans les ${topCount} premiers de [${winningNumbers.join(', ')}]`);
+  
+  const doubleNumbers = [11, 22, 33, 44, 55, 66, 77, 88];
+  
+  // Vérifier que les numéros joués sont bien des doubles
+  const validDoubles = playedNumbers.filter(num => doubleNumbers.includes(num));
+  if (validDoubles.length === 0) {
+    console.log(`    ❌ Aucun double number valide dans: [${playedNumbers.join(', ')}]`);
+    console.log(`    📝 Doubles valides: [${doubleNumbers.join(', ')}]`);
+    return false;
+  }
+  
+  console.log(`    📊 Doubles valides joués: [${validDoubles.join(', ')}]`);
+  
+  // Prendre seulement les X premiers numéros tirés
+  const topWinningNumbers = winningNumbers.slice(0, topCount);
+  console.log(`    📊 ${topCount} premiers numéros tirés: [${topWinningNumbers.join(', ')}]`);
+  
+  // RÈGLE : Au moins 2 doubles doivent être trouvés dans les X premiers
+  const matchingNumbers = playedNumbers.filter(num => topWinningNumbers.includes(num));
+  const isValid = matchingNumbers.length >= 2;
+  
+  console.log(`    ${isValid ? '✅' : '❌'} ${matchingNumbers.length} correspondances dans les ${topCount} premiers (min: 2)`);
   console.log(`    📊 Numéros trouvés: [${matchingNumbers.join(', ')}]`);
   
   return isValid;

@@ -1,4 +1,4 @@
-post http://localhost:3000/api/tickets
+get http://localhost:3000/api/tickets
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc1MTM3MDMxMCwiZXhwIjoxNzUxNDU2NzEwfQ.YdKml5ar1tMUe9xnDa0MqILx50mhyqaqEPltoDOriIc
 Content-Type: application/json
 

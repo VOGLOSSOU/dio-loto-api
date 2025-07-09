@@ -483,31 +483,25 @@ function validatePosition(playedNumbers, winningNumbers, position) {
 }
 
 /**
- * Validation NAP - RÈGLE STRICTE
- * TOUS les numéros NAP doivent être dans les gagnants (ordre non important)
+ * ✅ VALIDATION NAP CORRIGÉE - VRAIE RÈGLE
+ * Le joueur peut jouer jusqu'à 5 numéros, il gagne si AU MOINS requiredCount sortent
  */
 function validateNAP(playedNumbers, winningNumbers, requiredCount) {
   console.log(`    🔍 NAP ${requiredCount}: [${playedNumbers.join(", ")}] dans [${winningNumbers.join(", ")}]`)
 
-  // Vérification du nombre correct de numéros
-  if (playedNumbers.length !== requiredCount) {
-    console.log(`    ❌ NAP ${requiredCount} exige exactement ${requiredCount} numéros (reçu: ${playedNumbers.length})`)
-    return false
-  }
-
-  // RÈGLE : TOUS les numéros NAP doivent être trouvés
+  // RÈGLE CORRIGÉE : AU MOINS requiredCount numéros doivent être trouvés
   const foundNumbers = playedNumbers.filter((num) => winningNumbers.includes(num))
-  const allFound = foundNumbers.length === playedNumbers.length
+  const hasEnough = foundNumbers.length >= requiredCount
 
-  console.log(`    ${allFound ? "✅" : "❌"} ${foundNumbers.length}/${playedNumbers.length} numéros NAP trouvés`)
+  console.log(`    ${hasEnough ? "✅" : "❌"} ${foundNumbers.length}/${playedNumbers.length} numéros NAP trouvés`)
   console.log(`    📊 Numéros trouvés: [${foundNumbers.join(", ")}]`)
 
-  if (!allFound) {
+  if (!hasEnough) {
     const notFound = playedNumbers.filter((num) => !winningNumbers.includes(num))
     console.log(`    ❌ Numéros NAP manquants: [${notFound.join(", ")}]`)
   }
 
-  return allFound
+  return hasEnough
 }
 
 /**

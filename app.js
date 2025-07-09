@@ -6,7 +6,7 @@ const cors = require("cors") // Ajout de cors
 const { initDb } = require("./src/db/sequelize") 
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 5000
 
 // Middleware
 app
@@ -82,6 +82,7 @@ require("./src/routes/games/getGamesByCountries")(app)
 require("./src/routes/ticket/createTicket")(app)
 require("./src/routes/ticket/createTicketFromCart")(app) // Création de ticket à partir du panier
 require("./src/routes/ticket/getTicketByUser")(app)
+require("./src/routes/ticket/getSpecificTicket")(app)
 require("./src/routes/ticket/getTicketInCartByUser")(app)   // Récupérer les tickets en panier par utilisateur
 require("./src/routes/ticket/getAllTickets")(app)
 require("./src/routes/ticket/countTickets")(app)

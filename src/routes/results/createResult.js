@@ -214,18 +214,28 @@ module.exports = (app) => {
 // =====================================================
 
 async function getTicketValidationDetail(ticket, winningNumbers, winningNumbers2, game, isValid) {
-  // ✅ Parse des numéros corrigé - ticket.numerosJoues est déjà un tableau grâce au getter Sequelize
+  // ✅ Parse des numéros corrigé - Gérer les cas où numerosJoues est une chaîne JSON ou un tableau
   let numerosJoues = []
   try {
     if (Array.isArray(ticket.numerosJoues)) {
+      // Cas où c'est déjà un tableau (getter Sequelize)
       numerosJoues = ticket.numerosJoues.map((num) => Number.parseInt(num))
+    } else if (typeof ticket.numerosJoues === 'string') {
+      // Cas où c'est une chaîne JSON (stockage brut en base)
+      const parsed = JSON.parse(ticket.numerosJoues)
+      if (Array.isArray(parsed)) {
+        numerosJoues = parsed.map((num) => Number.parseInt(num))
+      } else {
+        console.warn(`⚠️ numerosJoues parsé n'est pas un tableau pour ticket ${ticket.id}:`, parsed)
+        numerosJoues = [] // Fallback sécurisé pour les détails seulement
+      }
     } else {
-      console.warn(`⚠️ numerosJoues n'est pas un tableau pour ticket ${ticket.id}:`, ticket.numerosJoues)
-      numerosJoues = []
+      console.warn(`⚠️ numerosJoues format inconnu pour ticket ${ticket.id}:`, ticket.numerosJoues)
+      numerosJoues = [] // Fallback sécurisé pour les détails seulement
     }
   } catch (error) {
     console.error(`❌ Erreur parsing numerosJoues pour ticket ${ticket.id}:`, error)
-    numerosJoues = []
+    numerosJoues = [] // Fallback sécurisé pour les détails seulement
   }
 
   // ✅ Calculer les correspondances selon le type de jeu

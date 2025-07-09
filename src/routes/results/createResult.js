@@ -76,11 +76,16 @@ module.exports = (app) => {
         } else {
           console.log(`📊 ${tickets.length} ticket(s) trouvé(s) en attente pour validation`)
 
-          // Préparer les numéros gagnants
-          const winningNumbers = newResult.numbers.split(",").map((num) => Number.parseInt(num.trim()))
-          const winningNumbers2 = newResult.numbers2
-            ? newResult.numbers2.split(",").map((num) => Number.parseInt(num.trim()))
-            : null
+          // ✅ Préparer les numéros gagnants - Gérer les espaces ET les virgules
+          const winningNumbers = newResult.numbers.includes(',') ?
+            newResult.numbers.split(',').map((num) => Number.parseInt(num.trim())) :
+            newResult.numbers.split(' ').filter(n => n.trim()).map((num) => Number.parseInt(num.trim()))
+
+          const winningNumbers2 = newResult.numbers2 ?
+            (newResult.numbers2.includes(',') ?
+              newResult.numbers2.split(',').map((num) => Number.parseInt(num.trim())) :
+              newResult.numbers2.split(' ').filter(n => n.trim()).map((num) => Number.parseInt(num.trim()))
+            ) : null
 
           console.log(`🎲 Numéros gagnants: ${winningNumbers.join(", ")}`)
           if (winningNumbers2) {

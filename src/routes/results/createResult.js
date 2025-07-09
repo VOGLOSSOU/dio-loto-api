@@ -323,7 +323,7 @@ function getCorrespondancesParType(typeJeu, formule, numerosJoues, winningNumber
         [8, 80],
         [9, 90],
         [10, 1],
-        [11, 12],
+        [48, 84],
         [12, 21],
         [13, 31],
         [14, 41],

@@ -666,7 +666,7 @@ function validateDoubleNumberFormula(winningNumbers, formule) {
 function validateAnagrammeFormula(winningNumbers, formule) {
   console.log(`    🔍 Anagramme + ${formule}: 37 binômes vs [${winningNumbers.join(", ")}]`)
 
-  // Les 37 binômes automatiques (selon votre liste exacte)
+  // ✅ Les 37 binômes automatiques (liste officielle corrigée)
   const anagrammes = [
     [1, 10],
     [2, 20],
@@ -677,8 +677,6 @@ function validateAnagrammeFormula(winningNumbers, formule) {
     [7, 70],
     [8, 80],
     [9, 90],
-    [10, 1],
-    [48, 84],
     [12, 21],
     [13, 31],
     [14, 41],
@@ -686,25 +684,27 @@ function validateAnagrammeFormula(winningNumbers, formule) {
     [16, 61],
     [17, 71],
     [18, 81],
-    [19, 91],
-    [20, 2],
-    [21, 12],
-    [22, 23],
     [23, 32],
     [24, 42],
     [25, 52],
     [26, 62],
     [27, 72],
     [28, 82],
-    [29, 92],
-    [30, 3],
-    [31, 13],
-    [32, 23],
-    [33, 34],
     [34, 43],
     [35, 53],
     [36, 63],
     [37, 73],
+    [38, 83],
+    [45, 54],
+    [46, 64],
+    [47, 74],
+    [48, 84],
+    [56, 65],
+    [57, 75],
+    [58, 85],
+    [67, 76],
+    [68, 86],
+    [78, 87],
   ]
 
   console.log(`    📊 Test de ${anagrammes.length} binômes automatiques...`)

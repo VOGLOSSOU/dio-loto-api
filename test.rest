@@ -1,15 +1,7 @@
-get http://localhost:3000/api/tickets
+get http://localhost:3000/api/tickets?date=2025-07-09&search=coteivoire7
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc1MTM3MDMxMCwiZXhwIjoxNzUxNDU2NzEwfQ.YdKml5ar1tMUe9xnDa0MqILx50mhyqaqEPltoDOriIc
 Content-Type: application/json
 
 {
-  "uniqueUserId": "52672738-d164-4b24-a458-e94c0ccf9cc4",
-  "heureJeu": "16",
-  "nomJeu": "benin11",
-  "typeJeu": "anagramme",
-  "numerosJoues": [1, 2, 3, 4, 5],
-  "formule": "simple",
-  "mise": 1000,
-  "gains": 5000,
-  "isCart": true
+
 }

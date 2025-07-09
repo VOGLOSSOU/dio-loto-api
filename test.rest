@@ -1,4 +1,4 @@
-GET http://localhost:5000/api/tickets/search?type=NAP&jeu=coteivoire16&formule=NAP3DoubleChance
+GET http://localhost:5000/api/tickets/search?type=Annagrammesimple&jeu=coteivoire16&formule=AnnagrammesimpleDoubleChance
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc1MTM3MDMxMCwiZXhwIjoxNzUxNDU2NzEwfQ.YdKml5ar1tMUe9xnDa0MqILx50mhyqaqEPltoDOriIc
 Content-Type: application/json
 

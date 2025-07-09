@@ -1,0 +1,152 @@
+📋 GUIDE COMPLET DES COMBINAISONS TYPE + FORMULE - LOTERIE NATIONALE
+🎯 TYPE : FIRST OU ONE BK
+First BK + Directe
+Numéros joués : 1 seul numéro
+Condition de gain : Le numéro joué doit se retrouver PARMI les numéros tirés (peu importe la position)
+Exemple : Je joue le 15, si le 15 sort en 1ère, 2ème, 3ème, 4ème ou 5ème position → Je gagne
+First BK + Position1
+Numéros joués : 1 seul numéro
+Condition de gain : Le numéro joué doit être exactement le PREMIER numéro tiré
+Exemple : Je joue le 15, je gagne seulement si le 15 est tiré en 1ère position
+First BK + Position2
+Numéros joués : 1 seul numéro
+Condition de gain : Le numéro joué doit être exactement le DEUXIÈME numéro tiré
+First BK + Position3
+Numéros joués : 1 seul numéro
+Condition de gain : Le numéro joué doit être exactement le TROISIÈME numéro tiré
+First BK + Position4
+Numéros joués : 1 seul numéro
+Condition de gain : Le numéro joué doit être exactement le QUATRIÈME numéro tiré
+First BK + Position5
+Numéros joués : 1 seul numéro
+Condition de gain : Le numéro joué doit être exactement le CINQUIÈME numéro tiré
+🎯 TYPE : NAP
+NAP + NAP3
+Numéros joués : Exactement 3 numéros
+Condition de gain : LES 3 numéros joués doivent TOUS se retrouver parmi les numéros tirés (ordre non important)
+Exemple : Je joue [12, 35, 67], je gagne si 12 ET 35 ET 67 sortent tous (peu importe leurs positions)
+NAP + NAP4
+Numéros joués : Exactement 4 numéros
+Condition de gain : LES 4 numéros joués doivent TOUS se retrouver parmi les numéros tirés
+NAP + NAP5
+Numéros joués : Exactement 5 numéros
+Condition de gain : LES 5 numéros joués doivent TOUS se retrouver parmi les numéros tirés
+NAP + NAP3DoubleChance
+Numéros joués : Exactement 3 numéros
+Condition de gain : Les 3 numéros doivent tous être dans le tirage Win (5 premiers) OU tous dans le tirage Machine (5 derniers)
+NAP + NAP4DoubleChance
+Numéros joués : Exactement 4 numéros
+Condition de gain : Les 4 numéros doivent tous être dans Win OU tous dans Machine
+NAP + NAP5DoubleChance
+Numéros joués : Exactement 5 numéros
+Condition de gain : Les 5 numéros doivent tous être dans Win OU tous dans Machine
+🎯 TYPE : TWO SÛRS
+Two Sûrs + Directe
+Numéros joués : Exactement 2 numéros
+Condition de gain : LES 2 numéros joués doivent TOUS se retrouver parmi les numéros tirés (ordre non important)
+Exemple : Je joue [23, 56], je gagne si 23 ET 56 sortent tous les deux
+Two Sûrs + Turbo2
+Numéros joués : Exactement 2 numéros
+Condition de gain : Les 2 numéros joués doivent TOUS être dans les 2 PREMIERS numéros tirés
+Exemple : Je joue [23, 56], je gagne seulement si 23 ET 56 sont dans les 2 premières positions
+Two Sûrs + Turbo3
+Numéros joués : Exactement 2 numéros
+Condition de gain : Les 2 numéros joués doivent TOUS être dans les 3 PREMIERS numéros tirés
+Two Sûrs + Turbo4
+Numéros joués : Exactement 2 numéros
+Condition de gain : Les 2 numéros joués doivent TOUS être dans les 4 PREMIERS numéros tirés
+Two Sûrs + Turbo2DoubleChance
+Numéros joués : Exactement 2 numéros
+Condition de gain : Les 2 numéros dans les 2 premiers de Win OU les 2 numéros dans les 2 premiers de Machine
+Two Sûrs + Turbo3DoubleChance
+Numéros joués : Exactement 2 numéros
+Condition de gain : Les 2 numéros dans les 3 premiers de Win OU les 2 numéros dans les 3 premiers de Machine
+Two Sûrs + Turbo4DoubleChance
+Numéros joués : Exactement 2 numéros
+Condition de gain : Les 2 numéros dans les 4 premiers de Win OU les 2 numéros dans les 4 premiers de Machine
+🎯 TYPE : PERMUTATIONS
+Permutations + Directe
+Numéros joués : Entre 3 et 20 numéros (au choix du joueur)
+Condition de gain : AU MOINS 2 des numéros joués doivent se retrouver parmi les numéros tirés
+Exemple : Je joue [12, 25, 33, 48, 67], je gagne si au moins 2 de ces numéros sortent (ex: 25 et 48)
+Permutations + Turbo2
+Numéros joués : Entre 3 et 20 numéros
+Condition de gain : AU MOINS 2 des numéros joués doivent être dans les 2 PREMIERS numéros tirés
+Permutations + Turbo3
+Numéros joués : Entre 3 et 20 numéros
+Condition de gain : AU MOINS 2 des numéros joués doivent être dans les 3 PREMIERS numéros tirés
+Permutations + Turbo4
+Numéros joués : Entre 3 et 20 numéros
+Condition de gain : AU MOINS 2 des numéros joués doivent être dans les 4 PREMIERS numéros tirés
+Permutations + DirecteDoubleChance
+Numéros joués : Entre 3 et 20 numéros
+Condition de gain : Au moins 2 numéros dans Win OU au moins 2 numéros dans Machine
+Permutations + Turbo2DoubleChance
+Numéros joués : Entre 3 et 20 numéros
+Condition de gain : Au moins 2 dans les 2 premiers de Win OU au moins 2 dans les 2 premiers de Machine
+Permutations + Turbo3DoubleChance
+Numéros joués : Entre 3 et 20 numéros
+Condition de gain : Au moins 2 dans les 3 premiers de Win OU au moins 2 dans les 3 premiers de Machine
+Permutations + Turbo4DoubleChance
+Numéros joués : Entre 3 et 20 numéros
+Condition de gain : Au moins 2 dans les 4 premiers de Win OU au moins 2 dans les 4 premiers de Machine
+🎯 TYPE : DOUBLE NUMBER ⚠️ Spécial
+Double Number + Directe
+Numéros joués : AUTOMATIQUE - Les 8 doubles [11, 22, 33, 44, 55, 66, 77, 88]
+Condition de gain : AU MOINS 2 de ces 8 doubles doivent se retrouver parmi les numéros tirés
+Exemple : Si 22 et 55 sortent → Je gagne (peu importe les autres numéros)
+Double Number + Turbo2
+Numéros joués : AUTOMATIQUE - Les 8 doubles [11, 22, 33, 44, 55, 66, 77, 88]
+Condition de gain : AU MOINS 2 de ces doubles doivent être dans les 2 PREMIERS numéros tirés
+Double Number + Turbo3
+Numéros joués : AUTOMATIQUE - Les 8 doubles [11, 22, 33, 44, 55, 66, 77, 88]
+Condition de gain : AU MOINS 2 de ces doubles doivent être dans les 3 PREMIERS numéros tirés
+Double Number + Turbo4
+Numéros joués : AUTOMATIQUE - Les 8 doubles [11, 22, 33, 44, 55, 66, 77, 88]
+Condition de gain : AU MOINS 2 de ces doubles doivent être dans les 4 PREMIERS numéros tirés
+Double Number + Turbo2DoubleChance
+Numéros joués : AUTOMATIQUE - Les 8 doubles
+Condition de gain : Au moins 2 doubles dans les 2 premiers de Win OU au moins 2 doubles dans les 2 premiers de Machine
+Double Number + Turbo3DoubleChance
+Numéros joués : AUTOMATIQUE - Les 8 doubles
+Condition de gain : Au moins 2 doubles dans les 3 premiers de Win OU au moins 2 doubles dans les 3 premiers de Machine
+Double Number + Turbo4DoubleChance
+Numéros joués : AUTOMATIQUE - Les 8 doubles
+Condition de gain : Au moins 2 doubles dans les 4 premiers de Win OU au moins 2 doubles dans les 4 premiers de Machine
+🎯 TYPE : ANAGRAMME SIMPLE ⚠️ Spécial
+Anagramme + Directe
+Numéros joués : AUTOMATIQUE - 37 binômes prédéfinis : [1,10], [2,20], [3,30], [4,40], [5,50], [6,60], [7,70], [8,80], [9,90], [10,1], [11,12], [12,21], [13,31], [14,41], [15,51], [16,61], [17,71], [18,81], [19,91], [20,2], [21,12], [22,23], [23,32], [24,42], [25,52], [26,62], [27,72], [28,82], [29,92], [30,3], [31,13], [32,23], [33,34], [34,43], [35,53], [36,63], [37,73]
+Condition de gain : AU MOINS 1 binôme complet doit sortir parmi les numéros tirés
+Exemple : Si les numéros 2 ET 20 sortent tous les deux → Je gagne (car le binôme [2,20] est complet)
+Anagramme + Turbo2
+Numéros joués : AUTOMATIQUE - Les 37 binômes
+Condition de gain : AU MOINS 1 binôme complet doit avoir ses 2 numéros dans les 2 PREMIERS tirés
+Anagramme + Turbo3
+Numéros joués : AUTOMATIQUE - Les 37 binômes
+Condition de gain : AU MOINS 1 binôme complet doit avoir ses 2 numéros dans les 3 PREMIERS tirés
+Anagramme + Turbo4
+Numéros joués : AUTOMATIQUE - Les 37 binômes
+Condition de gain : AU MOINS 1 binôme complet doit avoir ses 2 numéros dans les 4 PREMIERS tirés
+Anagramme + DirecteDoubleChance
+Numéros joués : AUTOMATIQUE - Les 37 binômes
+Condition de gain : Au moins 1 binôme complet dans Win OU au moins 1 binôme complet dans Machine
+Anagramme + Turbo2DoubleChance
+Numéros joués : AUTOMATIQUE - Les 37 binômes
+Condition de gain : Au moins 1 binôme complet dans les 2 premiers de Win OU au moins 1 binôme complet dans les 2 premiers de Machine
+Anagramme + Turbo3DoubleChance
+Numéros joués : AUTOMATIQUE - Les 37 binômes
+Condition de gain : Au moins 1 binôme complet dans les 3 premiers de Win OU au moins 1 binôme complet dans les 3 premiers de Machine
+Anagramme + Turbo4DoubleChance
+Numéros joués : AUTOMATIQUE - Les 37 binômes
+Condition de gain : Au moins 1 binôme complet dans les 4 premiers de Win OU au moins 1 binôme complet dans les 4 premiers de Machine
+Anagramme + AnnagrammesimpleDoubleChance
+Numéros joués : AUTOMATIQUE - Les 37 binômes
+Condition de gain : Au moins 1 binôme complet dans Win OU au moins 1 binôme complet dans Machine
+📝 NOTES IMPORTANTES
+Double Chance :
+Win : Les 5 premiers numéros tirés (60% des gains)
+Machine : Les 5 derniers numéros tirés (40% des gains)
+Pour gagner en double chance, il suffit que la condition soit remplie sur Win OU sur Machine (pas les deux)
+Types Automatiques :
+Double Number : Le joueur ne choisit jamais ses numéros, ce sont toujours les 8 doubles
+Anagramme Simple : Le joueur ne choisit jamais ses numéros, ce sont toujours les 37 binômes prédéfinis

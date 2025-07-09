@@ -58,14 +58,24 @@ function validateTickets(tickets, result, game) {
 function validateSingleTicket(ticket, winningNumbers, winningNumbers2, game) {
   const { formule, typeJeu } = ticket
 
-  // ✅ PARSING CORRIGÉ - ticket.numerosJoues est déjà un tableau grâce au getter Sequelize
+  // ✅ PARSING CORRIGÉ - Gérer les cas où numerosJoues est une chaîne JSON ou un tableau
   let playedNumbers = []
   try {
     if (Array.isArray(ticket.numerosJoues)) {
+      // Cas où c'est déjà un tableau (getter Sequelize)
       playedNumbers = ticket.numerosJoues.map((num) => Number.parseInt(num))
+    } else if (typeof ticket.numerosJoues === 'string') {
+      // Cas où c'est une chaîne JSON (stockage brut en base)
+      const parsed = JSON.parse(ticket.numerosJoues)
+      if (Array.isArray(parsed)) {
+        playedNumbers = parsed.map((num) => Number.parseInt(num))
+      } else {
+        console.warn(`⚠️ numerosJoues parsé n'est pas un tableau pour ticket ${ticket.id}:`, parsed)
+        return false
+      }
     } else {
-      console.warn(`⚠️ numerosJoues n'est pas un tableau pour ticket ${ticket.id}:`, ticket.numerosJoues)
-      playedNumbers = []
+      console.warn(`⚠️ numerosJoues format inconnu pour ticket ${ticket.id}:`, ticket.numerosJoues)
+      return false
     }
   } catch (error) {
     console.error(`❌ Erreur parsing numerosJoues pour ticket ${ticket.id}:`, error)

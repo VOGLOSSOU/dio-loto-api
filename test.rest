@@ -1,4 +1,4 @@
-get http://localhost:3000/api/tickets?date=2025-07-09&search=coteivoire7
+get http://localhost:3000/api/tickets?date=2025-07-09&search=benin11
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc1MTM3MDMxMCwiZXhwIjoxNzUxNDU2NzEwfQ.YdKml5ar1tMUe9xnDa0MqILx50mhyqaqEPltoDOriIc
 Content-Type: application/json
 

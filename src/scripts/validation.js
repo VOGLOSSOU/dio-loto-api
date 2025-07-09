@@ -174,13 +174,13 @@ function validateByFormula(formule, playedNumbers, winningNumbers, typeJeu = nul
       return validateNAP(playedNumbers, winningNumbers, 5)
 
     case "NAP:NAP3DoubleChance":
-      return validateNAP(playedNumbers, winningNumbers, 3)
+      return validateNAPDoubleChance(playedNumbers, winningNumbers, 3)
 
     case "NAP:NAP4DoubleChance":
-      return validateNAP(playedNumbers, winningNumbers, 4)
+      return validateNAPDoubleChance(playedNumbers, winningNumbers, 4)
 
     case "NAP:NAP5DoubleChance":
-      return validateNAP(playedNumbers, winningNumbers, 5)
+      return validateNAPDoubleChance(playedNumbers, winningNumbers, 5)
 
     // ==========================================
     // === TWOSÛRS (avec accent circonflexe exact du frontend)
@@ -338,11 +338,11 @@ function validateByFormula(formule, playedNumbers, winningNumbers, typeJeu = nul
         case "NAP5":
           return validateNAP(playedNumbers, winningNumbers, 5)
         case "NAP3DoubleChance":
-          return validateNAP(playedNumbers, winningNumbers, 3)
+          return validateNAPDoubleChance(playedNumbers, winningNumbers, 3)
         case "NAP4DoubleChance":
-          return validateNAP(playedNumbers, winningNumbers, 4)
+          return validateNAPDoubleChance(playedNumbers, winningNumbers, 4)
         case "NAP5DoubleChance":
-          return validateNAP(playedNumbers, winningNumbers, 5)
+          return validateNAPDoubleChance(playedNumbers, winningNumbers, 5)
 
         // === TURBOS ===
         case "Turbo2":
@@ -508,6 +508,28 @@ function validateNAP(playedNumbers, winningNumbers, requiredCount) {
   }
 
   return allFound
+}
+
+/**
+ * ✅ NOUVELLE FONCTION - Validation NAP DoubleChance
+ * AU MOINS le nombre requis de numéros doivent être dans les gagnants
+ * Le joueur peut jouer plus de numéros que requis
+ */
+function validateNAPDoubleChance(playedNumbers, winningNumbers, requiredCount) {
+  console.log(`    🔍 NAP ${requiredCount} DoubleChance: [${playedNumbers.join(", ")}] dans [${winningNumbers.join(", ")}]`)
+
+  // RÈGLE : AU MOINS requiredCount numéros doivent être trouvés
+  const foundNumbers = playedNumbers.filter((num) => winningNumbers.includes(num))
+  const hasEnough = foundNumbers.length >= requiredCount
+
+  console.log(`    ${hasEnough ? "✅" : "❌"} ${foundNumbers.length}/${playedNumbers.length} numéros trouvés (min requis: ${requiredCount})`)
+  console.log(`    📊 Numéros trouvés: [${foundNumbers.join(", ")}]`)
+
+  if (!hasEnough) {
+    console.log(`    ❌ Seulement ${foundNumbers.length} numéro(s), il en faut au moins ${requiredCount}`)
+  }
+
+  return hasEnough
 }
 
 /**

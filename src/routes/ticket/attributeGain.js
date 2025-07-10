@@ -1,4 +1,4 @@
-const { Ticket, User } = require('../../db/sequelize');
+const { Ticket, User, Notification } = require('../../db/sequelize');
 
 // Liste des jeux Côte d'Ivoire à traitement spécial
 const specialCIVGames = [
@@ -56,9 +56,24 @@ if (ticket.statut !== 'validé') {
       await user.save();
 
       // 5. Mettre à jour le ticket (pour ne plus le proposer à l’admin)
-      ticket.gains = [gain]; 
-      ticket.statut = 'attribué'; 
+      ticket.gains = [gain];
+      ticket.statut = 'attribué';
       await ticket.save();
+
+      // 6. Créer une notification pour l'utilisateur
+      let notificationMessage = '';
+      if (specialCIVGames.includes(ticket.nomJeu)) {
+        notificationMessage = `Félicitations ! Un gain de ${gain} FCFA a été attribué à votre ticket n°${ticket.numeroTicket}. Répartition : ${soldeToAdd} FCFA ajoutés à votre solde principal et ${gainToAdd} FCFA ajoutés à votre solde gain.`;
+      } else {
+        notificationMessage = `Félicitations ! Un gain de ${gain} FCFA a été attribué à votre ticket n°${ticket.numeroTicket} et ajouté à votre solde gain.`;
+      }
+
+      await Notification.create({
+        userId: user.uniqueUserId,
+        type: 'gain_attribue',
+        title: 'Gain attribué à votre ticket',
+        message: notificationMessage
+      });
 
       res.status(200).json({
         message: "Gain attribué avec succès.",

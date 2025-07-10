@@ -1,7 +1,11 @@
 📋 DOCUMENTATION API - SYSTÈME DE NOTIFICATIONS
 =================================================
 
-🎯 APERÇU GÉNÉRAL
+� BASE URL
+-----------
+https://dio-loto-api.onrender.com
+
+�🎯 APERÇU GÉNÉRAL
 -----------------
 Le système de notifications permet de :
 - Créer automatiquement des notifications lors des transactions
@@ -28,7 +32,7 @@ Authorization: Bearer <votre_token>
 
 1️⃣ RÉCUPÉRER LES NOTIFICATIONS D'UN UTILISATEUR
 -----------------------------------------------
-GET /api/notifications/user/:userId
+GET https://dio-loto-api.onrender.com/api/notifications/user/:userId
 
 Paramètres URL :
 - userId (obligatoire) : UUID de l'utilisateur
@@ -39,9 +43,9 @@ Paramètres Query (optionnels) :
 - offset : Décalage pour pagination (défaut: 0)
 
 Exemples d'appels :
-GET /api/notifications/user/uuid-123
-GET /api/notifications/user/uuid-123?type=recharge_admin
-GET /api/notifications/user/uuid-123?limit=20&offset=10
+GET https://dio-loto-api.onrender.com/api/notifications/user/uuid-123
+GET https://dio-loto-api.onrender.com/api/notifications/user/uuid-123?type=recharge_admin
+GET https://dio-loto-api.onrender.com/api/notifications/user/uuid-123?limit=20&offset=10
 
 Réponse :
 {
@@ -79,7 +83,7 @@ Réponse :
 
 2️⃣ RÉCUPÉRER TOUTES LES NOTIFICATIONS (ADMIN)
 ---------------------------------------------
-GET /api/notifications
+GET https://dio-loto-api.onrender.com/api/notifications
 
 Paramètres Query (optionnels) :
 - type : Filtrer par type
@@ -91,10 +95,10 @@ Paramètres Query (optionnels) :
 - offset : Décalage (défaut: 0)
 
 Exemples d'appels :
-GET /api/notifications
-GET /api/notifications?type=gain_attribue
-GET /api/notifications?dateFrom=2024-01-01&dateTo=2024-01-31
-GET /api/notifications?search=recharge
+GET https://dio-loto-api.onrender.com/api/notifications
+GET https://dio-loto-api.onrender.com/api/notifications?type=gain_attribue
+GET https://dio-loto-api.onrender.com/api/notifications?dateFrom=2024-01-01&dateTo=2024-01-31
+GET https://dio-loto-api.onrender.com/api/notifications?search=recharge
 
 Réponse :
 {
@@ -116,7 +120,7 @@ Réponse :
 
 3️⃣ MARQUER UNE NOTIFICATION COMME LUE/NON LUE
 ---------------------------------------------
-PATCH /api/notifications/:id/read
+PATCH https://dio-loto-api.onrender.com/api/notifications/:id/read
 
 Paramètres URL :
 - id (obligatoire) : ID de la notification
@@ -127,7 +131,7 @@ Body JSON :
 }
 
 Exemple d'appel :
-PATCH /api/notifications/123/read
+PATCH https://dio-loto-api.onrender.com/api/notifications/123/read
 Body: { "isRead": true }
 
 Réponse :
@@ -143,13 +147,13 @@ Réponse :
 
 4️⃣ MARQUER TOUTES LES NOTIFICATIONS D'UN USER COMME LUES
 --------------------------------------------------------
-PATCH /api/notifications/user/:userId/mark-all-read
+PATCH https://dio-loto-api.onrender.com/api/notifications/user/:userId/mark-all-read
 
 Paramètres URL :
 - userId (obligatoire) : UUID de l'utilisateur
 
 Exemple d'appel :
-PATCH /api/notifications/user/uuid-123/mark-all-read
+PATCH https://dio-loto-api.onrender.com/api/notifications/user/uuid-123/mark-all-read
 
 Réponse :
 {
@@ -163,13 +167,13 @@ Réponse :
 
 5️⃣ COMPTER LES NOTIFICATIONS NON LUES
 -------------------------------------
-GET /api/notifications/user/:userId/unread-count
+GET https://dio-loto-api.onrender.com/api/notifications/user/:userId/unread-count
 
 Paramètres URL :
 - userId (obligatoire) : UUID de l'utilisateur
 
 Exemple d'appel :
-GET /api/notifications/user/uuid-123/unread-count
+GET https://dio-loto-api.onrender.com/api/notifications/user/uuid-123/unread-count
 
 Réponse :
 {
@@ -184,13 +188,13 @@ Réponse :
 
 6️⃣ SUPPRIMER UNE NOTIFICATION
 -----------------------------
-DELETE /api/notifications/:id
+DELETE https://dio-loto-api.onrender.com/api/notifications/:id
 
 Paramètres URL :
 - id (obligatoire) : ID de la notification
 
 Exemple d'appel :
-DELETE /api/notifications/123
+DELETE https://dio-loto-api.onrender.com/api/notifications/123
 
 Réponse :
 {
@@ -207,7 +211,7 @@ Utilisez la route 5️⃣ pour afficher un badge avec le nombre de notifications
 
 // Récupérer le count toutes les 30 secondes
 setInterval(() => {
-  fetch(`/api/notifications/user/${userId}/unread-count`)
+  fetch(`https://dio-loto-api.onrender.com/api/notifications/user/${userId}/unread-count`)
     .then(res => res.json())
     .then(data => {
       updateNotificationBadge(data.unreadCount);
@@ -220,7 +224,7 @@ Utilisez la route 1️⃣ avec pagination pour afficher la liste :
 
 // Charger les notifications avec pagination
 function loadNotifications(offset = 0) {
-  fetch(`/api/notifications/user/${userId}?limit=20&offset=${offset}`)
+  fetch(`https://dio-loto-api.onrender.com/api/notifications/user/${userId}?limit=20&offset=${offset}`)
     .then(res => res.json())
     .then(data => {
       displayNotifications(data.notifications);
@@ -233,7 +237,7 @@ function loadNotifications(offset = 0) {
 Utilisez la route 3️⃣ quand l'utilisateur clique sur une notification :
 
 function markAsRead(notificationId) {
-  fetch(`/api/notifications/${notificationId}/read`, {
+  fetch(`https://dio-loto-api.onrender.com/api/notifications/${notificationId}/read`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ isRead: true })
@@ -249,7 +253,7 @@ function markAsRead(notificationId) {
 Utilisez la route 4️⃣ pour un bouton "Marquer tout comme lu" :
 
 function markAllAsRead() {
-  fetch(`/api/notifications/user/${userId}/mark-all-read`, {
+  fetch(`https://dio-loto-api.onrender.com/api/notifications/user/${userId}/mark-all-read`, {
     method: 'PATCH'
   })
   .then(res => res.json())
@@ -288,7 +292,7 @@ Toutes les routes retournent des codes HTTP standards :
 - 500 : Erreur serveur
 
 Exemple de gestion d'erreur :
-fetch('/api/notifications/user/invalid-id')
+fetch('https://dio-loto-api.onrender.com/api/notifications/user/invalid-id')
   .then(res => {
     if (!res.ok) {
       throw new Error(`HTTP ${res.status}`);

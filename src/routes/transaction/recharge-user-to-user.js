@@ -1,4 +1,4 @@
-const { User, UserToUserTransaction } = require('../../db/sequelize');
+const { User, UserToUserTransaction, Notification } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -35,6 +35,14 @@ module.exports = (app) => {
       user.gain -= montant;
       user.solde += montant;
       await user.save();
+
+      // Création de la notification pour l'utilisateur
+      await Notification.create({
+        userId: user.uniqueUserId,
+        type: 'recharge_user_to_user',
+        title: 'Transfert de gain vers solde principal',
+        message: `Vous avez transféré ${montant} FCFA de votre solde gain vers votre solde principal. Nouveau solde principal : ${user.solde} FCFA, nouveau solde gain : ${user.gain} FCFA.`
+      });
 
       res.status(201).json({
         message: "Votre recharge a été effectuée avec succès.",

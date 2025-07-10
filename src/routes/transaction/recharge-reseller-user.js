@@ -1,4 +1,4 @@
-const { Reseller, User, ResellerToUserTransaction } = require('../../db/sequelize');
+const { Reseller, User, ResellerToUserTransaction, Notification } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -17,7 +17,14 @@ module.exports = (app) => {
       }
 
       // Vérification si le revendeur existe
-      const reseller = await Reseller.findOne({ where: { uniqueResellerId } });
+      const reseller = await Reseller.findOne({
+        where: { uniqueResellerId },
+        include: [{
+          model: User,
+          as: 'user',
+          attributes: ['firstName', 'lastName']
+        }]
+      });
       if (!reseller) {
         return res.status(404).json({ message: "Aucun revendeur trouvé avec cet identifiant unique." });
       }
@@ -55,6 +62,14 @@ module.exports = (app) => {
       // Mise à jour du solde de l'utilisateur
       user.solde += montant;
       await user.save();
+
+      // Création de la notification pour l'utilisateur
+      await Notification.create({
+        userId: user.uniqueUserId,
+        type: 'recharge_reseller',
+        title: 'Recharge effectuée par un revendeur',
+        message: `Votre compte a été rechargé de ${montant} FCFA par le revendeur ${reseller.user?.firstName || 'N/A'} ${reseller.user?.lastName || 'N/A'}. Nouveau solde : ${user.solde} FCFA.`
+      });
 
       res.status(201).json({
         message: `L'utilisateur ${user.lastName} ${user.firstName} a été rechargé avec succès.`,

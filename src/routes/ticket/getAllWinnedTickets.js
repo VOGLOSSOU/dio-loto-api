@@ -1,4 +1,5 @@
 const { Ticket, Game, User } = require('../../db/sequelize');
+const { Op } = require('sequelize');
 
 module.exports = (app) => {
   /**
@@ -21,13 +22,18 @@ module.exports = (app) => {
       }
       const gameNames = games.map(g => g.nom);
 
-      // On récupère tous les tickets gagnants (statut "validé", pas dans le panier, jeu du pays)
+      // On récupère tous les tickets gagnants (statut "attribué", pas dans le panier, jeu du pays)
       const tickets = await Ticket.findAll({
         where: {
-          nomJeu: gameNames,
-          statut: 'validé',
+          nomJeu: { [Op.in]: gameNames }, // Correction : utiliser Op.in pour chercher dans un tableau
+          statut: 'validé', // Les tickets gagnants qui attendent l'attribution de gain
           isCart: false
         },
+        include: [{
+          model: User,
+          as: 'User', // Utiliser l'association existante
+          attributes: ['uniqueUserId', 'firstName', 'lastName', 'email', 'solde', 'gain']
+        }],
         order: [['created', 'DESC']]
       });
 

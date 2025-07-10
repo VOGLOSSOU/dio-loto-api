@@ -1,0 +1,300 @@
+📋 DOCUMENTATION API - SYSTÈME DE NOTIFICATIONS
+=================================================
+
+🎯 APERÇU GÉNÉRAL
+-----------------
+Le système de notifications permet de :
+- Créer automatiquement des notifications lors des transactions
+- Consulter les notifications par utilisateur ou globalement
+- Marquer les notifications comme lues/non lues
+- Supprimer les notifications
+- Compter les notifications non lues
+
+🔐 AUTHENTIFICATION
+-------------------
+Toutes les routes nécessitent un token d'authentification dans le header :
+Authorization: Bearer <votre_token>
+
+📊 TYPES DE NOTIFICATIONS
+-------------------------
+- recharge_admin : Recharge effectuée par un administrateur
+- recharge_reseller : Recharge effectuée par un revendeur
+- recharge_user_to_user : Transfert gain → solde principal
+- gain_attribue : Attribution de gain à un ticket
+- autre : Autres types de notifications
+
+🚀 ROUTES DISPONIBLES
+=====================
+
+1️⃣ RÉCUPÉRER LES NOTIFICATIONS D'UN UTILISATEUR
+-----------------------------------------------
+GET /api/notifications/user/:userId
+
+Paramètres URL :
+- userId (obligatoire) : UUID de l'utilisateur
+
+Paramètres Query (optionnels) :
+- type : Filtrer par type (recharge_admin, recharge_reseller, etc.)
+- limit : Nombre max de notifications (défaut: 50)
+- offset : Décalage pour pagination (défaut: 0)
+
+Exemples d'appels :
+GET /api/notifications/user/uuid-123
+GET /api/notifications/user/uuid-123?type=recharge_admin
+GET /api/notifications/user/uuid-123?limit=20&offset=10
+
+Réponse :
+{
+  "message": "Notifications de l'utilisateur récupérées avec succès.",
+  "user": {
+    "uniqueUserId": "uuid-123",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com"
+  },
+  "pagination": {
+    "total": 25,
+    "limit": 50,
+    "offset": 0,
+    "hasMore": false
+  },
+  "statistics": {
+    "recharge_admin": 5,
+    "recharge_reseller": 8,
+    "gain_attribue": 12
+  },
+  "notifications": [
+    {
+      "id": 1,
+      "userId": "uuid-123",
+      "type": "recharge_admin",
+      "title": "Recharge effectuée par un administrateur",
+      "message": "Votre compte a été rechargé de 5000 FCFA...",
+      "isRead": false,
+      "readAt": null,
+      "created": "2024-01-15T10:30:00Z"
+    }
+  ]
+}
+
+2️⃣ RÉCUPÉRER TOUTES LES NOTIFICATIONS (ADMIN)
+---------------------------------------------
+GET /api/notifications
+
+Paramètres Query (optionnels) :
+- type : Filtrer par type
+- userId : Filtrer par utilisateur
+- dateFrom : Date de début (YYYY-MM-DD)
+- dateTo : Date de fin (YYYY-MM-DD)
+- search : Recherche dans titre/message
+- limit : Nombre max (défaut: 100)
+- offset : Décalage (défaut: 0)
+
+Exemples d'appels :
+GET /api/notifications
+GET /api/notifications?type=gain_attribue
+GET /api/notifications?dateFrom=2024-01-01&dateTo=2024-01-31
+GET /api/notifications?search=recharge
+
+Réponse :
+{
+  "message": "Toutes les notifications récupérées avec succès.",
+  "pagination": { ... },
+  "statistics": {
+    "byType": {
+      "recharge_admin": 450,
+      "recharge_reseller": 320
+    },
+    "byPeriod": {
+      "last24hours": 25,
+      "last7days": 180,
+      "last30days": 650
+    }
+  },
+  "notifications": [ ... ]
+}
+
+3️⃣ MARQUER UNE NOTIFICATION COMME LUE/NON LUE
+---------------------------------------------
+PATCH /api/notifications/:id/read
+
+Paramètres URL :
+- id (obligatoire) : ID de la notification
+
+Body JSON :
+{
+  "isRead": true  // ou false (optionnel, défaut: true)
+}
+
+Exemple d'appel :
+PATCH /api/notifications/123/read
+Body: { "isRead": true }
+
+Réponse :
+{
+  "message": "Notification marquée comme lue avec succès.",
+  "notification": {
+    "id": 123,
+    "isRead": true,
+    "readAt": "2024-01-15T10:30:00Z",
+    ...
+  }
+}
+
+4️⃣ MARQUER TOUTES LES NOTIFICATIONS D'UN USER COMME LUES
+--------------------------------------------------------
+PATCH /api/notifications/user/:userId/mark-all-read
+
+Paramètres URL :
+- userId (obligatoire) : UUID de l'utilisateur
+
+Exemple d'appel :
+PATCH /api/notifications/user/uuid-123/mark-all-read
+
+Réponse :
+{
+  "message": "5 notification(s) marquée(s) comme lue(s) avec succès.",
+  "user": { ... },
+  "statistics": {
+    "markedAsRead": 5,
+    "totalNotifications": 25
+  }
+}
+
+5️⃣ COMPTER LES NOTIFICATIONS NON LUES
+-------------------------------------
+GET /api/notifications/user/:userId/unread-count
+
+Paramètres URL :
+- userId (obligatoire) : UUID de l'utilisateur
+
+Exemple d'appel :
+GET /api/notifications/user/uuid-123/unread-count
+
+Réponse :
+{
+  "message": "Nombre de notifications non lues récupéré avec succès.",
+  "user": { ... },
+  "unreadCount": 8,
+  "unreadByType": {
+    "recharge_admin": 3,
+    "gain_attribue": 5
+  }
+}
+
+6️⃣ SUPPRIMER UNE NOTIFICATION
+-----------------------------
+DELETE /api/notifications/:id
+
+Paramètres URL :
+- id (obligatoire) : ID de la notification
+
+Exemple d'appel :
+DELETE /api/notifications/123
+
+Réponse :
+{
+  "message": "Notification supprimée avec succès.",
+  "deletedNotification": { ... }
+}
+
+🎨 INTÉGRATION FRONTEND - SUGGESTIONS
+=====================================
+
+💡 BADGE DE NOTIFICATIONS NON LUES
+----------------------------------
+Utilisez la route 5️⃣ pour afficher un badge avec le nombre de notifications non lues :
+
+// Récupérer le count toutes les 30 secondes
+setInterval(() => {
+  fetch(`/api/notifications/user/${userId}/unread-count`)
+    .then(res => res.json())
+    .then(data => {
+      updateNotificationBadge(data.unreadCount);
+    });
+}, 30000);
+
+💡 LISTE DES NOTIFICATIONS
+--------------------------
+Utilisez la route 1️⃣ avec pagination pour afficher la liste :
+
+// Charger les notifications avec pagination
+function loadNotifications(offset = 0) {
+  fetch(`/api/notifications/user/${userId}?limit=20&offset=${offset}`)
+    .then(res => res.json())
+    .then(data => {
+      displayNotifications(data.notifications);
+      setupPagination(data.pagination);
+    });
+}
+
+💡 MARQUER COMME LU AU CLIC
+---------------------------
+Utilisez la route 3️⃣ quand l'utilisateur clique sur une notification :
+
+function markAsRead(notificationId) {
+  fetch(`/api/notifications/${notificationId}/read`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ isRead: true })
+  })
+  .then(() => {
+    // Mettre à jour l'interface
+    updateNotificationUI(notificationId);
+  });
+}
+
+💡 BOUTON "TOUT MARQUER COMME LU"
+---------------------------------
+Utilisez la route 4️⃣ pour un bouton "Marquer tout comme lu" :
+
+function markAllAsRead() {
+  fetch(`/api/notifications/user/${userId}/mark-all-read`, {
+    method: 'PATCH'
+  })
+  .then(res => res.json())
+  .then(data => {
+    showMessage(`${data.statistics.markedAsRead} notifications marquées comme lues`);
+    refreshNotificationsList();
+  });
+}
+
+🔄 CRÉATION AUTOMATIQUE
+=======================
+Les notifications sont créées automatiquement lors de :
+- Recharge admin → revendeur
+- Recharge admin → utilisateur
+- Recharge revendeur → utilisateur
+- Attribution de gain à un ticket
+- Transfert gain → solde principal
+
+Aucune action frontend nécessaire pour la création !
+
+📱 RECOMMANDATIONS UX
+=====================
+1. Afficher un badge avec le nombre de notifications non lues
+2. Marquer automatiquement comme lu quand l'utilisateur clique
+3. Proposer un bouton "Tout marquer comme lu"
+4. Utiliser la pagination pour les grandes listes
+5. Actualiser le count périodiquement (toutes les 30s)
+6. Différencier visuellement les notifications lues/non lues
+
+🚨 GESTION D'ERREURS
+====================
+Toutes les routes retournent des codes HTTP standards :
+- 200 : Succès
+- 400 : Paramètres manquants/invalides
+- 404 : Ressource non trouvée
+- 500 : Erreur serveur
+
+Exemple de gestion d'erreur :
+fetch('/api/notifications/user/invalid-id')
+  .then(res => {
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    return res.json();
+  })
+  .catch(err => {
+    console.error('Erreur notifications:', err);
+  });

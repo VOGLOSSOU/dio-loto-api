@@ -1,4 +1,4 @@
-const { Admin, User, AdminToUserTransaction, SoldeInitial, Transaction } = require('../../db/sequelize');
+const { Admin, User, AdminToUserTransaction, SoldeInitial, Transaction, Notification } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -55,6 +55,14 @@ if (montantRestant < montant) {
       // Mise à jour du solde de l'utilisateur
       user.solde += montant;
       await user.save();
+
+      // Création de la notification pour l'utilisateur
+      await Notification.create({
+        userId: user.uniqueUserId,
+        type: 'recharge_admin',
+        title: 'Recharge effectuée par un administrateur',
+        message: `Votre compte a été rechargé de ${montant} FCFA par l'administrateur ${admin.firstName} ${admin.lastName}. Nouveau solde : ${user.solde} FCFA.`
+      });
 
       res.status(201).json({
         message: `L'utilisateur a été crédité avec succès.`,

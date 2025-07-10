@@ -1,4 +1,4 @@
-const { Admin, Reseller, Transaction, SoldeInitial, User, AdminToUserTransaction } = require('../../db/sequelize');
+const { Admin, Reseller, Transaction, SoldeInitial, User, AdminToUserTransaction, Notification } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
@@ -62,6 +62,14 @@ const montantUtilise = (montantAdminToReseller || 0) + (montantAdminToUser || 0)
       // Mise à jour du soldeRevendeur
       reseller.soldeRevendeur += montant;
       await reseller.save();
+
+      // Création de la notification pour le revendeur
+      await Notification.create({
+        userId: user.uniqueUserId, // Le revendeur est avant tout un user
+        type: 'recharge_admin',
+        title: 'Recharge effectuée par un administrateur',
+        message: `Votre compte revendeur a été rechargé de ${montant} FCFA par l'administrateur ${admin.firstName} ${admin.lastName}. Nouveau solde revendeur : ${reseller.soldeRevendeur} FCFA.`
+      });
 
       res.status(201).json({
         message: `Le revendeur a été rechargé avec succès.`,

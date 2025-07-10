@@ -171,7 +171,19 @@ Withdrawal.belongsTo(User, {
   as: 'user'
 });
 
-// (Et ainsi de suite pour les éventuelles autres relations que vous aviez.) 
+// Association Notification ↔ User
+Notification.belongsTo(User, {
+  foreignKey: 'userId',
+  targetKey: 'uniqueUserId',
+  as: 'user'
+});
+User.hasMany(Notification, {
+  foreignKey: 'userId',
+  sourceKey: 'uniqueUserId',
+  as: 'notifications'
+});
+
+// (Et ainsi de suite pour les éventuelles autres relations que vous aviez.)
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 6) Synchronisation de la base (sans toucher ici non plus)

@@ -114,6 +114,14 @@ require("./src/routes/announce/createAnnounce")(app)
 require("./src/routes/announce/getAllAnnounces")(app)
 require("./src/routes/announce/deleteAnnounce")(app)
 
+// : Notifications
+require("./src/routes/notifications/getNotificationByUser")(app)
+require("./src/routes/notifications/getAllNotifications")(app)
+require("./src/routes/notifications/markAsRead")(app)
+require("./src/routes/notifications/mark-all-read")(app)
+require("./src/routes/notifications/deleteNotification")(app)
+require("./src/routes/notifications/unread-count")(app)
+
 // : EasyCron
 require("./src/routes/easycron/ping")(app)
 require("./src/routes/easycron/updateStatus")(app)

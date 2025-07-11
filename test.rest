@@ -1,7 +1,14 @@
-GET http://localhost:5000/api/tickets/winners
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc1MTM3MDMxMCwiZXhwIjoxNzUxNDU2NzEwfQ.YdKml5ar1tMUe9xnDa0MqILx50mhyqaqEPltoDOriIc
+post http://localhost:4000/api/tickets/
 Content-Type: application/json
 
 {
-
+    "uniqueUserId" : "52672738-d164-4b24-a458-e94c0ccf9cc4",
+    "heureJeu" : "11:20",
+    "nomJeu" : "Benin11" ,
+    "typeJeu" : "Anagrammes",
+    "numerosJoues" : [1,2,2] ,
+    "formule" : "Directe",
+    "mise" : "10",
+    "gains" : "20 (Win) / 60 (Machine)",
+    "isCart" : false
 }

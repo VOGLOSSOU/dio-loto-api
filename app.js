@@ -6,7 +6,7 @@ const cors = require("cors") // Ajout de cors
 const { initDb } = require("./src/db/sequelize") 
 
 const app = express()
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 4000
 
 // Middleware
 app

@@ -56,7 +56,24 @@ if (ticket.statut !== 'validé') {
       await user.save();
 
       // 5. Mettre à jour le ticket (pour ne plus le proposer à l’admin)
-      ticket.gains = [gain];
+      // Récupérer les gains existants et ajouter le gain attribué
+      let currentGains = ticket.gains;
+      if (typeof currentGains === 'string') {
+        try {
+          currentGains = JSON.parse(currentGains);
+        } catch {
+          currentGains = { original: currentGains };
+        }
+      }
+
+      // Ajouter le gain attribué à la structure existante
+      const updatedGains = {
+        ...currentGains,
+        attribue: gain,
+        dateAttribution: new Date().toISOString()
+      };
+
+      ticket.gains = updatedGains;
       ticket.statut = 'attribué';
       await ticket.save();
 

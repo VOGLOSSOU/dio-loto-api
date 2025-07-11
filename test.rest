@@ -1,14 +1,19 @@
-post http://localhost:4000/api/tickets/
+# post http://localhost:4000/api/transactions/recharge-reseller-user
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc1MjI1MDE3OCwiZXhwIjoxNzUyMzM2NTc4fQ.YT4dCpk_D1tMEM5zj3pW9VN3Q1X-1w99yitWfaGAynA 
+# Content-Type: application/json
+
+# {
+#     "uniqueResellerId" : "f23c990b-437a-4cf9-a6fe-728f09f89af7",
+#     "email" : "today@gmail.com",
+#     "montant" : 1000
+# }   
+
+
+get http://localhost:4000/api/notifications/user/52672738-d164-4b24-a458-e94c0ccf9cc4
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjksImlhdCI6MTc1MjI1MDE3OCwiZXhwIjoxNzUyMzM2NTc4fQ.YT4dCpk_D1tMEM5zj3pW9VN3Q1X-1w99yitWfaGAynA 
 Content-Type: application/json
 
 {
-    "uniqueUserId" : "52672738-d164-4b24-a458-e94c0ccf9cc4",
-    "heureJeu" : "11:20",
-    "nomJeu" : "Benin11" ,
-    "typeJeu" : "Anagrammes",
-    "numerosJoues" : [1,2,2] ,
-    "formule" : "Directe",
-    "mise" : "10",
-    "gains" : "20 (Win) / 60 (Machine)",
-    "isCart" : false
-}
+    "email" : "today@gmail.com",
+    "password" : "today"
+}   

@@ -23,12 +23,7 @@ module.exports = (app) => {
         return res.status(404).json({ message: "Transaction introuvable." });
       }
 
-      // Vérifie le statut
-      if (transaction.status !== 'invalidé') {
-        return res.status(400).json({ message: "Seules les transactions avec le statut 'invalidé' peuvent être supprimées." });
-      }
-
-      // Supprime la transaction
+      // Supprime la transaction (peu importe le statut - nettoyage de base)
       await transaction.destroy();
 
       res.status(200).json({ message: "Transaction supprimée avec succès." });

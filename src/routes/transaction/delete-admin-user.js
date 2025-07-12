@@ -3,11 +3,11 @@ const auth = require('../../auth/auth');
 
 module.exports = (app) => {
   /**
-   * DELETE /api/transactions/admin-to-user/:uniqueTransacId/cancel
+   * PATCH /api/transactions/admin-to-user/:uniqueTransacId/cancel
    * Annule une recharge admin → user en invalidant la transaction,
    * retournant l'argent au solde système et débitant l'utilisateur
    */
-  app.delete('/api/transactions/admin-to-user/:uniqueTransacId/cancel', auth, async (req, res) => {
+  app.patch('/api/transactions/admin-to-user/:uniqueTransacId/cancel', auth, async (req, res) => {
     try {
       const { uniqueTransacId } = req.params;
       const { adminId } = req.body;

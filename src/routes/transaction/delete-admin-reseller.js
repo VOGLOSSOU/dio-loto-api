@@ -3,11 +3,11 @@ const auth = require('../../auth/auth');
 
 module.exports = (app) => {
   /**
-   * DELETE /api/transactions/admin-to-reseller/:uniqueTransacId/cancel
+   * PATCH /api/transactions/admin-to-reseller/:uniqueTransacId/cancel
    * Annule une recharge admin → revendeur en invalidant la transaction,
    * retournant l'argent au solde système et débitant le revendeur
    */
-  app.delete('/api/transactions/admin-to-reseller/:uniqueTransacId/cancel', auth, async (req, res) => {
+  app.patch('/api/transactions/admin-to-reseller/:uniqueTransacId/cancel', auth, async (req, res) => {
     try {
       const { uniqueTransacId } = req.params;
       const { adminId } = req.body;

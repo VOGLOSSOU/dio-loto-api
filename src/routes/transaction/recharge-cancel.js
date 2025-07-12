@@ -1,8 +1,8 @@
-const { ResellerToUserTransaction, Reseller, User, Admin, sequelize } = require('../../db/sequelize');
+const { ResellerToUserTransaction, Reseller, User, Admin, Notification, sequelize } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
 module.exports = (app) => {
-  app.post('/api/transactions/recharge/:uniqueTransacId/cancel', auth, async (req, res) => {
+  app.patch('/api/transactions/recharge/:uniqueTransacId/cancel', auth, async (req, res) => {
     const t = await sequelize.transaction();
     try {
       const { uniqueTransacId } = req.params;
@@ -49,11 +49,49 @@ module.exports = (app) => {
       transaction.status = 'invalidé';
       await transaction.save({ transaction: t });
 
+      // ✅ Créer des notifications
+      // Notification pour l'utilisateur
+      await Notification.create({
+        userId: user.uniqueUserId,
+        type: 'autre',
+        title: 'Recharge annulée par un administrateur',
+        message: `Une recharge de ${transaction.money} FCFA effectuée par un revendeur a été annulée par l'administrateur ${admin.firstName} ${admin.lastName}. Votre nouveau solde est de ${user.solde} FCFA.`
+      }, { transaction: t });
+
+      // Notification pour le revendeur (récupérer l'utilisateur lié au revendeur)
+      const resellerUser = await User.findOne({ where: { uniqueUserId: reseller.uniqueUserId }, transaction: t });
+      if (resellerUser) {
+        await Notification.create({
+          userId: resellerUser.uniqueUserId,
+          type: 'autre',
+          title: 'Transaction annulée par un administrateur',
+          message: `Votre transaction de ${transaction.money} FCFA vers ${user.firstName} ${user.lastName} a été annulée par l'administrateur ${admin.firstName} ${admin.lastName}. Votre nouveau solde revendeur est de ${reseller.soldeRevendeur} FCFA.`
+        }, { transaction: t });
+      }
+
       await t.commit();
 
       res.status(200).json({
-        message: "La transaction a été annulée avec succès, même si l'utilisateur n'avait plus le solde requis.",
-        transaction
+        message: "Transaction annulée avec succès.",
+        details: {
+          transactionId: uniqueTransacId,
+          montantAnnule: transaction.money,
+          utilisateurConcerne: {
+            email: user.email,
+            ancienSolde: user.solde + transaction.money,
+            nouveauSolde: user.solde
+          },
+          revendeurConcerne: {
+            email: resellerUser?.email,
+            ancienSoldeRevendeur: reseller.soldeRevendeur - transaction.money,
+            nouveauSoldeRevendeur: reseller.soldeRevendeur
+          },
+          adminAuteur: {
+            nom: `${admin.firstName} ${admin.lastName}`,
+            email: admin.email
+          },
+          dateAnnulation: new Date()
+        }
       });
     } catch (error) {
       await t.rollback();

@@ -1,4 +1,4 @@
-delete http://localhost:4000/api/transactions/recharge/ea2ea2df-c3fe-45e7-a669-165170c06948/delete
+get http://localhost:4000/api/tickets/623
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NTIyNTg0NTgsImV4cCI6MTc1MjM0NDg1OH0.3OuzWyj4ZKIeyEv5dAgn-SF2f2LyAy0XZoynPnZ7e1o
 Content-Type: application/json
 

@@ -77,6 +77,7 @@ require("./src/routes/transaction/delete-admin-reseller")(app) // Annuler une re
 
 // : Games
 require("./src/routes/games/updateGamesStatus")(app)
+require("./src/routes/games/getGamesStatus")(app) // Nouvelle route pour consulter l'état des jeux
 require("./src/routes/games/gamesAvailbleByCountries")(app)
 require("./src/routes/games/getGamesByCountries")(app)
 

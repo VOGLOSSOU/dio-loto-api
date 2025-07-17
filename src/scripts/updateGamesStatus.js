@@ -25,12 +25,19 @@ const updateGameStatus = () => {
           ? currentTime.isBetween(startTime, endTime) // Cas normal : startTime < endTime
           : currentTime.isAfter(startTime) || currentTime.isBefore(endTime); // Cas où la plage traverse minuit
 
-        // Mettre à jour le statut du jeu
+        // Mettre à jour le statut du jeu SEULEMENT si pas de contrôle manuel
         const game = schedule.game;
+
+        // Vérifier si le jeu est en contrôle manuel
+        if (game.manualOverride) {
+          console.log(`Le jeu "${game.nom}" est en contrôle manuel - statut non modifié automatiquement.`);
+          continue; // Passer au jeu suivant
+        }
+
         if (isInSchedule && game.statut !== 'ouvert') {
           game.statut = 'ouvert';
           await game.save();
-          console.log(`Le jeu "${game.nom}" est maintenant ouvert.`);
+          console.log(`Le jeu "${game.nom}" est maintenant ouvert (mode automatique).`);
 
           // Nouvelle fonctionnalité : suppression du résultat si le jeu s'ouvre
           const deleted = await Result.destroy({ where: { gameId: game.id } });
@@ -41,7 +48,7 @@ const updateGameStatus = () => {
         } else if (!isInSchedule && game.statut !== 'fermé') {
           game.statut = 'fermé';
           await game.save();
-          console.log(`Le jeu "${game.nom}" est maintenant fermé.`);
+          console.log(`Le jeu "${game.nom}" est maintenant fermé (mode automatique).`);
         }
 
         // Logs détaillés pour chaque jeu (désactivés)

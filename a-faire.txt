@@ -1,5 +1,3 @@
 Voici une liste de tous ce qui reste :
 
--.le positionnement des gains 60%sur solde principal et 40%sur solde gain pour Les jeux de la cote d'ivoire,(7h 21h 22h 23h 1j 3h)
-- Afficher les notifications aux utilisateurs 
 - Transformer le site administratif en application qui peut-être mis sur l' accueil du téléphone

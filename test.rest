@@ -1,4 +1,4 @@
-get http://localhost:4000/api/tickets/623
+GET http://localhost:4000/api/games/status
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NTIyNTg0NTgsImV4cCI6MTc1MjM0NDg1OH0.3OuzWyj4ZKIeyEv5dAgn-SF2f2LyAy0XZoynPnZ7e1o
 Content-Type: application/json
 

@@ -1,4 +1,5 @@
-const { Game, Result, Ticket } = require("../../db/sequelize")
+const { Game, Result, Ticket, Notification } = require("../../db/sequelize")
+const { Op } = require('sequelize')
 const auth = require("../../auth/auth")
 const { validateSingleTicket } = require("../../scripts/validation") // ✅ Import corrigé
 
@@ -151,7 +152,68 @@ module.exports = (app) => {
         validationResult.executed = false
       }
 
-      // 8) Construire la réponse finale
+      // 8) NOTIFICATIONS AUX JOUEURS
+      const notificationResult = {
+        executed: false,
+        totalPlayers: 0,
+        notificationsCreated: 0,
+        error: null,
+      }
+
+      try {
+        console.log(`📢 Début de l'envoi des notifications pour le jeu ${game.nom}...`)
+
+        // Récupérer les utilisateurs distincts qui ont joué ce jeu
+        const players = await Ticket.findAll({
+          where: {
+            nomJeu: game.nom,
+            statut: { [Op.in]: ['en attente', 'validé', 'invalidé'] },
+            isCart: false
+          },
+          attributes: [
+            [require('sequelize').fn('DISTINCT', require('sequelize').col('uniqueUserId')), 'uniqueUserId']
+          ],
+          raw: true
+        });
+
+        const uniqueUserIds = players.map(p => p.uniqueUserId).filter(id => id); // Filtrer les null/undefined
+        notificationResult.totalPlayers = uniqueUserIds.length;
+
+        if (uniqueUserIds.length === 0) {
+          console.log(`ℹ️ Aucun joueur trouvé pour le jeu ${game.nom}`)
+          notificationResult.executed = true
+        } else {
+          console.log(`📢 ${uniqueUserIds.length} joueur(s) trouvé(s) pour notification`)
+
+          // Préparer les données de notification
+          const notificationData = {
+            type: 'resultat_jeu',
+            title: `Résultat ${game.nom} - ${game.pays}`,
+            message: `Numéros gagnants: ${newResult.numbers}${newResult.numbers2 ? ` | Double chance: ${newResult.numbers2}` : ''}`,
+            isRead: false,
+          };
+
+          // Créer les notifications en bulk pour performance
+          const notificationsToCreate = uniqueUserIds.map(userId => ({
+            ...notificationData,
+            userId: userId,
+            readAt: null,
+          }));
+
+          // Bulk insert
+          const createdNotifications = await Notification.bulkCreate(notificationsToCreate);
+          notificationResult.notificationsCreated = createdNotifications.length;
+          notificationResult.executed = true;
+
+          console.log(`✅ ${createdNotifications.length} notification(s) créée(s) pour le jeu ${game.nom}`)
+        }
+      } catch (notificationError) {
+        console.error("❌ Erreur lors de l'envoi des notifications:", notificationError)
+        notificationResult.error = notificationError.message
+        notificationResult.executed = false
+      }
+
+      // 9) Construire la réponse finale
       const response = {
         message: "Résultat enregistré avec succès.",
         result: {
@@ -201,6 +263,31 @@ module.exports = (app) => {
           error: validationResult.error,
           notice: `Vous pouvez relancer la validation manuellement via POST /api/results/${newResult.id}/validate-tickets`,
         }
+      }
+
+      // Ajouter les détails des notifications
+      if (notificationResult.executed && !notificationResult.error) {
+        response.notifications = {
+          success: true,
+          statistiques: {
+            totalPlayers: notificationResult.totalPlayers,
+            notificationsCreated: notificationResult.notificationsCreated,
+          },
+          message: notificationResult.totalPlayers === 0
+            ? "Aucun joueur à notifier."
+            : `${notificationResult.notificationsCreated} notification(s) envoyée(s) aux joueurs.`,
+        }
+
+        // Mettre à jour le message principal si tout s'est bien passé
+        if (validationResult.executed && !validationResult.error) {
+          response.message = "Résultat enregistré avec succès, tickets validés et notifications envoyées."
+        }
+      } else if (notificationResult.error) {
+        response.notifications = {
+          success: false,
+          error: notificationResult.error,
+        }
+        response.message += " Erreur lors de l'envoi des notifications."
       }
 
       return res.status(201).json(response)

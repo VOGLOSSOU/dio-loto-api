@@ -4,7 +4,7 @@ const auth = require("../../auth/auth");
 module.exports = (app) => {
   app.delete('/api/resellers/:uniqueResellerId', auth, async (req, res) => {
     try {
-      const reseller = await Reseller.findOne({ where: { id: req.params.uniqueResellerId } });
+      const reseller = await Reseller.findOne({ where: { uniqueResellerId: req.params.uniqueResellerId } });
       if (!reseller) {
         return res.status(404).json({ message: `Aucun revendeur trouvé avec l'identifiant ${req.params.uniqueResellerId}.` });
       }

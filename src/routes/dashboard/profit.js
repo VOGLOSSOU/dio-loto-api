@@ -1,4 +1,4 @@
-const { ResellerToUserTransaction, Ticket, sequelize } = require("../../db/sequelize")
+const { ResellerToUserTransaction, Ticket, Withdrawal, sequelize } = require("../../db/sequelize")
 const { Op, fn, col, literal } = require('sequelize')
 const auth = require("../../auth/auth")
 
@@ -21,32 +21,28 @@ module.exports = (app) => {
       const totalRecharges = parseFloat(totalRechargesResult[0]?.totalRecharges || 0)
       console.log(`💸 Total recharges revendeur→user: ${totalRecharges} FCFA`)
 
-      // 2) Calculer la somme totale des gains des tickets attribués
-      // Les gains sont stockés en JSON, on doit les sommer correctement
-      const totalGainsResult = await Ticket.findAll({
+      // 2) Calculer la somme totale des retraits traités (ARGENT SORTANT)
+      const totalWithdrawalsResult = await Withdrawal.findAll({
         attributes: [
-          [fn('SUM',
-            literal(`CAST(JSON_EXTRACT(gains, '$[0]') AS DECIMAL(10,2))`)
-          ), 'totalGains']
+          [fn('SUM', col('montant')), 'totalWithdrawals']
         ],
         where: {
-          statut: 'attribué', // Uniquement les tickets avec gains attribués
-          isCart: false
+          statut: 'traité' // Uniquement les retraits traités
         },
         raw: true
       })
 
-      const totalGains = parseFloat(totalGainsResult[0]?.totalGains || 0)
-      console.log(`🎁 Total gains attribués: ${totalGains} FCFA`)
+      const totalWithdrawals = parseFloat(totalWithdrawalsResult[0]?.totalWithdrawals || 0)
+      console.log(`💸 Total retraits traités: ${totalWithdrawals} FCFA`)
 
       // 3) Calculer le bénéfice net
-      const netProfit = totalRecharges - totalGains
+      const netProfit = totalRecharges - totalWithdrawals
       console.log(`💰 Bénéfice net: ${netProfit} FCFA`)
 
       // 4) Statistiques supplémentaires
       const stats = {
         totalRecharges,
-        totalGains,
+        totalWithdrawals,
         netProfit,
         profitMargin: totalRecharges > 0 ? ((netProfit / totalRecharges) * 100).toFixed(2) + '%' : '0%'
       }
@@ -60,11 +56,11 @@ module.exports = (app) => {
         message: 'Bénéfices calculés avec succès.',
         data: stats,
         explanation: {
-          formula: 'Bénéfice = (Recharges revendeur→user) - (Gains des tickets attribués)',
+          formula: 'Bénéfice = (Recharges revendeur→user) - (Retraits traités)',
           details: {
             recharges: 'Somme des transactions validées de revendeurs vers utilisateurs',
-            gains: 'Somme des gains des tickets ayant le statut "attribué"',
-            netProfit: 'Recharges totales - Gains totaux'
+            withdrawals: 'Somme des retraits ayant le statut "traité"',
+            netProfit: 'Recharges totales - Retraits traités'
           }
         }
       })

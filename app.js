@@ -112,6 +112,7 @@ require("./src/routes/results/getAllResults")(app)
 require("./src/routes/dashboard/dashboard")(app)
 require("./src/routes/dashboard/topResellers")(app)
 require("./src/routes/dashboard/recentActivity")(app)
+require("./src/routes/dashboard/profit")(app)
 
 // : Announces
 require("./src/routes/announce/createAnnounce")(app)

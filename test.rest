@@ -7,8 +7,8 @@
 # }  
 
 
-get http://localhost:4000/api/resellers?status=actif
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NjE4MTkxNjIsImV4cCI6MTc2MTkwNTU2Mn0.uGPBMjKY8EoakQUzXkmPVKOK2RqyQIV4RfeJIDLG0NI 
+get http://localhost:4000/api/dashboard/profit
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NjE4MTkxNjIsImV4cCI6MTc2MTkwNTU2Mn0.uGPBMjKY8EoakQUzXkmPVKOK2RqyQIV4RfeJIDLG0NI 
 Content-Type: application/json
 
 # {

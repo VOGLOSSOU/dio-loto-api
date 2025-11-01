@@ -5,7 +5,8 @@ const {
   SoldeInitial,
   ResellerToUserTransaction,
   Ticket,
-  User
+  User,
+  Withdrawal
 } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
@@ -16,7 +17,7 @@ module.exports = (app) => {
    * Renvoie les métriques suivantes :
    *  - totalBalance       : somme de SoldeInitial.montant moins somme de ResellerToUserTransaction.money (status = 'validé')
    *  - todaysRecharges    : somme de ResellerToUserTransaction.money (status = 'validé') pour aujourd'hui
-   *  - totalUserGains     : somme de User.gain pour tous les utilisateurs
+   *  - totalUserGains     : somme des retraits traités (Withdrawal.montant où statut = 'traité')
    *  - ticketsPlayedToday : nombre de Ticket créés aujourd'hui
    */
   app.get('/api/dashboard/summary', auth, async (req, res) => {
@@ -45,8 +46,10 @@ module.exports = (app) => {
         }
       });
 
-      // 4) Gain global des utilisateurs (somme de User.gain)
-      const totalUserGains = await User.sum('gain');
+      // 4) Gain global des utilisateurs (somme des retraits traités)
+      const totalUserGains = await Withdrawal.sum('montant', {
+        where: { statut: 'traité' }
+      });
 
       // 5) Nombre de tickets joués aujourd'hui
       const ticketsPlayedToday = await Ticket.count({

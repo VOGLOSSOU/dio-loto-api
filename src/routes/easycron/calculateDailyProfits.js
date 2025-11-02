@@ -2,12 +2,12 @@ const { calculateDailyProfits } = require("../../scripts/calculateDailyProfits")
 
 module.exports = (app) => {
   /**
-   * POST /api/easycron/calculate-daily-profits
+   * GET /api/easycron/calculate-daily-profits
    *
    * Route appelée par cron-job.org pour calculer les bénéfices journaliers
    * Cette route exécute le script calculateDailyProfits.js
    */
-  app.post('/api/easycron/calculate-daily-profits', async (req, res) => {
+  app.get('/api/easycron/calculate-daily-profits', async (req, res) => {
     try {
       console.log('🔄 [EASYCRON] Début du calcul automatique des bénéfices journaliers...')
 

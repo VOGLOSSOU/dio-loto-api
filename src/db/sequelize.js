@@ -19,6 +19,7 @@ const AdminToUserTransactionModel = require('../models/adminToUserTransaction');
 const ResultModel                      = require('../models/result');
 const NotificationModel                = require('../models/notification');
 const AnnounceModel                    = require('../models/announce');
+const DailyProfitModel                = require('../models/dailyProfit');
 
 // 2) Création de la connexion Sequelize
 const sequelize = new Sequelize(
@@ -49,6 +50,7 @@ const AdminToUserTransaction     = AdminToUserTransactionModel(sequelize, DataTy
 const Result                     = ResultModel(sequelize, DataTypes);
 const Notification               = NotificationModel(sequelize, DataTypes);
 const Announce                   = AnnounceModel(sequelize, DataTypes);
+const DailyProfit                = DailyProfitModel(sequelize, DataTypes);
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 4) Associations **SEULEMENT** pour Game, Schedule et Result (manuelles ici)
@@ -215,5 +217,6 @@ module.exports = {
   AdminToUserTransaction,
   Result,
   Notification,
-  Announce
+  Announce,
+  DailyProfit
 };

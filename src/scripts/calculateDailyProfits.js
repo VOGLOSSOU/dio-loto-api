@@ -41,7 +41,7 @@ async function calculateDailyProfits(targetDate = null) {
       ],
       where: {
         status: 'validé',
-        createdAt: {
+        created: {  // Correction: 'created' au lieu de 'createdAt'
           [Op.between]: [startOfDay, endOfDay]
         }
       },
@@ -58,7 +58,7 @@ async function calculateDailyProfits(targetDate = null) {
       ],
       where: {
         statut: 'traité',
-        createdAt: {
+        created: {  // Correction: 'created' au lieu de 'createdAt'
           [Op.between]: [startOfDay, endOfDay]
         }
       },

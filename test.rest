@@ -7,11 +7,11 @@
 # }  
 
 
-get http://localhost:4000/api/dashboard/profit
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxLCJpYXQiOjE3NjE4MTkxNjIsImV4cCI6MTc2MTkwNTU2Mn0.uGPBMjKY8EoakQUzXkmPVKOK2RqyQIV4RfeJIDLG0NI 
+get http://localhost:3000/api/dashboard/daily-profits
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxMSwiaWF0IjoxNzYyMTAwMzAyLCJleHAiOjE3NjIxODY3MDJ9.zHzQpCw2czmuXzQ2eZbmCT9ek93BYiZ0-nulRosjmp4
 Content-Type: application/json
 
-# {
-#     "email" : "admin@gmail.com",
-#     "password" : "admin123"
-# }   
+{
+    "email" : "dioloto1@gmail.com",
+    "password" : "12Octobre1944"
+}   

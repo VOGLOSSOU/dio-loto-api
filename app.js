@@ -132,6 +132,7 @@ require("./src/routes/notifications/unread-count")(app)
 require("./src/routes/easycron/ping")(app)
 require("./src/routes/easycron/updateStatus")(app)
 require("./src/routes/easycron/cleanupOldTicketsRoute")(app)
+require("./src/routes/easycron/calculateDailyProfits")(app)
 
 
 app.listen(port, () => {

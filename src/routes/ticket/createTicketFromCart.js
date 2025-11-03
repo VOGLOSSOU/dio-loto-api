@@ -37,10 +37,14 @@ app.patch('/api/tickets/:id/validate', async (req, res) => {
 
     // Vérifier que l'utilisateur a suffisamment de solde
     if (ticket.mise > user.solde) {
-      await ticket.destroy({ transaction: t });
-      await t.commit();
+      await t.rollback();
       return res.status(400).json({
-        message: "Solde insuffisant pour valider ce ticket. Ticket supprimé du panier."
+        message: "Solde insuffisant pour valider ce ticket.",
+        ticketId: ticket.id,
+        requiredAmount: ticket.mise,
+        currentBalance: user.solde,
+        missingAmount: ticket.mise - user.solde,
+        suggestion: "Rechargez votre compte pour valider ce ticket."
       });
     }
 

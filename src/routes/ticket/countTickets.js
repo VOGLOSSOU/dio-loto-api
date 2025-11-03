@@ -7,12 +7,14 @@ module.exports = (app) => {
       const enAttente = await Ticket.count({ where: { statut: 'en attente', isCart: false } });
       const valides = await Ticket.count({ where: { statut: 'validé', isCart: false } });
       const invalides = await Ticket.count({ where: { statut: 'invalidé', isCart: false } });
+      const attribues = await Ticket.count({ where: { statut: 'attribué' } });
 
       res.json({
         total,
         enAttente,
         valides,
-        invalides
+        invalides,
+        attribues
       });
     } catch (error) {
       res.status(500).json({ message: "Erreur lors du comptage des tickets.", error });

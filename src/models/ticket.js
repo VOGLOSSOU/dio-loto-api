@@ -70,13 +70,13 @@ isCart: {
   defaultValue: false
 },
     statut: {
-  type: DataTypes.ENUM('en attente', 'validé', 'invalidé'),
+  type: DataTypes.ENUM('en attente', 'validé', 'invalidé', 'attribué'),
   allowNull: false,
   defaultValue: 'en attente',
   validate: {
     isIn: {
       args: [['en attente', 'validé', 'invalidé', 'attribué']],
-      msg: 'Le statut doit être "en attente", "validé" ou "invalidé".'
+      msg: 'Le statut doit être "en attente", "validé", "invalidé" ou "attribué".'
     },
     notNull: { msg: 'Le statut est requis.' }
   }

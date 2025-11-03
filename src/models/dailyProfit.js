@@ -32,6 +32,15 @@ module.exports = (sequelize, DataTypes) => {
         min: 0
       }
     },
+    totalSalaries: {
+      type: DataTypes.DECIMAL(15, 2),
+      allowNull: false,
+      defaultValue: 0,
+      validate: {
+        isDecimal: { msg: 'Le total des salaires doit être un nombre valide.' },
+        min: 0
+      }
+    },
     netProfit: {
       type: DataTypes.DECIMAL(15, 2),
       allowNull: false,

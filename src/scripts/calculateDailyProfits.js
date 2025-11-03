@@ -68,15 +68,20 @@ async function calculateDailyProfits(targetDate = null) {
     const totalWithdrawals = parseFloat(totalWithdrawalsResult[0]?.totalWithdrawals || 0)
     console.log(`💸 Retraits du jour: ${totalWithdrawals} FCFA`)
 
-    // 3) Calculer le bénéfice net
-    const netProfit = totalRecharges - totalWithdrawals
-    console.log(`💰 Bénéfice net du jour: ${netProfit} FCFA`)
+    // 3) Calculer les salaires des revendeurs (10% des recharges)
+    const totalSalaries = totalRecharges * 0.10
+    console.log(`👥 Salaires revendeurs (10%): ${totalSalaries} FCFA`)
+
+    // 4) Calculer le bénéfice net réel (après déduction des salaires)
+    const netProfit = totalRecharges - totalWithdrawals - totalSalaries
+    console.log(`💰 Bénéfice net réel du jour: ${netProfit} FCFA`)
 
     // 4) Sauvegarder ou mettre à jour
     const profitData = {
       date: dateString,
       totalRecharges,
       totalWithdrawals,
+      totalSalaries,
       netProfit
     }
 
@@ -94,6 +99,7 @@ async function calculateDailyProfits(targetDate = null) {
       date: dateString,
       totalRecharges,
       totalWithdrawals,
+      totalSalaries,
       netProfit,
       action: existingRecord ? 'updated' : 'created'
     }

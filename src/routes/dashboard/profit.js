@@ -35,14 +35,19 @@ module.exports = (app) => {
       const totalWithdrawals = parseFloat(totalWithdrawalsResult[0]?.totalWithdrawals || 0)
       console.log(`💸 Total retraits traités: ${totalWithdrawals} FCFA`)
 
-      // 3) Calculer le bénéfice net
-      const netProfit = totalRecharges - totalWithdrawals
-      console.log(`💰 Bénéfice net: ${netProfit} FCFA`)
+      // 3) Calculer les salaires des revendeurs (10% des recharges)
+      const totalSalaries = totalRecharges * 0.10
+      console.log(`👥 Salaires revendeurs (10%): ${totalSalaries} FCFA`)
 
-      // 4) Statistiques supplémentaires
+      // 4) Calculer le bénéfice net réel (après déduction des salaires)
+      const netProfit = totalRecharges - totalWithdrawals - totalSalaries
+      console.log(`💰 Bénéfice net réel: ${netProfit} FCFA`)
+
+      // 5) Statistiques supplémentaires
       const stats = {
         totalRecharges,
         totalWithdrawals,
+        totalSalaries,
         netProfit,
         profitMargin: totalRecharges > 0 ? ((netProfit / totalRecharges) * 100).toFixed(2) + '%' : '0%'
       }
@@ -56,11 +61,12 @@ module.exports = (app) => {
         message: 'Bénéfices calculés avec succès.',
         data: stats,
         explanation: {
-          formula: 'Bénéfice = (Recharges revendeur→user) - (Retraits traités)',
+          formula: 'Bénéfice = (Recharges revendeur→user) - (Retraits traités) - (Salaires revendeurs 10%)',
           details: {
             recharges: 'Somme des transactions validées de revendeurs vers utilisateurs',
             withdrawals: 'Somme des retraits ayant le statut "traité"',
-            netProfit: 'Recharges totales - Retraits traités'
+            salaries: '10% des recharges totales (salaires des revendeurs)',
+            netProfit: 'Recharges totales - Retraits traités - Salaires revendeurs'
           }
         }
       })

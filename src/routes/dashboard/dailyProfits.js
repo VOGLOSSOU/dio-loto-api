@@ -10,7 +10,7 @@ module.exports = (app) => {
       const dailyProfits = await DailyProfit.findAll({
         order: [['date', 'DESC']], // Du plus récent au plus ancien
         limit: 30,
-        attributes: ['date', 'totalRecharges', 'totalWithdrawals', 'netProfit']
+        attributes: ['date', 'totalRecharges', 'totalWithdrawals', 'totalSalaries', 'netProfit']
       })
 
       // Transformer les données pour le frontend
@@ -18,6 +18,7 @@ module.exports = (app) => {
         date: profit.date,
         totalRecharges: parseFloat(profit.totalRecharges),
         totalWithdrawals: parseFloat(profit.totalWithdrawals),
+        totalSalaries: parseFloat(profit.totalSalaries || 0),
         netProfit: parseFloat(profit.netProfit)
       }))
 
@@ -27,7 +28,7 @@ module.exports = (app) => {
         count: formattedData.length,
         explanation: {
           period: '30 derniers jours',
-          calculation: 'Bénéfice journalier = Recharges du jour - Retraits du jour'
+          calculation: 'Bénéfice journalier = Recharges du jour - Retraits du jour - Salaires revendeurs (10%)'
         }
       })
 

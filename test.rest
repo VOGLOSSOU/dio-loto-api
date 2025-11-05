@@ -7,7 +7,7 @@
 # }  
 
 
-get http://localhost:3000/api/tickets
+get http://localhost:3000/api/tickets?isCart=true
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pbklkIjoxMSwiaWF0IjoxNzYyMTAwMzAyLCJleHAiOjE3NjIxODY3MDJ9.zHzQpCw2czmuXzQ2eZbmCT9ek93BYiZ0-nulRosjmp4
 Content-Type: application/json
 

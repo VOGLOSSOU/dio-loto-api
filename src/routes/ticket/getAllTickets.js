@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 module.exports = (app) => {
   app.get('/api/tickets', async (req, res) => {
     try {
-      const { statut, date, search } = req.query;
+      const { statut, date, search, isCart } = req.query;
 
       // Construction dynamique des filtres
       const where = {
@@ -14,6 +14,11 @@ module.exports = (app) => {
       // Filtre par statut
       if (statut) {
         where[Op.and].push({ statut });
+      }
+
+      // Filtre par statut panier
+      if (isCart !== undefined) {
+        where[Op.and].push({ isCart: isCart === 'true' });
       }
 
       // Filtre par date (ex: "2025-07-09")

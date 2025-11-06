@@ -31,7 +31,8 @@ module.exports = (app) => {
         reseauMobile: retrait.reseauMobile,
         phoneNumber: retrait.phoneNumber,
         montant: retrait.montant,
-        statut: retrait.statut
+        statut: retrait.statut,
+        originalCreatedAt: retrait.created // Date originale de création du retrait
       }, { transaction: t });
 
       // Suppression du retrait

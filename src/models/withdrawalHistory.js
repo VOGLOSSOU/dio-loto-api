@@ -95,6 +95,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 'traité',
       comment: 'Statut au moment de l\'archivage (toujours traité)'
     },
+    originalCreatedAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      comment: 'Date originale de création du retrait (avant archivage)'
+    },
     deletedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

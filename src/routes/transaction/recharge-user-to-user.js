@@ -13,9 +13,9 @@ module.exports = (app) => {
       }
 
       // Vérification du montant
-      if (montant < 500 || montant > 500000) {
-        return res.status(400).json({ message: "Le montant de la recharge doit être compris entre 500 et 500 000." });
-      }
+      // if (montant < 500 || montant > 500000) {
+      //   return res.status(400).json({ message: "Le montant de la recharge doit être compris entre 500 et 500 000." });
+      // }
 
       // Vérification du gain suffisant
       if (user.gain < montant) {

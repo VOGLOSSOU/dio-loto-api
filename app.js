@@ -102,6 +102,7 @@ require("./src/routes/withdrawals/getAllWithdrawals")(app)
 require("./src/routes/withdrawals/markWithdrawalProcessed")(app)
 require("./src/routes/withdrawals/withdrawalsSummary")(app) // Résumé des retraits
 require("./src/routes/withdrawals/deleteprocessedwithdrawals")(app) // Suppression des retraits traités
+require("./src/routes/withdrawals/getArchivedWithdrawals")(app) // Historique des retraits supprimés
 
 // : Results
 require("./src/routes/results/createResult")(app)

@@ -1,4 +1,4 @@
-// routes/dashboard.js
+// routes/dashboard/dashboard.js
 
 const { Op } = require('sequelize');
 const {
@@ -6,7 +6,8 @@ const {
   ResellerToUserTransaction,
   Ticket,
   User,
-  Withdrawal
+  Withdrawal,
+  WithdrawalHistory
 } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
 
@@ -46,10 +47,12 @@ module.exports = (app) => {
         }
       });
 
-      // 4) Gain global des utilisateurs (somme des retraits traités)
-      const totalUserGains = await Withdrawal.sum('montant', {
+      // 4) Gain global des utilisateurs (somme des retraits traités + historique)
+      const totalProcessedWithdrawals = await Withdrawal.sum('montant', {
         where: { statut: 'traité' }
       });
+      const totalArchivedWithdrawals = await WithdrawalHistory.sum('montant');
+      const totalUserGains = (totalProcessedWithdrawals || 0) + (totalArchivedWithdrawals || 0);
 
       // 5) Nombre de tickets joués aujourd'hui
       const ticketsPlayedToday = await Ticket.count({

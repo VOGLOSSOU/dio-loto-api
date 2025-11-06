@@ -1,3 +1,10 @@
-Voici une liste de tous ce qui reste :
+Pouvoir supprimez un ticket 
+Pouvoir supprimez un retrait traité
 
-- Transformer le site administratif en application qui peut-être mis sur l' accueil du téléphone
+Gardez l' historique des sous qui sortent ( retraits traités ) 
+
+Voir comment le résumé des recharges d' un revendur est chargé selon la date 
+optimiser ça pour obtenir que pour la journée
+
+nombre de prise quand on joue les perms, on va revoir ça
+on va augmenter les nombre de prise à 20 

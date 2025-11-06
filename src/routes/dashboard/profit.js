@@ -1,4 +1,4 @@
-const { ResellerToUserTransaction, Ticket, Withdrawal, sequelize } = require("../../db/sequelize")
+const { ResellerToUserTransaction, Ticket, Withdrawal, WithdrawalHistory, sequelize } = require("../../db/sequelize")
 const { Op, fn, col, literal } = require('sequelize')
 const auth = require("../../auth/auth");
 
@@ -21,19 +21,31 @@ module.exports = (app) => {
       const totalRecharges = parseFloat(totalRechargesResult[0]?.totalRecharges || 0)
       console.log(`💸 Total recharges revendeur→user: ${totalRecharges} FCFA`)
 
-      // 2) Calculer la somme totale des retraits traités (ARGENT SORTANT)
-      const totalWithdrawalsResult = await Withdrawal.findAll({
+      // 2) Calculer la somme totale des retraits traités (actifs + archivés)
+      const activeWithdrawalsResult = await Withdrawal.findAll({
         attributes: [
-          [fn('SUM', col('montant')), 'totalWithdrawals']
+          [fn('SUM', col('montant')), 'totalActive']
         ],
         where: {
-          statut: 'traité' // Uniquement les retraits traités
+          statut: 'traité' // Retraits actifs traités
         },
         raw: true
       })
 
-      const totalWithdrawals = parseFloat(totalWithdrawalsResult[0]?.totalWithdrawals || 0)
-      console.log(`💸 Total retraits traités: ${totalWithdrawals} FCFA`)
+      const archivedWithdrawalsResult = await WithdrawalHistory.findAll({
+        attributes: [
+          [fn('SUM', col('montant')), 'totalArchived']
+        ],
+        raw: true
+      })
+
+      const activeWithdrawals = parseFloat(activeWithdrawalsResult[0]?.totalActive || 0)
+      const archivedWithdrawals = parseFloat(archivedWithdrawalsResult[0]?.totalArchived || 0)
+      const totalWithdrawals = activeWithdrawals + archivedWithdrawals
+
+      console.log(`💸 Retraits actifs traités: ${activeWithdrawals} FCFA`)
+      console.log(`📦 Retraits archivés: ${archivedWithdrawals} FCFA`)
+      console.log(`💸 Total retraits (actifs + archivés): ${totalWithdrawals} FCFA`)
 
       // 3) Calculer les salaires des revendeurs (10% des recharges)
       const totalSalaries = totalRecharges * 0.10
@@ -61,12 +73,12 @@ module.exports = (app) => {
         message: 'Bénéfices calculés avec succès.',
         data: stats,
         explanation: {
-          formula: 'Bénéfice = (Recharges revendeur→user) - (Retraits traités) - (Salaires revendeurs 10%)',
+          formula: 'Bénéfice = (Recharges revendeur→user) - (Retraits traités actifs + archivés) - (Salaires revendeurs 10%)',
           details: {
             recharges: 'Somme des transactions validées de revendeurs vers utilisateurs',
-            withdrawals: 'Somme des retraits ayant le statut "traité"',
+            withdrawals: 'Somme des retraits actifs (statut "traité") + retraits archivés (supprimés mais historisés)',
             salaries: '10% des recharges totales (salaires des revendeurs)',
-            netProfit: 'Recharges totales - Retraits traités - Salaires revendeurs'
+            netProfit: 'Recharges totales - (Retraits actifs + archivés) - Salaires revendeurs'
           }
         }
       })

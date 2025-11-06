@@ -1,8 +1,3 @@
-Pouvoir supprimez un ticket 
-Pouvoir supprimez un retrait traité
-
-Gardez l' historique des sous qui sortent ( retraits traités ) 
-
 Voir comment le résumé des recharges d' un revendur est chargé selon la date 
 optimiser ça pour obtenir que pour la journée
 

@@ -1,4 +1,4 @@
-const { ResellerToUserTransaction, Withdrawal, DailyProfit } = require("../db/sequelize")
+const { ResellerToUserTransaction, Withdrawal, WithdrawalHistory, DailyProfit } = require("../db/sequelize")
 const { Op } = require('sequelize')
 
 /**
@@ -51,22 +51,41 @@ async function calculateDailyProfits(targetDate = null) {
     const totalRecharges = parseFloat(totalRechargesResult[0]?.totalRecharges || 0)
     console.log(`💸 Recharges du jour: ${totalRecharges} FCFA`)
 
-    // 2) Calculer les retraits du jour
-    const totalWithdrawalsResult = await Withdrawal.findAll({
+    // 2) Calculer les retraits du jour (actifs + archivés)
+    // 2a) Retraits encore actifs dans la table principale
+    const activeWithdrawalsResult = await Withdrawal.findAll({
       attributes: [
-        [require('sequelize').fn('SUM', require('sequelize').col('montant')), 'totalWithdrawals']
+        [require('sequelize').fn('SUM', require('sequelize').col('montant')), 'totalActive']
       ],
       where: {
         statut: 'traité',
-        created: {  // Correction: 'created' au lieu de 'createdAt'
+        created: {
           [Op.between]: [startOfDay, endOfDay]
         }
       },
       raw: true
     })
 
-    const totalWithdrawals = parseFloat(totalWithdrawalsResult[0]?.totalWithdrawals || 0)
-    console.log(`💸 Retraits du jour: ${totalWithdrawals} FCFA`)
+    // 2b) Retraits archivés qui ont été créés pendant cette période
+    const archivedWithdrawalsResult = await WithdrawalHistory.findAll({
+      attributes: [
+        [require('sequelize').fn('SUM', require('sequelize').col('montant')), 'totalArchived']
+      ],
+      where: {
+        originalCreatedAt: { // Date de création originale du retrait
+          [Op.between]: [startOfDay, endOfDay]
+        }
+      },
+      raw: true
+    })
+
+    const activeWithdrawals = parseFloat(activeWithdrawalsResult[0]?.totalActive || 0)
+    const archivedWithdrawals = parseFloat(archivedWithdrawalsResult[0]?.totalArchived || 0)
+    const totalWithdrawals = activeWithdrawals + archivedWithdrawals
+
+    console.log(`💸 Retraits actifs du jour: ${activeWithdrawals} FCFA`)
+    console.log(`📦 Retraits archivés du jour: ${archivedWithdrawals} FCFA`)
+    console.log(`💸 Total retraits du jour: ${totalWithdrawals} FCFA`)
 
     // 3) Calculer les salaires des revendeurs (10% des recharges)
     const totalSalaries = totalRecharges * 0.10

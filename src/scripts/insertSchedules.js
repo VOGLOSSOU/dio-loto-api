@@ -22,7 +22,7 @@ const schedules = [
   { nom: 'benin21', startTime: '00:00:00', endTime: '20:55:00', pays: 'Benin', timezone: 'Africa/Porto-Novo' },
   { nom: 'benin00', startTime: '03:00:00', endTime: '23:55:00', pays: 'Benin', timezone: 'Africa/Porto-Novo' },
 
-  { nom: 'togo8', startTime: '11:00:00', endTime: '07:55:00', pays: 'Togo', timezone: 'Africa/Lome' },
+  { nom: 'togo8', startTime: '10:00:00', endTime: '08:55:00', pays: 'Togo', timezone: 'Africa/Lome' },
   { nom: 'togo13', startTime: '16:00:00', endTime: '12:55:00', pays: 'Togo', timezone: 'Africa/Lome' },
   { nom: 'togo18', startTime: '21:00:00', endTime: '17:55:00', pays: 'Togo', timezone: 'Africa/Lome' },
 

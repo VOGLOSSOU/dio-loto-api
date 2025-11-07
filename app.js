@@ -45,6 +45,7 @@ require("./src/routes/admin/createAdmin")(app)
 require("./src/routes/admin/updateAdmin")(app)
 require("./src/routes/admin/deleteAdmin")(app)
 require("./src/routes/admin/login")(app)
+require("./src/routes/admin/fixUserBalances")(app) // Correction d'urgence des soldes
 
 // : Resellers
 require("./src/routes/reseller/createReseller")(app)

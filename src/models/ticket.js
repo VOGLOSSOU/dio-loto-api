@@ -64,6 +64,12 @@ module.exports = (sequelize, DataTypes) => {
     this.setDataValue('gains', JSON.stringify(val));
   }
 },
+userBalanceAtCreation: {
+  type: DataTypes.FLOAT,
+  allowNull: true, // Permet null pour les tickets existants
+  defaultValue: null,
+  comment: 'Solde de l\'utilisateur au moment de la création du ticket'
+},
 isCart: {
   type: DataTypes.BOOLEAN,
   allowNull: false,

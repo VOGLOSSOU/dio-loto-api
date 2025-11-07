@@ -35,6 +35,9 @@ app.patch('/api/tickets/:id/validate', async (req, res) => {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
 
+    // ENREGISTRER LE SOLDE AVANT DÉBIT
+    const userBalanceAtCreation = user.solde;
+
     // Vérifier que l'utilisateur a suffisamment de solde
     if (ticket.mise > user.solde) {
       await t.rollback();
@@ -54,6 +57,7 @@ app.patch('/api/tickets/:id/validate', async (req, res) => {
 
     // Valider le ticket (le sortir du panier)
     ticket.isCart = false;
+    ticket.userBalanceAtCreation = userBalanceAtCreation; // ← SOLDE AVANT DÉBIT
     await ticket.save({ transaction: t });
 
     // Commit de la transaction

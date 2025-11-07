@@ -104,7 +104,10 @@ module.exports = (app) => {
         return res.status(404).json({ message: "Utilisateur non trouvé." });
       }
 
-      // 2b) Vérification du solde SEULEMENT pour création directe
+      // 2b) ENREGISTRER LE SOLDE AVANT TOUT DÉBIT
+      const userBalanceAtCreation = user.solde;
+
+      // 2c) Vérification du solde SEULEMENT pour création directe
       if (!isCartValue) {
         // Mode création directe : solde obligatoire
         if (mise > user.solde) {
@@ -113,13 +116,13 @@ module.exports = (app) => {
             message: "Solde insuffisant pour créer le ticket directement."
           });
         }
-        
+
         // Débiter le solde pour création directe
         user.solde -= mise;
         await user.save({ transaction: t });
       }
 
-      // 2c) On crée le ticket
+      // 2d) On crée le ticket
       const ticket = await Ticket.create({
         uniqueUserId,
         heureJeu: dateJeu,
@@ -129,6 +132,7 @@ module.exports = (app) => {
         formule,
         mise,
         gains: gainsData,
+        userBalanceAtCreation: userBalanceAtCreation, // ← SOLDE AVANT DÉBIT
         isCart: isCartValue
       }, { transaction: t });
 

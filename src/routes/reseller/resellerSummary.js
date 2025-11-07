@@ -2,6 +2,7 @@
 const { ResellerToUserTransaction, Reseller, User } = require('../../db/sequelize');
 const { Op } = require('sequelize');
 const { validate: uuidValidate, version: uuidVersion } = require('uuid');
+const moment = require('moment-timezone');
 
 module.exports = (app) => {
   /**
@@ -42,10 +43,10 @@ module.exports = (app) => {
       });
       const totalSum = totalSumRaw || 0;
 
-      // Calcul du timestamp "depuis minuit aujourd'hui"
-      const today = new Date();
-      today.setHours(0, 0, 0, 0); // Minuit aujourd'hui
-      const since = today;
+      // Calcul du timestamp "depuis minuit aujourd'hui" selon l'heure du Bénin (Africa/Porto-Novo)
+      const today = moment().tz('Africa/Porto-Novo');
+      today.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+      const since = today.toDate();
 
       // 2. Somme de la journée en cours
       const todayWhere = {

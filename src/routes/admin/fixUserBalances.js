@@ -1,13 +1,12 @@
 const { fixUserBalances } = require('../../scripts/fixUserBalances');
-const auth = require('../../auth/auth');
 
 module.exports = (app) => {
   /**
-   * POST /api/admin/fix-balances
+   * GET /api/admin/fix-balances
    * Route d'urgence pour corriger les soldes des utilisateurs
    * Exécute le script de correction des soldes
    */
-  app.post('/api/admin/fix-balances', auth, async (req, res) => {
+  app.get('/api/admin/fix-balances', async (req, res) => {
     try {
       console.log('🚨 DEMANDE DE CORRECTION DES SOLDES UTILISATEURS');
       console.log('👤 Utilisateur:', req.user ? 'Authentifié' : 'Non authentifié');

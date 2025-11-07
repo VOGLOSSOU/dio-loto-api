@@ -20,18 +20,17 @@ async function fixUserBalances() {
     for (const user of users) {
       console.log(`\n🔍 Vérification de ${user.firstName} ${user.lastName} (${user.uniqueUserId})`);
 
-      // Calculer le total des mises pour les tickets validés (non en panier)
-      const ticketsValides = await Ticket.findAll({
+      // Calculer le total des mises pour TOUS les tickets NON en panier (peu importe le statut)
+      const ticketsPayants = await Ticket.findAll({
         where: {
           uniqueUserId: user.uniqueUserId,
-          isCart: false, // Uniquement les tickets validés
-          statut: { [Op.ne]: 'invalidé' } // Exclure les tickets invalidés
+          isCart: false // Uniquement les tickets sortis du panier (payés)
         },
         attributes: ['mise']
       });
 
-      const totalMises = ticketsValides.reduce((sum, ticket) => sum + ticket.mise, 0);
-      console.log(`   🎫 ${ticketsValides.length} tickets validés = ${totalMises} FCFA dépensés`);
+      const totalMises = ticketsPayants.reduce((sum, ticket) => sum + ticket.mise, 0);
+      console.log(`   🎫 ${ticketsPayants.length} tickets payants = ${totalMises} FCFA dépensés`);
 
       // SI la somme des mises dépasse le solde actuel, débiter complètement
       const soldeActuel = user.solde;

@@ -10,6 +10,7 @@ const {
   WithdrawalHistory
 } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
+const moment = require('moment-timezone');
 
 module.exports = (app) => {
   /**
@@ -31,18 +32,18 @@ module.exports = (app) => {
       });
       const totalBalance = (totalInjected || 0) - (totalDistributed || 0);
 
-      // Bornes de la journée en cours
-      const startOfDay = new Date();
-      startOfDay.setHours(0, 0, 0, 0);
-      const endOfDay = new Date();
-      endOfDay.setHours(23, 59, 59, 999);
+      // Bornes de la journée en cours selon l'heure du Bénin (Africa/Porto-Novo)
+      const startOfDay = moment().tz('Africa/Porto-Novo');
+      startOfDay.set({ hour: 0, minute: 0, second: 0, millisecond: 0 });
+      const endOfDay = moment().tz('Africa/Porto-Novo');
+      endOfDay.set({ hour: 23, minute: 59, second: 59, millisecond: 999 });
 
       // 3) Somme des recharges validées aujourd'hui
       const todaysRecharges = await ResellerToUserTransaction.sum('money', {
         where: {
           status: 'validé',
           created: {
-            [Op.between]: [startOfDay, endOfDay]
+            [Op.between]: [startOfDay.toDate(), endOfDay.toDate()]
           }
         }
       });
@@ -58,7 +59,7 @@ module.exports = (app) => {
       const ticketsPlayedToday = await Ticket.count({
         where: {
           created: {
-            [Op.between]: [startOfDay, endOfDay]
+            [Op.between]: [startOfDay.toDate(), endOfDay.toDate()]
           }
         }
       });

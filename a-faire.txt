@@ -1,5 +1,4 @@
-Voir comment le résumé des recharges d' un revendur est chargé selon la date 
-optimiser ça pour obtenir que pour la journée
+
 
 nombre de prise quand on joue les perms, on va revoir ça
 on va augmenter les nombre de prise à 20 

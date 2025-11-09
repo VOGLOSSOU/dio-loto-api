@@ -1,4 +1,14 @@
+D' ici Lundi 10 / 11 / 2025 de 00h 00 à 23h 
 
-
-nombre de prise quand on joue les perms, on va revoir ça
-on va augmenter les nombre de prise à 20 
+On compte lancer un bonus sur toutes les  premières recharges pour tout utilisateur.
+Voilà comment ça va se passer :
+Tout client qui sollicite une recharge se verra offert un bonus de 50% sur cette recharge. 
+Le bonus sera appliqué uniquement à la première recharge de tout les utilisateurs dans 
+la journée du Lundi 10 / 11 / 2025 de 00h 00 à 23h 59. 
+A la seconde recharge, le bonus ne s'.applique plus.
+Par exemple, dès qu'ils sonne 00h 00 du Lundi 10 Novembre 2025 ( la journée qui suivra celle ci ) ,
+ un user avec un identifiant xhh77jh qui recharge 1000 se fera offert 1500 à la place : 1000 pour sa recharge normale, puis 500 en guise de bonus. 
+Lorsque ce même utilisateur voudra recharger une seconde fois dans cette journée, le bonus ne va plus s'appliquer.  voilà. Maintenant, lorsque la recharge avec le bénéfice aura marché, 
+on va créditer le solde utilisateur des 1000 qu'il a rechargé et ensuite afficher un autre solde appelé bonus qui sera 500 F , et qu'il verra bien sur son tableau de bord.
+Lorsqu' il va vouloir jouer ou faire des opérations, c'est du solde bénéfice qu'on va débiter. On va s' assurer que le solde bonus soit d'abord à 0 avant de toucher à son solde utilisateur.
+Le lundi 10 / 11 / 2025, tous les soldes bénéfices seront remis à 0F ( même pour ceux qui n'ont pas fini d'utiliser ça ) et le système continue comme il fonctionnait auparavant. 

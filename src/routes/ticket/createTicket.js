@@ -192,7 +192,23 @@ module.exports = (app) => {
       return res.status(201).json(response);
 
     } catch (error) {
-      await t.rollback();
+      // Vérifier si la transaction est déjà committée
+      if (t.finished === 'commit') {
+        console.error('Transaction déjà committée - pas de rollback nécessaire');
+        return res.status(500).json({
+          message: 'Erreur interne du serveur.',
+          error: error.message,
+          details: 'Transaction déjà finalisée'
+        });
+      }
+
+      // Rollback seulement si la transaction n'est pas encore finalisée
+      try {
+        await t.rollback();
+      } catch (rollbackError) {
+        console.error('Erreur lors du rollback:', rollbackError.message);
+      }
+
       console.error('Erreur lors de l\'enregistrement du ticket :', error);
       console.error('Stack trace:', error.stack);
       console.error('Données reçues:', req.body);

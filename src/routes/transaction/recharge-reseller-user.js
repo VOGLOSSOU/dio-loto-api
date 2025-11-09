@@ -1,5 +1,7 @@
 const { Reseller, User, ResellerToUserTransaction, Notification } = require('../../db/sequelize');
 const auth = require('../../auth/auth');
+const moment = require('moment-timezone');
+const { Op } = require('sequelize');
 
 module.exports = (app) => {
   app.post('/api/transactions/recharge-reseller-user', auth, async (req, res) => {
@@ -45,15 +47,43 @@ module.exports = (app) => {
         return res.status(400).json({ message: "Le solde du revendeur est insuffisant pour effectuer cette opération." });
       }
 
-      // Création de la transaction (UUID uniquement)
-      const transaction = await ResellerToUserTransaction.create({
-  sender: reseller.uniqueResellerId,
-  receiver: user.uniqueUserId,
-  money: montant,
-  date: new Date(),
-  status: 'validé',
-});
+      // VÉRIFICATION BONUS : Seulement lundi 10 novembre 2025 (heure Bénin)
+      const todayBenin = moment().tz('Africa/Porto-Novo');
+      const isBonusDay = todayBenin.isSame('2025-11-10', 'day');
 
+      let bonusAmount = 0;
+      let isFirstRechargeToday = false;
+
+      if (isBonusDay) {
+        // Vérifier si c'est la première recharge du jour pour cet utilisateur
+        const todayStart = todayBenin.clone().startOf('day');
+        const todayEnd = todayBenin.clone().endOf('day');
+
+        const todaysRecharges = await ResellerToUserTransaction.count({
+          where: {
+            receiver: user.uniqueUserId,
+            status: 'validé',
+            created: {
+              [Op.between]: [todayStart.toDate(), todayEnd.toDate()]
+            }
+          }
+        });
+
+        if (todaysRecharges === 0) {
+          // Première recharge du jour → Appliquer bonus 50%
+          bonusAmount = Math.round(montant * 0.5 * 100) / 100; // 50% arrondi à 2 décimales
+          isFirstRechargeToday = true;
+        }
+      }
+
+      // Création de la transaction
+      const transaction = await ResellerToUserTransaction.create({
+        sender: reseller.uniqueResellerId,
+        receiver: user.uniqueUserId,
+        money: montant,
+        date: new Date(),
+        status: 'validé',
+      });
 
       // Mise à jour du soldeRevendeur
       reseller.soldeRevendeur -= montant;
@@ -61,20 +91,46 @@ module.exports = (app) => {
 
       // Mise à jour du solde de l'utilisateur
       user.solde += montant;
+      if (bonusAmount > 0) {
+        user.bonus += bonusAmount;
+      }
       await user.save();
 
       // Création de la notification pour l'utilisateur
+      let notificationMessage = '';
+      if (bonusAmount > 0) {
+        // Notification avec bonus
+        notificationMessage = `🎉 BONUS SPÉCIAL ! Vous venez de recevoir ${bonusAmount} FCFA de bonus sur votre recharge de ${montant} FCFA. Total crédité : ${montant + bonusAmount} FCFA. Utilisez votre bonus complètement avant minuit, sinon il disparaîtra ! Nouveau solde : ${user.solde} FCFA, Bonus : ${user.bonus} FCFA.`;
+      } else {
+        // Notification normale
+        notificationMessage = `Votre compte a été rechargé de ${montant} FCFA par le revendeur ${reseller.user?.firstName || 'N/A'} ${reseller.user?.lastName || 'N/A'}. Nouveau solde : ${user.solde} FCFA.`;
+      }
+
       await Notification.create({
         userId: user.uniqueUserId,
-        type: 'recharge_reseller',
-        title: 'Recharge effectuée par un revendeur',
-        message: `Votre compte a été rechargé de ${montant} FCFA par le revendeur ${reseller.user?.firstName || 'N/A'} ${reseller.user?.lastName || 'N/A'}. Nouveau solde : ${user.solde} FCFA.`
+        type: bonusAmount > 0 ? 'recharge_bonus' : 'recharge_reseller',
+        title: bonusAmount > 0 ? '🎉 Recharge avec Bonus Spécial !' : 'Recharge effectuée par un revendeur',
+        message: notificationMessage
       });
 
-      res.status(201).json({
-        message: `L'utilisateur ${user.lastName} ${user.firstName} a été rechargé avec succès.`,
-        transaction
-      });
+      // Réponse avec infos bonus si applicable
+      const response = {
+        message: bonusAmount > 0
+          ? `🎉 BONUS SPÉCIAL ! L'utilisateur ${user.lastName} ${user.firstName} a été rechargé de ${montant} FCFA + ${bonusAmount} FCFA de bonus !`
+          : `L'utilisateur ${user.lastName} ${user.firstName} a été rechargé avec succès.`,
+        transaction,
+        bonusApplied: bonusAmount > 0,
+        bonusDetails: bonusAmount > 0 ? {
+          montantRecharge: montant,
+          bonusRecu: bonusAmount,
+          totalCredite: montant + bonusAmount,
+          nouveauSolde: user.solde,
+          nouveauBonus: user.bonus,
+          isFirstRechargeToday
+        } : null
+      };
+
+      res.status(201).json(response);
     } catch (error) {
       console.error('Erreur lors de la recharge :', error);
       res.status(500).json({ message: 'Une erreur est survenue.', error });

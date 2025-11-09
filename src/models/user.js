@@ -86,18 +86,32 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     gain: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-      defaultValue: 0,
-      validate: {
-        isFloat: { msg: 'Le gain doit être un nombre valide.' },
-        min: {
-          args: [0],
-          msg: 'Le gain ne peut pas être négatif.'
-        },
-        notNull: { msg: 'Le gain est requis.' }
-      }
-    }
+ type: DataTypes.FLOAT,
+ allowNull: false,
+ defaultValue: 0,
+ validate: {
+   isFloat: { msg: 'Le gain doit être un nombre valide.' },
+   min: {
+     args: [0],
+     msg: 'Le gain ne peut pas être négatif.'
+   },
+   notNull: { msg: 'Le gain est requis.' }
+ }
+},
+bonus: {
+ type: DataTypes.FLOAT,
+ allowNull: false,
+ defaultValue: 0,
+ comment: 'Solde bonus temporaire (campagne promotionnelle 50%)',
+ validate: {
+   isFloat: { msg: 'Le bonus doit être un nombre valide.' },
+   min: {
+     args: [0],
+     msg: 'Le bonus ne peut pas être négatif.'
+   },
+   notNull: { msg: 'Le bonus est requis.' }
+ }
+}
   }, {
     timestamps: true,
     createdAt: 'created',

@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     type: {
-      type: DataTypes.ENUM('recharge_admin', 'recharge_reseller', 'recharge_user_to_user', 'gain_attribue', 'autre'),
+      type: DataTypes.ENUM('recharge_admin', 'recharge_reseller', 'recharge_user_to_user', 'gain_attribue', 'recharge_bonus', 'autre'),
       allowNull: false
     },
     title: {

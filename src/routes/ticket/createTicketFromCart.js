@@ -38,22 +38,51 @@ app.patch('/api/tickets/:id/validate', async (req, res) => {
     // ENREGISTRER LE SOLDE AVANT DÉBIT
     const userBalanceAtCreation = user.solde;
 
-    // Vérifier que l'utilisateur a suffisamment de solde
-    if (ticket.mise > user.solde) {
+    // Vérifier que l'utilisateur a suffisamment de solde (bonus + solde normal)
+    const totalAvailable = user.bonus + user.solde;
+    if (ticket.mise > totalAvailable) {
       await t.rollback();
       return res.status(400).json({
         message: "Solde insuffisant pour valider ce ticket.",
         ticketId: ticket.id,
         requiredAmount: ticket.mise,
-        currentBalance: user.solde,
-        missingAmount: ticket.mise - user.solde,
+        bonusDisponible: user.bonus,
+        soldeDisponible: user.solde,
+        totalDisponible: totalAvailable,
+        missingAmount: ticket.mise - totalAvailable,
         suggestion: "Rechargez votre compte pour valider ce ticket."
       });
     }
 
-    // Débiter le solde de l'utilisateur
-    user.solde -= ticket.mise;
+    // Logique de débit : bonus d'abord, puis solde normal
+    let remainingAmount = ticket.mise;
+    let bonusUsed = 0;
+    let soldeUsed = 0;
+
+    // 1. Utiliser le bonus en priorité
+    if (user.bonus > 0) {
+      if (user.bonus >= remainingAmount) {
+        // Bonus suffit
+        bonusUsed = remainingAmount;
+        user.bonus -= remainingAmount;
+        remainingAmount = 0;
+      } else {
+        // Utiliser tout le bonus et compléter avec solde
+        bonusUsed = user.bonus;
+        remainingAmount -= user.bonus;
+        user.bonus = 0;
+      }
+    }
+
+    // 2. Compléter avec le solde normal si nécessaire
+    if (remainingAmount > 0) {
+      soldeUsed = remainingAmount;
+      user.solde -= remainingAmount;
+    }
+
     await user.save({ transaction: t });
+
+    console.log(`💰 Validation panier - Bonus utilisé: ${bonusUsed} FCFA, Solde utilisé: ${soldeUsed} FCFA`);
 
     // Valider le ticket (le sortir du panier)
     ticket.isCart = false;
@@ -73,7 +102,10 @@ app.patch('/api/tickets/:id/validate', async (req, res) => {
         isCart: ticket.isCart,
         statut: ticket.statut
       },
-      newSolde: user.solde
+      newSolde: user.solde,
+      newBonus: user.bonus,
+      bonusUsed: bonusUsed || 0,
+      soldeUsed: soldeUsed || 0
     });
 
   } catch (error) {

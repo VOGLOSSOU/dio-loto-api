@@ -110,16 +110,45 @@ module.exports = (app) => {
       // 2c) Vérification du solde SEULEMENT pour création directe
       if (!isCartValue) {
         // Mode création directe : solde obligatoire
-        if (mise > user.solde) {
-          await t.rollback();
-          return res.status(400).json({
-            message: "Solde insuffisant pour créer le ticket directement."
-          });
+        // Logique de débit : bonus d'abord, puis solde normal
+        let remainingAmount = mise;
+        let bonusUsed = 0;
+        let soldeUsed = 0;
+
+        // 1. Utiliser le bonus en priorité
+        if (user.bonus > 0) {
+          if (user.bonus >= remainingAmount) {
+            // Bonus suffit
+            bonusUsed = remainingAmount;
+            user.bonus -= remainingAmount;
+            remainingAmount = 0;
+          } else {
+            // Utiliser tout le bonus et compléter avec solde
+            bonusUsed = user.bonus;
+            remainingAmount -= user.bonus;
+            user.bonus = 0;
+          }
         }
 
-        // Débiter le solde pour création directe
-        user.solde -= mise;
+        // 2. Compléter avec le solde normal si nécessaire
+        if (remainingAmount > 0) {
+          if (remainingAmount > user.solde) {
+            await t.rollback();
+            return res.status(400).json({
+              message: "Solde insuffisant pour créer le ticket directement.",
+              bonusDisponible: user.bonus,
+              soldeDisponible: user.solde,
+              montantRequis: remainingAmount,
+              totalDisponible: user.bonus + user.solde
+            });
+          }
+          soldeUsed = remainingAmount;
+          user.solde -= remainingAmount;
+        }
+
         await user.save({ transaction: t });
+
+        console.log(`💰 Débit effectué - Bonus utilisé: ${bonusUsed} FCFA, Solde utilisé: ${soldeUsed} FCFA`);
       }
 
       // 2d) On crée le ticket
@@ -152,9 +181,12 @@ module.exports = (app) => {
         }
       };
 
-      // Ajouter le nouveau solde seulement si on a débité
+      // Ajouter les nouveaux soldes seulement si on a débité
       if (!isCartValue) {
         response.newSolde = user.solde;
+        response.newBonus = user.bonus;
+        response.bonusUsed = bonusUsed || 0;
+        response.soldeUsed = soldeUsed || 0;
       }
 
       return res.status(201).json(response);

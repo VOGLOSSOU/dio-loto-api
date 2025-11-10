@@ -100,9 +100,9 @@ function validateSingleTicket(ticket, winningNumbers, winningNumbers2, game) {
     console.log(`🎲 Numéros gagnants Machine: [${winningNumbers2.join(", ")}]`)
   }
 
-  // Gestion de la double chance
-  if (game.doubleChance && winningNumbers2) {
-    console.log(`🔄 Mode double chance activé - Test sur Win ET Machine`)
+  // Gestion de la double chance - CORRIGÉ : Seulement pour les formules DoubleChance
+  if (game.doubleChance && winningNumbers2 && formule.includes('DoubleChance')) {
+    console.log(`🔄 Mode double chance activé - Test sur Win OU Machine (formule: ${formule})`)
 
     const winInWin = validateByFormula(formule, playedNumbers, winningNumbers, typeJeu)
     const winInMachine = validateByFormula(formule, playedNumbers, winningNumbers2, typeJeu)

@@ -192,13 +192,15 @@ module.exports = (app) => {
       return res.status(201).json(response);
 
     } catch (error) {
-      // Vérifier si la transaction est déjà committée
+      // SI LA TRANSACTION EST DÉJÀ COMMITTÉE = SUCCÈS MALGRÉ L'ERREUR
       if (t.finished === 'commit') {
-        console.error('Transaction déjà committée - pas de rollback nécessaire');
-        return res.status(500).json({
-          message: 'Erreur interne du serveur.',
-          error: error.message,
-          details: 'Transaction déjà finalisée'
+        console.warn('⚠️ Erreur après commit réussi - ticket créé malgré l\'erreur');
+        console.error('Erreur post-commit:', error.message);
+        // NE PAS RETOURNER D'ERREUR 500 !
+        return res.status(201).json({
+          message: 'Ticket créé avec succès malgré une erreur mineure.',
+          warning: 'Une erreur mineure est survenue après la création.',
+          ticketCreated: true
         });
       }
 

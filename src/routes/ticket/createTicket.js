@@ -198,7 +198,7 @@ module.exports = (app) => {
         console.error('Erreur post-commit:', error.message);
         // NE PAS RETOURNER D'ERREUR 500 !
         return res.status(201).json({
-          message: 'Ticket créé avec succès malgré une erreur mineure.',
+          message: 'Ticket créé avec succès.',
           warning: 'Une erreur mineure est survenue après la création.',
           ticketCreated: true
         });

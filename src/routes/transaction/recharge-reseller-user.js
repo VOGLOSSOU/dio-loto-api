@@ -47,9 +47,9 @@ module.exports = (app) => {
         return res.status(400).json({ message: "Le solde du revendeur est insuffisant pour effectuer cette opération." });
       }
 
-      // VÉRIFICATION BONUS : Seulement lundi 10 novembre 2025 (heure Bénin)
+      // VÉRIFICATION BONUS : Seulement lundi 17 août 2025 (heure Bénin)
       const todayBenin = moment().tz('Africa/Porto-Novo');
-      const isBonusDay = todayBenin.isSame('2025-11-10', 'day');
+      const isBonusDay = todayBenin.isSame('2025-08-17', 'day');
 
       let bonusAmount = 0;
       let isFirstRechargeToday = false;
@@ -70,8 +70,8 @@ module.exports = (app) => {
         });
 
         if (todaysRecharges === 0) {
-          // Première recharge du jour → Appliquer bonus 50%
-          bonusAmount = Math.round(montant * 0.5 * 100) / 100; // 50% arrondi à 2 décimales
+          // Première recharge du jour → Appliquer bonus 10%
+          bonusAmount = Math.round(montant * 0.1 * 100) / 100; // 10% arrondi à 2 décimales
           isFirstRechargeToday = true;
         }
       }

@@ -1,9 +1,8 @@
 const { Ticket, User, Notification, sequelize } = require('../../db/sequelize');
 
-// Liste des jeux avec répartition 60% solde / 40% gain
+// Liste des jeux Côte d'Ivoire à traitement spécial
 const specialCIVGames = [
-  'coteivoire7', 'coteivoire21', 'coteivoire22', 'coteivoire23', 'coteivoire1', 'coteivoire3', 'coteivoire8',
-  'togo9', 'ghana20'  // Ajout Togo et Ghana pour répartition 60/40
+  'coteivoire7', 'coteivoire21', 'coteivoire22', 'coteivoire23', 'coteivoire1', 'coteivoire3', 'coteivoire8'
 ];
 
 module.exports = (app) => {

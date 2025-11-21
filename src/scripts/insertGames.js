@@ -32,7 +32,7 @@ const games = [
   { nom: 'coteivoire23', description: 'Disponible dès 02h00 et devient indisponible à partir de 22h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire1', description: 'Disponible dès 04h00 et devient indisponible à partir de 00h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire3', description: 'Disponible dès 06h00 et devient indisponible à partir de 02h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
-  { nom: 'ghana20', description: 'Disponible dès 23h00 et devient indisponible à partir de 19h55.', pays: 'Ghana', doubleChance: true },
+  { nom: 'ghana20', description: 'Disponible dès 22h00 et devient indisponible à partir de 18h55.', pays: 'Ghana', doubleChance: true },
   { nom: 'niger15', description: 'Disponible dès 18h00 et devient indisponible à partir de 14h55.', pays: 'Niger', doubleChance: false },
 ];
 

@@ -37,7 +37,7 @@ const schedules = [
   { nom: 'coteivoire1',  startTime: '04:00:00', endTime: '00:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
   { nom: 'coteivoire3',  startTime: '06:00:00', endTime: '02:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
 
-  { nom: 'ghana20', startTime: '23:00:00', endTime: '19:55:00', pays: 'Ghana', timezone: 'Africa/Accra' },
+  { nom: 'ghana20', startTime: '22:00:00', endTime: '18:55:00', pays: 'Ghana', timezone: 'Africa/Accra' },
   { nom: 'niger15', startTime: '18:00:00', endTime: '14:55:00', pays: 'Niger', timezone: 'Africa/Niamey' },
 ];
 

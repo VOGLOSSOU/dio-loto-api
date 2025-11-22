@@ -1,4 +1,4 @@
-const { Ticket, User, sequelize } = require('../../db/sequelize');
+const { Ticket, User, Game, sequelize } = require('../../db/sequelize');
 
 module.exports = (app) => {
   app.post('/api/tickets', async (req, res) => {
@@ -19,6 +19,19 @@ module.exports = (app) => {
     // 1) Vérification rapide des champs (heureJeu n'est plus requis)
     if (!uniqueUserId || !nomJeu || !typeJeu || !numerosJoues || !formule || miseRaw == null || gainRaw == null) {
       return res.status(400).json({ message: 'Tous les champs sont requis.' });
+    }
+
+    // 2) Vérifier que le jeu existe et est ouvert
+    const game = await Game.findOne({ where: { nom: nomJeu } });
+    if (!game) {
+      return res.status(404).json({ message: "Jeu non trouvé." });
+    }
+    if (game.statut !== 'ouvert') {
+      return res.status(400).json({
+        message: "Le jeu n'est pas disponible pour le moment.",
+        gameStatus: game.statut,
+        gameName: game.nom
+      });
     }
 
     const mise = Number(miseRaw);

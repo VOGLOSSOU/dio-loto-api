@@ -1,6 +1,6 @@
 const { Game } = require('../../db/sequelize');
 
-const validPays = ['Benin', 'Côte d\'Ivoire', 'Ghana', 'Niger', 'Togo'];
+const validPays = ['Benin', 'Côte d\'Ivoire', 'Ghana', 'France', 'Togo'];
 
 module.exports = (app) => {
   app.get('/api/games/available/:pays', async (req, res) => {

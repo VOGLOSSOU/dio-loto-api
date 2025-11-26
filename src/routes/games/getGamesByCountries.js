@@ -6,7 +6,7 @@ module.exports = (app) => {
       const { pays } = req.params;
 
       // Vérifier si le pays est valide
-      const validPays = ['Benin', 'Côte d\'Ivoire', 'Ghana', 'Niger', 'Togo'];
+      const validPays = ['Benin', 'Côte d\'Ivoire', 'Ghana', 'France', 'Togo'];
       if (!validPays.includes(pays)) {
         return res.status(400).json({ message: 'Pays invalide.' });
       }

@@ -16,7 +16,7 @@ async function createWithdrawalHistoryTable() {
         uniqueId VARCHAR(255) NOT NULL COMMENT 'UUID unique du retrait',
         uniqueUserId VARCHAR(255) NOT NULL,
         fullName VARCHAR(100) NOT NULL,
-        pays ENUM('Benin', 'Togo', 'Ghana', 'Niger', 'Côte d\\'Ivoire') NOT NULL,
+        pays ENUM('Benin', 'Togo', 'Ghana', 'France', 'Côte d\\'Ivoire') NOT NULL,
         reseauMobile VARCHAR(50) NOT NULL,
         phoneNumber VARCHAR(20) NOT NULL,
         montant FLOAT NOT NULL,

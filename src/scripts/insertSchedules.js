@@ -38,7 +38,7 @@ const schedules = [
   { nom: 'coteivoire3',  startTime: '06:00:00', endTime: '02:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
 
   { nom: 'ghana20', startTime: '22:00:00', endTime: '18:55:00', pays: 'Ghana', timezone: 'Africa/Accra' },
-  { nom: 'niger15', startTime: '18:00:00', endTime: '14:55:00', pays: 'Niger', timezone: 'Africa/Niamey' },
+  { nom: 'france15', startTime: '18:00:00', endTime: '14:55:00', pays: 'France', timezone: 'Africa/Niamey' },
 ];
 
 // Fonction pour insérer les horaires

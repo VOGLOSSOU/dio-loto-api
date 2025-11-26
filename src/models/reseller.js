@@ -48,12 +48,12 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     pays: {
-      type: DataTypes.ENUM('Benin', 'Côte d\'Ivoire', 'Ghana', 'Niger', 'Togo'),
+      type: DataTypes.ENUM('Benin', 'Côte d\'Ivoire', 'Ghana', 'France', 'Togo'),
       allowNull: false,
       validate: {
         isIn: {
-          args: [['Benin', 'Côte d\'Ivoire', 'Ghana', 'Niger', 'Togo']],
-          msg: 'Le pays doit être l’un des suivants : Benin, Côte d\'Ivoire, Ghana, Niger, Togo.'
+          args: [['Benin', 'Côte d\'Ivoire', 'Ghana', 'France', 'Togo']],
+          msg: 'Le pays doit être l’un des suivants : Benin, Côte d\'Ivoire, Ghana, France, Togo.'
         },
         notNull: { msg: 'Le pays est requis.' }
       }

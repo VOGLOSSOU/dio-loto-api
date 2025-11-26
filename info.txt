@@ -19,7 +19,7 @@
 - gain
 - soldeRevendeur
 - whatsapp
-- pays ( Benin , Côte d' Ivoire, Ghana, Niger, Togo )
+- pays ( Benin , Côte d' Ivoire, Ghana, France, Togo )
 - status
 
 3 - admin :
@@ -86,8 +86,8 @@ Voici le noms des jeux :
 Bénin : benin11, benin14, benin18, benin21, benin00, 
 Togo : togo8, togo13, togo18,
 Côte d' Ivoire : coteivoire7, coteivoire10, coteivoire13, coteivoire16, coteivoire21, coteivoire23, coteivoire1, coteivoire3, 
-Ghana : ghana20, 
-Niger :  niger15
+Ghana : ghana20,
+France :  france15
 
 
 

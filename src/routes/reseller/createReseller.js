@@ -38,7 +38,7 @@ module.exports = (app) => {
       }
 
       // Vérification du pays
-      const validCountries = ['Benin', 'Côte d\'Ivoire', 'Ghana', 'Niger', 'Togo'];
+      const validCountries = ['Benin', 'Côte d\'Ivoire', 'Ghana', 'France', 'Togo'];
       if (!validCountries.includes(pays)) {
         return res.status(400).json({ message: `Le pays doit être l’un des suivants : ${validCountries.join(', ')}.` });
       }

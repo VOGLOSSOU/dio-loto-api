@@ -49,7 +49,7 @@ module.exports = (app) => {
 
       // VÉRIFICATION BONUS : Seulement lundi 24 novembre 2025 (heure Bénin)
       const todayBenin = moment().tz('Africa/Porto-Novo');
-      const isBonusDay = todayBenin.isSame('2025-11-24', 'day');
+      const isBonusDay = todayBenin.isSame('2025-11-30', 'day');
 
       let bonusAmount = 0;
       let isFirstRechargeToday = false;

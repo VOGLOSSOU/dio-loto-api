@@ -11,7 +11,7 @@ async function resetAllBonuses() {
 
     // Vérifier qu'on est bien le jour de bonus (lundi 24 novembre 2025)
     const todayBenin = moment().tz('Africa/Porto-Novo');
-    const isBonusDay = todayBenin.isSame('2025-11-24', 'day');
+    const isBonusDay = todayBenin.isSame('2025-11-30', 'day');
 
     if (!isBonusDay) {
       console.log('📅 Pas le jour de bonus - Aucun reset nécessaire');

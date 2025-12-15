@@ -41,3 +41,18 @@ Ce guide explique comment programmer une journée de bonus pour les recharges re
 - Date : `'2025-12-14'`
 - Jour : Samedi
 - Bonus : 10% sur première recharge du jour
+
+## Remettre tous les bonus à 0 manuellement
+
+Si vous voulez remettre tous les soldes bonus des utilisateurs à 0 (par exemple, après une journée de bonus), utilisez cette requête SQL dans phpMyAdmin :
+
+```sql
+UPDATE Users SET bonus = 0 WHERE bonus > 0;
+```
+
+Cette requête :
+- Met à jour la table `Users`
+- Remet le champ `bonus` à 0 pour tous les utilisateurs ayant bonus > 0
+- Affiche le nombre de lignes affectées
+
+**Note :** Utilisez `WHERE bonus > 0` pour ne toucher que ceux qui ont des bonus, ou `UPDATE Users SET bonus = 0;` pour tous les utilisateurs.

@@ -1,4 +1,4 @@
-const { WithdrawalHistory } = require('../../db/sequelize');
+const { WithdrawalHistory, User } = require('../../db/sequelize');
 const { Op } = require('sequelize');
 const auth = require('../../auth/auth');
 
@@ -15,6 +15,12 @@ module.exports = (app) => {
       // Récupérer tous les retraits archivés
       const archivedWithdrawals = await WithdrawalHistory.findAll({
         order: [['deletedAt', 'DESC']], // Du plus récent au plus ancien
+        include: [{
+          model: User,
+          as: 'user',
+          attributes: ['email'],
+          required: false
+        }],
         attributes: [
           'id',
           'originalId',
@@ -39,6 +45,7 @@ module.exports = (app) => {
         uniqueId: withdrawal.uniqueId,
         uniqueUserId: withdrawal.uniqueUserId,
         fullName: withdrawal.fullName,
+        email: withdrawal.user?.email || null, // Email de l'utilisateur
         pays: withdrawal.pays,
         reseauMobile: withdrawal.reseauMobile,
         phoneNumber: withdrawal.phoneNumber,

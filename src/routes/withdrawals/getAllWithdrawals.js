@@ -1,6 +1,6 @@
 // routes/getAllWithdrawals.js
 
-const { Withdrawal } = require('../../db/sequelize');
+const { Withdrawal, User } = require('../../db/sequelize');
 
 module.exports = (app) => {
   /**
@@ -39,15 +39,24 @@ module.exports = (app) => {
         }
       }
 
-      // 2) Requête Sequelize avec conditions dynamiques
-      const withdrawals = await Withdrawal.findAll({ where });
+      // 2) Requête Sequelize avec conditions dynamiques et inclusion de l'utilisateur
+      const withdrawals = await Withdrawal.findAll({
+        where,
+        include: [{
+          model: User,
+          as: 'user',
+          attributes: ['email'],
+          required: false // LEFT JOIN
+        }]
+      });
 
       // 3) On mappe le résultat pour ne renvoyer que les champs utiles
       const result = withdrawals.map(w => ({
         id: w.id,
         uniqueId: w.uniqueId,
         uniqueUserId: w.uniqueUserId,
-        fullName: w.fullName,       
+        fullName: w.fullName,
+        email: w.user?.email || null, // Email de l'utilisateur
         pays: w.pays,
         reseauMobile: w.reseauMobile,
         phoneNumber: w.phoneNumber,

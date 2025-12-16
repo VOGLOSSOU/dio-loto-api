@@ -64,9 +64,10 @@ module.exports = (app) => {
       // Trier par date de création (plus récent en premier)
       allWithdrawals.sort((a, b) => new Date(b.created) - new Date(a.created));
 
-      // Retourner EXACTEMENT le même format qu'avant
+      // Retourner avec l'email ajouté
       return res.status(200).json({
         message: `Retraits de l'utilisateur ${uniqueUserId} récupérés avec succès.`,
+        userEmail: user.email, // Ajout de l'email
         withdrawals: allWithdrawals
       });
     } catch (error) {

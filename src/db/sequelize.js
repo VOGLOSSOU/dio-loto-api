@@ -175,6 +175,12 @@ Withdrawal.belongsTo(User, {
   as: 'user'
 });
 
+WithdrawalHistory.belongsTo(User, {
+  foreignKey: 'uniqueUserId',
+  targetKey: 'uniqueUserId',
+  as: 'user'
+});
+
 // Association Notification ↔ User
 Notification.belongsTo(User, {
   foreignKey: 'userId',

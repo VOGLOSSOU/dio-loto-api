@@ -5,10 +5,42 @@ const { Op } = require('sequelize');
 module.exports = (app) => {
   app.get('/api/transactions/reseller-to-user/daily-summary-2-days', async (req, res) => {
     try {
-      // Calculer la période : 2 derniers jours
-      const endDate = moment().tz('Africa/Porto-Novo').endOf('day');
-      const startDate = moment().tz('Africa/Porto-Novo').subtract(1, 'days').startOf('day');
-      const totalDays = 2;
+      const { startDate: startDateParam, endDate: endDateParam, days } = req.query;
+
+      let startDate, endDate, totalDays;
+
+      // Si dates spécifiques fournies
+      if (startDateParam && endDateParam) {
+        startDate = moment.tz(startDateParam, 'YYYY-MM-DD', 'Africa/Porto-Novo').startOf('day');
+        endDate = moment.tz(endDateParam, 'YYYY-MM-DD', 'Africa/Porto-Novo').endOf('day');
+
+        if (!startDate.isValid() || !endDate.isValid()) {
+          return res.status(400).json({ message: 'Format de date invalide. Utilisez YYYY-MM-DD.' });
+        }
+
+        if (startDate.isAfter(endDate)) {
+          return res.status(400).json({ message: 'La date de début doit être avant la date de fin.' });
+        }
+
+        totalDays = endDate.diff(startDate, 'days') + 1;
+      }
+      // Si nombre de jours fourni
+      else if (days) {
+        const numDays = parseInt(days);
+        if (isNaN(numDays) || numDays < 1 || numDays > 365) {
+          return res.status(400).json({ message: 'Le paramètre days doit être un nombre entre 1 et 365.' });
+        }
+
+        endDate = moment().tz('Africa/Porto-Novo').endOf('day');
+        startDate = moment().tz('Africa/Porto-Novo').subtract(numDays - 1, 'days').startOf('day');
+        totalDays = numDays;
+      }
+      // Par défaut : 2 derniers jours
+      else {
+        endDate = moment().tz('Africa/Porto-Novo').endOf('day');
+        startDate = moment().tz('Africa/Porto-Novo').subtract(1, 'days').startOf('day');
+        totalDays = 2;
+      }
 
       // Récupérer tous les revendeurs actifs avec leurs infos utilisateur
       const activeResellers = await Reseller.findAll({
@@ -24,7 +56,7 @@ module.exports = (app) => {
 
       const resellersData = [];
 
-      // Pour chaque revendeur, calculer ses stats sur 7 jours
+      // Pour chaque revendeur, calculer ses stats sur la période
       for (const reseller of activeResellers) {
         // Récupérer les transactions de ce revendeur sur la période avec plus d'infos
         const transactions = await ResellerToUserTransaction.findAll({
@@ -139,7 +171,7 @@ module.exports = (app) => {
       resellersData.sort((a, b) => b.periodStats.totalAmount - a.periodStats.totalAmount);
 
       res.json({
-        message: "Résumé par revendeur des transactions reseller-to-user sur 2 jours",
+        message: `Résumé par revendeur des transactions reseller-to-user sur ${totalDays} jour${totalDays > 1 ? 's' : ''}`,
         period: {
           startDate: startDate.format('YYYY-MM-DD'),
           endDate: endDate.format('YYYY-MM-DD'),

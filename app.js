@@ -72,7 +72,7 @@ require("./src/routes/transaction/getAdminToReseller")(app)
 require("./src/routes/transaction/getResellerToUser")(app)
 require("./src/routes/transaction/getUserToUser")(app)
 require("./src/routes/transaction/getRechargeSummary")(app)
-require("./src/routes/transaction/dailyRechargeSummary")(app) // Résumé quotidien sur 30 jours
+require("./src/routes/transaction/dailyRechargeSummary")(app) // Résumé quotidien sur 2 jours (paramétrable)
 require("./src/routes/transaction/deleteTransaction")(app)
 require("./src/routes/transaction/recharge-admin-to-user")(app)
 require("./src/routes/transaction/getAllAdminToUser")(app) // Récupérer les transactions d'un admin vers un utilisateur

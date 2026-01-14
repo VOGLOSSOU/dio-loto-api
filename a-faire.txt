@@ -1,0 +1,23 @@
+- ajouter un cham de filtre sur la page recharge revendeur pour voir les données d' une date donnée, 
+les données entre un jour et un autre ( intervale de temps )
+
+- réduire ticket 
+
+- possibilité de voir les tickets d' une personne donnée
+
+- mot de passe oublié 
+
+
+- audit d' un utilisateur ( par mail ) : connaitre à un moment T ce qu' il a rechargé ( ce qu' il s' est fait rechargé , 
+ce qu' il a joué, ce qu' il a gagné ... )  
+
+
+- 1 type de jeux à ajouter ( anagramme complet )
+
+
+- ajouter les formules ( DIRECT , Turbo2, Turbo3, Turbo4 )  pour Anagramme Simple 
+
+
+- 
+
+

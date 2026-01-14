@@ -1,9 +1,10 @@
 - ajouter un cham de filtre sur la page recharge revendeur pour voir les données d' une date donnée, 
-les données entre un jour et un autre ( intervale de temps )
+les données entre un jour et un autre ( intervale de temps ) ( fait ) 
 
-- réduire ticket 
+- réduire ticket ( fait )
 
-- possibilité de voir les tickets d' une personne donnée
+- possibilité de voir les tickets d' une personne donnée 
+( ajouter des filtres pour afficher des tickets suivant le nom de celui qui l' a crée )
 
 - mot de passe oublié 
 

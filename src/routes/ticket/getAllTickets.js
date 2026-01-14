@@ -4,7 +4,7 @@ const { Op } = require('sequelize');
 module.exports = (app) => {
   app.get('/api/tickets', async (req, res) => {
     try {
-      const { statut, date, search, isCart } = req.query;
+      const { statut, date, search, isCart, userSearch } = req.query;
 
       // Construction dynamique des filtres
       const where = {
@@ -41,6 +41,17 @@ module.exports = (app) => {
         });
       }
 
+      // Filtre par utilisateur (recherche dans firstName, lastName ou email)
+      if (userSearch) {
+        where[Op.and].push({
+          [Op.or]: [
+            { '$User.firstName$': { [Op.like]: `%${userSearch}%` } },
+            { '$User.lastName$': { [Op.like]: `%${userSearch}%` } },
+            { '$User.email$': { [Op.like]: `%${userSearch}%` } },
+          ]
+        });
+      }
+
       const tickets = await Ticket.findAll({
         where,
         order: [['created', 'DESC']],
@@ -62,6 +73,14 @@ module.exports = (app) => {
 
       res.json({
         message: "Liste filtrée des tickets (avec infos utilisateur).",
+        filters: {
+          statut: statut || null,
+          date: date || null,
+          search: search || null,
+          isCart: isCart ? isCart === 'true' : null,
+          userSearch: userSearch || null
+        },
+        total: tickets.length,
         data: tickets
       });
     } catch (error) {

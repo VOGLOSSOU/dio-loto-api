@@ -137,7 +137,7 @@ module.exports = (app) => {
         // Créer le breakdown quotidien (même jours sans transaction)
         const dailyBreakdown = [];
         for (let i = totalDays - 1; i >= 0; i--) {
-          const currentDate = moment().tz('Africa/Porto-Novo').subtract(i, 'days');
+          const currentDate = startDate.clone().add(i, 'days');
           const dateKey = currentDate.format('YYYY-MM-DD');
           const stats = dailyStats[dateKey] || {
             transactions: 0,

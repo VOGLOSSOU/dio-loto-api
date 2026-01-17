@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 module.exports = (app) => {
   app.get('/api/transactions/reseller-to-user/daily-summary-2-days', async (req, res) => {
     try {
-      const { startDate: startDateParam, endDate: endDateParam, days } = req.query;
+      const { startDate: startDateParam, endDate: endDateParam, days, date } = req.query;
 
       let startDate, endDate, totalDays;
 
@@ -34,6 +34,17 @@ module.exports = (app) => {
         endDate = moment().tz('Africa/Porto-Novo').endOf('day');
         startDate = moment().tz('Africa/Porto-Novo').subtract(numDays - 1, 'days').startOf('day');
         totalDays = numDays;
+      }
+      // Si une date unique fournie
+      else if (date) {
+        const singleDate = moment.tz(date, 'YYYY-MM-DD', 'Africa/Porto-Novo');
+        if (!singleDate.isValid()) {
+          return res.status(400).json({ message: 'Format de date invalide. Utilisez YYYY-MM-DD.' });
+        }
+
+        startDate = singleDate.clone().startOf('day');
+        endDate = singleDate.clone().endOf('day');
+        totalDays = 1;
       }
       // Par défaut : 2 derniers jours
       else {

@@ -3,7 +3,7 @@ les données entre un jour et un autre ( intervale de temps ) ( fait )
 
 - réduire ticket ( fait )
 
-- possibilité de voir les tickets d' une personne donnée 
+- possibilité de voir les tickets d' une personne donnée  ( fait )
 ( ajouter des filtres pour afficher des tickets suivant le nom de celui qui l' a crée )
 
 - mot de passe oublié 
@@ -13,7 +13,7 @@ les données entre un jour et un autre ( intervale de temps ) ( fait )
 ce qu' il a joué, ce qu' il a gagné ... )  
 
 
-- 1 type de jeux à ajouter ( anagramme complet )
+- 1 type de jeux à ajouter ( anagramme complet ) 
 
 
 - ajouter les formules ( DIRECT , Turbo2, Turbo3, Turbo4 )  pour Anagramme Simple 

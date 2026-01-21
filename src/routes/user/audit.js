@@ -1,5 +1,5 @@
 const { User, Admin, ResellerToUserTransaction, AdminToUserTransaction, UserToUserTransaction, Ticket, Withdrawal } = require('../../db/sequelize');
-const { authenticateToken } = require('../../auth/auth');
+const authenticateToken = require('../../auth/auth');
 
 module.exports = (app) => {
   app.get('/api/users/audit', authenticateToken, async (req, res) => {

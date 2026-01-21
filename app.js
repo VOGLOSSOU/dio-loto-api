@@ -31,13 +31,13 @@ updateGameStatus();
 
 // : Users
 require("./src/routes/user/findAllUsers")(app)
+require("./src/routes/user/audit")(app) // Audit complet d'un utilisateur - AVANT findUserByPk pour éviter conflit
 require("./src/routes/user/findUserByPk")(app)
 require("./src/routes/user/createUser")(app)
 require("./src/routes/user/updateUser")(app)
 require("./src/routes/user/deleteUser")(app)
 require("./src/routes/user/login")(app)
 require("./src/routes/user/check-role")(app) // Vérification du rôle de l'utilisateur
-require("./src/routes/user/audit")(app) // Audit complet d'un utilisateur
 
 // : Admins
 require("./src/routes/admin/findAllAdmins")(app)

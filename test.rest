@@ -14,4 +14,12 @@ Content-Type: application/json
 # {
 #     "email" : "dioloto1@gmail.com",
 #     "password" : "12Octobre1944"
-# }   
+# }
+
+###
+
+# AUDIT UTILISATEUR - Test de la route d'audit
+GET http://localhost:3000/api/users/audit?email=afabdias@gmail.com
+Content-Type: application/json
+
+###

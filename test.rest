@@ -19,7 +19,7 @@ Content-Type: application/json
 ###
 
 # AUDIT UTILISATEUR - Test de la route d'audit
-GET http://localhost:3000/api/users/audit?email=afabdias@gmail.com
+GET http://localhost:3000/api/users/audit?email=Fambomarcellin@gmail.com
 Content-Type: application/json
 
 ###

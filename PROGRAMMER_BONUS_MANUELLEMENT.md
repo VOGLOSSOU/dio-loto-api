@@ -56,3 +56,9 @@ Cette requête :
 - Affiche le nombre de lignes affectées
 
 **Note :** Utilisez `WHERE bonus > 0` pour ne toucher que ceux qui ont des bonus, ou `UPDATE Users SET bonus = 0;` pour tous les utilisateurs.
+
+UPDATE Tickets 
+SET statut = 'en attente' 
+WHERE nomJeu = 'benin14' 
+AND statut IN ('validé', 'invalidé') 
+AND created >= DATE_SUB(NOW(), INTERVAL 24 HOUR);

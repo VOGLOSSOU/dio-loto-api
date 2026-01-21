@@ -1,8 +1,7 @@
-const { User, Admin, ResellerToUserTransaction, AdminToUserTransaction, UserToUserTransaction, Ticket, Withdrawal } = require('../../db/sequelize');
-const authenticateToken = require('../../auth/auth');
+const { User, Admin, Reseller, ResellerToUserTransaction, AdminToUserTransaction, UserToUserTransaction, Ticket, Withdrawal } = require('../../db/sequelize');
 
 module.exports = (app) => {
-  app.get('/api/users/audit', authenticateToken, async (req, res) => {
+  app.get('/api/users/audit', async (req, res) => {
     try {
       const { email } = req.query;
 
@@ -31,9 +30,15 @@ module.exports = (app) => {
         where: { receiver: userId },
         include: [
           {
-            model: User,
-            as: 'senderUser',
-            attributes: ['firstName', 'lastName', 'email']
+            model: Reseller,
+            as: 'reseller',
+            include: [
+              {
+                model: User,
+                as: 'user',
+                attributes: ['firstName', 'lastName', 'email']
+              }
+            ]
           }
         ],
         order: [['created', 'DESC']]
@@ -73,7 +78,7 @@ module.exports = (app) => {
 
       // 6. Récupérer tous les retraits
       const withdrawals = await Withdrawal.findAll({
-        where: { userId },
+        where: { uniqueUserId: userId },
         order: [['created', 'DESC']]
       });
 
@@ -144,9 +149,9 @@ module.exports = (app) => {
               date: t.created,
               sender: {
                 uniqueUserId: t.sender,
-                firstName: t.senderUser?.firstName || 'N/A',
-                lastName: t.senderUser?.lastName || 'N/A',
-                email: t.senderUser?.email || 'N/A'
+                firstName: t.reseller?.user?.firstName || 'N/A',
+                lastName: t.reseller?.user?.lastName || 'N/A',
+                email: t.reseller?.user?.email || 'N/A'
               }
             })),
             fromAdmins: receivedFromAdmins.map(t => ({

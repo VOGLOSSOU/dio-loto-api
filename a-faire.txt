@@ -10,7 +10,7 @@ les données entre un jour et un autre ( intervale de temps ) ( fait )
 
 
 - audit d' un utilisateur ( par mail ) : connaitre à un moment T ce qu' il a rechargé ( ce qu' il s' est fait rechargé , 
-ce qu' il a joué, ce qu' il a gagné ... )  
+ce qu' il a joué, ce qu' il a gagné ... )   ( fait )
 
 
 - 1 type de jeux à ajouter ( anagramme complet ) 

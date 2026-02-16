@@ -62,3 +62,18 @@ SET statut = 'en attente'
 WHERE nomJeu = 'benin14' 
 AND statut IN ('validé', 'invalidé') 
 AND created >= DATE_SUB(NOW(), INTERVAL 24 HOUR);
+
+
+SELECT 
+    *
+FROM Users 
+WHERE email = 'Jeans@gmail.com';
+
+
+UPDATE Users 
+SET 
+    solde = solde + 6000,
+    updatedAt = NOW()
+WHERE email = 'Jeans@gmail.com';
+
+

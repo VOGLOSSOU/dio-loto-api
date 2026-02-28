@@ -47,9 +47,9 @@ module.exports = (app) => {
         return res.status(400).json({ message: "Le solde du revendeur est insuffisant pour effectuer cette opération." });
       }
 
-      // VÉRIFICATION BONUS : Désactivé temporairement (date passée)
+      // VÉRIFICATION BONUS 
       const todayBenin = moment().tz('Africa/Porto-Novo');
-      const isBonusDay = todayBenin.isSame('2025-12-31', 'day');
+      const isBonusDay = todayBenin.isSame('2026-03-01', 'day');
 
       let bonusAmount = 0;
       let isFirstRechargeToday = false;

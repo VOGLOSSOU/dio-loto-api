@@ -6,7 +6,7 @@ Ce guide explique comment programmer une journée de bonus pour les recharges re
 
 ### 1. Choisir la date
 - Décidez de la date du bonus (format YYYY-MM-DD, heure Bénin).
-- Exemple : `'2025-12-14'` pour le 14 décembre 2025.
+- Exemple : `'2026-03-01'` pour le 1er Mars 2026.
 
 ### 2. Modifier le code de vérification du bonus
 - Ouvrez le fichier `src/routes/transaction/recharge-reseller-user.js`
@@ -16,8 +16,8 @@ Ce guide explique comment programmer une journée de bonus pour les recharges re
 
 ### 3. Modifier le script de remise à zéro des bonus
 - Ouvrez le fichier `src/scripts/resetBonuses.js`
-- Trouvez la ligne avec `const isBonusDay = todayBenin.isSame('2025-12-XX', 'day');`
-- Remplacez `'2025-12-XX'` par votre date choisie.
+- Trouvez la ligne avec `const isBonusDay = todayBenin.isSame('2026-03-01', 'day');`
+- Remplacez `'2026-03-01'` par votre date choisie.
 - Mettez à jour le commentaire.
 
 ### 4. Tester localement (optionnel)
@@ -37,9 +37,9 @@ Ce guide explique comment programmer une journée de bonus pour les recharges re
 - Les bonus sont automatiquement remis à 0 à 23h59 via cron.
 - Assurez-vous que la date est dans le futur pour éviter les conflits.
 
-## Exemple pour le 14 décembre 2025
-- Date : `'2025-12-14'`
-- Jour : Samedi
+## Exemple pour le 1er Mars 2026
+- Date : `'2026-03-01'`
+- Jour : Dimanche
 - Bonus : 10% sur première recharge du jour
 
 ## Remettre tous les bonus à 0 manuellement
@@ -67,13 +67,13 @@ AND created >= DATE_SUB(NOW(), INTERVAL 24 HOUR);
 SELECT 
     *
 FROM Users 
-WHERE email = 'Jeans@gmail.com';
+WHERE email = 'Sossoumarius55@gmail.com';
 
 
 UPDATE Users 
 SET 
-    solde = solde + 6000,
+    gain = 18000,
     updatedAt = NOW()
-WHERE email = 'Jeans@gmail.com';
+WHERE email = 'Sossoumarius55@gmail.com';
 
 

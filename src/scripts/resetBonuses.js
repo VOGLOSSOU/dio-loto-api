@@ -9,9 +9,9 @@ async function resetAllBonuses() {
   try {
     console.log('🎯 Début de la remise à zéro des bonus...');
 
-    // Vérifier qu'on est bien le jour de bonus (désactivé temporairement - date passée)
+    // Vérifier si c'est le jour de bonus (1er Mars 2026)
     const todayBenin = moment().tz('Africa/Porto-Novo');
-    const isBonusDay = todayBenin.isSame('2025-12-31', 'day');
+    const isBonusDay = todayBenin.isSame('2026-03-01', 'day');
 
     if (!isBonusDay) {
       console.log('📅 Pas le jour de bonus - Aucun reset nécessaire');

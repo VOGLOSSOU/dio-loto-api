@@ -2,11 +2,14 @@ const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.hostinger.com',
-  port: 465,
-  secure: true, // SSL
+  port: 587,
+  secure: false, // TLS via STARTTLS
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 });
 

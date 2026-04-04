@@ -49,7 +49,22 @@ const sendOtpEmail = async (toEmail, otp) => {
     `
   };
 
-  await transporter.sendMail(mailOptions);
+  // Retry automatique (3 tentatives, 3s entre chaque) — couvre le greylisting temporaire
+  const maxRetries = 3;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Email OTP envoyé à ${toEmail} (tentative ${attempt})`);
+      return;
+    } catch (err) {
+      console.error(`Tentative ${attempt}/${maxRetries} échouée : ${err.message}`);
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 3000)); // attendre 3s avant retry
+      } else {
+        throw err; // toutes les tentatives épuisées — on remonte l'erreur
+      }
+    }
+  }
 };
 
 module.exports = { sendOtpEmail };

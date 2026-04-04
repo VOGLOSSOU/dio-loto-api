@@ -4,6 +4,7 @@ const transporter = nodemailer.createTransport({
   host: 'smtp.hostinger.com',
   port: 587,
   secure: false, // TLS via STARTTLS
+  family: 4,     // Forcer IPv4 — Render ne supporte pas IPv6 sortant
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASSWORD

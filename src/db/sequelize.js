@@ -21,6 +21,7 @@ const NotificationModel                = require('../models/notification');
 const AnnounceModel                    = require('../models/announce');
 const DailyProfitModel                = require('../models/dailyProfit');
 const WithdrawalHistoryModel          = require('../models/withdrawalHistory');
+const OtpCodeModel                    = require('../models/otpCode');
 
 // 2) Création de la connexion Sequelize
 const sequelize = new Sequelize(
@@ -53,6 +54,7 @@ const Notification               = NotificationModel(sequelize, DataTypes);
 const Announce                   = AnnounceModel(sequelize, DataTypes);
 const DailyProfit                = DailyProfitModel(sequelize, DataTypes);
 const WithdrawalHistory          = WithdrawalHistoryModel(sequelize, DataTypes);
+const OtpCode                    = OtpCodeModel(sequelize, DataTypes);
 
 // ───────────────────────────────────────────────────────────────────────────────
 // 4) Associations **SEULEMENT** pour Game, Schedule et Result (manuelles ici)
@@ -227,5 +229,6 @@ module.exports = {
   Notification,
   Announce,
   DailyProfit,
-  WithdrawalHistory
+  WithdrawalHistory,
+  OtpCode
 };

@@ -134,6 +134,11 @@ require("./src/routes/notifications/mark-all-read")(app)
 require("./src/routes/notifications/deleteNotification")(app)
 require("./src/routes/notifications/unread-count")(app)
 
+// : Auth (Mot de passe oublié)
+require("./src/routes/auth/forgot-password")(app)
+require("./src/routes/auth/verify-otp")(app)
+require("./src/routes/auth/reset-password")(app)
+
 // : EasyCron
 require("./src/routes/easycron/ping")(app)
 require("./src/routes/easycron/updateStatus")(app)

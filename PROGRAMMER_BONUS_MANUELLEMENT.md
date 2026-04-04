@@ -59,7 +59,7 @@ Cette requête :
 
 UPDATE Tickets 
 SET statut = 'en attente' 
-WHERE nomJeu = 'benin14' 
+WHERE nomJeu = 'benin18' 
 AND statut IN ('validé', 'invalidé') 
 AND created >= DATE_SUB(NOW(), INTERVAL 24 HOUR);
 
@@ -67,13 +67,33 @@ AND created >= DATE_SUB(NOW(), INTERVAL 24 HOUR);
 SELECT 
     *
 FROM Users 
-WHERE email = 'Sossoumarius55@gmail.com';
+WHERE email = 'tossoufolly@gmail.fr';
 
 
 UPDATE Users 
 SET 
-    gain = 18000,
+    gain = 9000,
     updatedAt = NOW()
-WHERE email = 'Sossoumarius55@gmail.com';
+WHERE email = 'tossoufolly@gmail.fr';
 
 
+
+-- Ajouter un montant au gain existant
+UPDATE Users 
+SET 
+    gain = gain + 210,
+    updatedAt = NOW()
+WHERE email = 'tossoufolly@gmail.fr';
+
+
+UPDATE Users 
+SET 
+    gain = gain - 6000,
+    updatedAt = NOW()
+WHERE email = 'Lokzawer1978@gmail.com';
+
+UPDATE Users 
+SET 
+    gain = gain - 140,
+    updatedAt = NOW()
+WHERE email = 'lyneadekou@gmail.com';

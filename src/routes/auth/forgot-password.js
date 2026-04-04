@@ -35,13 +35,20 @@ module.exports = (app) => {
       // Sauvegarder en base
       await OtpCode.create({ email, otp, expiresAt, used: false });
 
-      // Envoyer l'email
-      await sendOtpEmail(email, otp);
+      // Envoyer l'email (séparé du try principal pour ne pas bloquer si SMTP échoue)
+      try {
+        await sendOtpEmail(email, otp);
+      } catch (mailError) {
+        console.error("Erreur envoi email OTP :", mailError.message);
+        // On supprime le code créé si l'email n'a pas pu partir
+        await OtpCode.update({ used: true }, { where: { email, otp } });
+        return res.status(500).json({ success: false, message: "Erreur lors de l'envoi. Réessayez." });
+      }
 
       return res.json({ success: true, message: "Si cet email existe, un code a été envoyé." });
 
     } catch (error) {
-      console.error("Erreur forgot-password :", error);
+      console.error("Erreur forgot-password :", error.message);
       return res.status(500).json({ success: false, message: "Erreur lors de l'envoi. Réessayez." });
     }
   });

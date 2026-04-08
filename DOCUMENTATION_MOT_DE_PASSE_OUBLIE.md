@@ -1,6 +1,6 @@
 # Fonctionnalité — Mot de passe oublié
 
-## Vue d'ensemble
+## Vue d'ensemble mise à jour
 
 La fonctionnalité de réinitialisation de mot de passe est disponible via **3 endpoints**. Le flux est le suivant :
 

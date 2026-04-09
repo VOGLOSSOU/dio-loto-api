@@ -22,10 +22,47 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenue sur notre API !" })
 })
 
+const cron = require('node-cron');
 const updateGameStatus = require('./src/scripts/updateGamesStatus');
+const { calculateDailyProfits } = require('./src/scripts/calculateDailyProfits');
+const { resetAllBonuses } = require('./src/scripts/resetBonuses');
+const { Ticket } = require('./src/db/sequelize');
+const { Op } = require('sequelize');
+const moment = require('moment-timezone');
 
-// Lancer la tâche planifiée
+// ─── Cron 1 : Mise à jour statuts des jeux (chaque minute) ───────────────────
 updateGameStatus();
+
+// ─── Cron 2 : Nettoyage des tickets >72h (chaque heure) ──────────────────────
+cron.schedule('0 * * * *', async () => {
+  try {
+    const cutoffDate = moment().subtract(72, 'hours').toDate();
+    const nbDeleted = await Ticket.destroy({ where: { created: { [Op.lt]: cutoffDate } } });
+    console.log(`[CRON - CLEANUP] ${nbDeleted} ticket(s) supprimé(s) (>72h)`);
+  } catch (error) {
+    console.error('[CRON - CLEANUP] Erreur :', error.message);
+  }
+});
+
+// ─── Cron 3 : Calcul des bénéfices journaliers (chaque jour à minuit) ────────
+cron.schedule('0 0 * * *', async () => {
+  try {
+    const result = await calculateDailyProfits();
+    console.log('[CRON - DAILY PROFITS] Calcul terminé :', result);
+  } catch (error) {
+    console.error('[CRON - DAILY PROFITS] Erreur :', error.message);
+  }
+}, { timezone: 'Africa/Porto-Novo' });
+
+// ─── Cron 4 : Remise à zéro des bonus (chaque jour à 23h59 heure Bénin) ──────
+cron.schedule('59 23 * * *', async () => {
+  try {
+    const result = await resetAllBonuses();
+    console.log('[CRON - RESET BONUS] Résultat :', result);
+  } catch (error) {
+    console.error('[CRON - RESET BONUS] Erreur :', error.message);
+  }
+}, { timezone: 'Africa/Porto-Novo' });
 
 // Ici nous afficherons nos routes
 

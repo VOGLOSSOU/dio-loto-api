@@ -2,7 +2,7 @@
 
 ## Vue d'ensemble mise à jouré
 
-La fonctionnalité de réinitialisation de mot de passe est disponible via **3 endpoints**. Le flux est le suivant :
+La fonctionnalité de réinitialisation de mot de passe est disponible via **3 endpoints**. Le flux est le suivant :::
 
 ```
 1. L'utilisateur soumet son email         → POST /api/auth/forgot-password

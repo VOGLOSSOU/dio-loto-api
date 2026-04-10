@@ -9,9 +9,11 @@ async function calculateDailyProfits(targetDate = null) {
   try {
     console.log('💰 Début du calcul des bénéfices journaliers...')
 
-    // Date cible : la veille par défaut, ou date spécifiée
+    // Date cible : la veille par défaut, ou exactement la date spécifiée
     const calculationDate = targetDate ? new Date(targetDate) : new Date()
-    calculationDate.setDate(calculationDate.getDate() - 1) // Jour précédent
+    if (!targetDate) {
+      calculationDate.setDate(calculationDate.getDate() - 1) // Seulement si pas de date explicite
+    }
 
     const dateString = calculationDate.toISOString().split('T')[0] // Format YYYY-MM-DD
     console.log(`📅 Calcul pour la date: ${dateString}`)

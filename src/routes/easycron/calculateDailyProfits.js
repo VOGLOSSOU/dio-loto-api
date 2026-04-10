@@ -9,10 +9,12 @@ module.exports = (app) => {
    */
   app.get('/api/easycron/calculate-daily-profits', async (req, res) => {
     try {
-      console.log('🔄 [EASYCRON] Début du calcul automatique des bénéfices journaliers...')
+      // Date spécifique optionnelle : ?date=2026-04-07 — sinon calcule pour hier
+      const targetDate = req.query.date ? new Date(req.query.date) : null;
 
-      // Exécuter le calcul des bénéfices de la veille
-      const result = await calculateDailyProfits()
+      console.log(`🔄 [EASYCRON] Calcul des bénéfices pour : ${targetDate ? req.query.date : 'hier (défaut)'}`)
+
+      const result = await calculateDailyProfits(targetDate)
 
       console.log('✅ [EASYCRON] Calcul terminé avec succès:', result)
 

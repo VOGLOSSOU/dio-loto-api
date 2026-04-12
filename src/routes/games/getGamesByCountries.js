@@ -1,4 +1,4 @@
-const { Game } = require('../../db/sequelize');
+const { Game, Schedule } = require('../../db/sequelize');
 
 module.exports = (app) => {
   app.get('/api/games/all/:pays', async (req, res) => {
@@ -11,8 +11,18 @@ module.exports = (app) => {
         return res.status(400).json({ message: 'Pays invalide.' });
       }
 
-      // Récupérer tous les jeux du pays
-      const games = await Game.findAll({ where: { pays } });
+      // Récupérer tous les jeux du pays, triés par heure d'ouverture
+      const games = await Game.findAll({
+        where: { pays },
+        include: [{
+          model: Schedule,
+          as: 'schedules',
+          attributes: ['startTime']
+        }],
+        order: [
+          [Schedule, 'startTime', 'ASC']
+        ]
+      });
 
       if (!games || games.length === 0) {
         return res.status(404).json({ message: `Aucun jeu trouvé pour le pays : ${pays}.` });

@@ -1,4 +1,4 @@
-const { Game } = require('../../db/sequelize');
+const { Game, Schedule } = require('../../db/sequelize');
 
 const validPays = ['Benin', 'Côte d\'Ivoire', 'Ghana', 'France', 'Togo'];
 
@@ -12,10 +12,18 @@ module.exports = (app) => {
         return res.status(400).json({ message: 'Pays invalide.' });
       }
 
-      // Récupérer tous les jeux ouverts pour le pays donné
+      // Récupérer tous les jeux ouverts pour le pays donné, triés par heure d'ouverture
       const games = await Game.findAll({
         where: { pays, statut: 'ouvert' },
-        attributes: ['nom', 'description', 'pays', 'statut']
+        include: [{
+          model: Schedule,
+          as: 'schedules',
+          attributes: ['startTime']
+        }],
+        attributes: ['nom', 'description', 'pays', 'statut'],
+        order: [
+          [Schedule, 'startTime', 'ASC']
+        ]
       });
 
       // Toujours renvoyer une réponse 200 avec ou sans jeux

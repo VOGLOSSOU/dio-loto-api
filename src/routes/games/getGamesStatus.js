@@ -9,7 +9,7 @@ module.exports = (app) => {
           model: Schedule,
           as: 'schedules'
         }],
-        order: [['pays', 'ASC'], ['nom', 'ASC']]
+        order: [['pays', 'ASC'], [Schedule, 'startTime', 'ASC']]
       });
 
       const gamesStatus = games.map(game => ({

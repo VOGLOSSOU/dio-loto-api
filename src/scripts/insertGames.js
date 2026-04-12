@@ -15,7 +15,7 @@ const Game = GameModel(sequelize, DataTypes);
 // Liste des jeux à insérer
 const games = [
   { nom: 'benin11', description: 'Disponible dès 14h00 et devient indisponible à partir de 10h55.', pays: 'Benin', doubleChance: false },
-  { nom: 'benin14', description: 'Disponible dès 17h00 et devient indisponible à partir de 13h55.', pays: 'Benin', doubleChance: false },
+  { nom: 'benin14', description: 'Disponible dès 17h00 et devient indisponible à partir de 13h55.', pays: 'Benin', doubleChance: true },
   { nom: 'benin18', description: 'Disponible dès 21h00 et devient indisponible à partir de 17h55.', pays: 'Benin', doubleChance: false },
   { nom: 'benin21', description: 'Disponible dès 00h00 et devient indisponible à partir de 20h55.', pays: 'Benin', doubleChance: false },
   { nom: 'benin00', description: 'Disponible dès 03h00 et devient indisponible à partir de 23h55.', pays: 'Benin', doubleChance: false },

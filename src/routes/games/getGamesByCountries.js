@@ -11,17 +11,10 @@ module.exports = (app) => {
         return res.status(400).json({ message: 'Pays invalide.' });
       }
 
-      // Récupérer tous les jeux du pays, triés par heure d'ouverture
+      // Récupérer tous les jeux du pays, triés par nom (qui contient l'heure)
       const games = await Game.findAll({
         where: { pays },
-        include: [{
-          model: Schedule,
-          as: 'schedules',
-          attributes: ['startTime']
-        }],
-        order: [
-          [Schedule, 'startTime', 'ASC']
-        ]
+        order: [['nom', 'ASC']]
       });
 
       if (!games || games.length === 0) {

@@ -23,3 +23,31 @@ GET http://localhost:3000/api/users/audit?email=Fambomarcellin@gmail.com
 Content-Type: application/json
 
 ###
+
+# ===================================================================
+# TESTS DES JEUX - Tri par heure d'ouverture
+# ===================================================================
+
+# Test 1: Tous les jeux du Bénin (triés par heure d'ouverture)
+GET https://api.dio-loto.com/api/games/all/Benin
+Content-Type: application/json
+
+###
+
+# Test 2: Jeux disponibles (ouverts) du Bénin (triés par heure d'ouverture)
+GET https://api.dio-loto.com/api/games/available/Benin
+Content-Type: application/json
+
+###
+
+# Test 3: État de tous les jeux (triés par pays puis heure d'ouverture)
+GET https://api.dio-loto.com/api/games/status
+Content-Type: application/json
+
+###
+
+# Test 4: Jeux disponibles Côte d'Ivoire (pour vérifier coteivoire18)
+GET https://api.dio-loto.com/api/games/available/Côte d'Ivoire
+Content-Type: application/json
+
+###

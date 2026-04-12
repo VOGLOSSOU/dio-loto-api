@@ -12,18 +12,11 @@ module.exports = (app) => {
         return res.status(400).json({ message: 'Pays invalide.' });
       }
 
-      // Récupérer tous les jeux ouverts pour le pays donné, triés par heure d'ouverture
+      // Récupérer tous les jeux ouverts pour le pays donné, triés par nom (qui contient l'heure)
       const games = await Game.findAll({
         where: { pays, statut: 'ouvert' },
-        include: [{
-          model: Schedule,
-          as: 'schedules',
-          attributes: ['startTime']
-        }],
         attributes: ['nom', 'description', 'pays', 'statut'],
-        order: [
-          [Schedule, 'startTime', 'ASC']
-        ]
+        order: [['nom', 'ASC']]
       });
 
       // Toujours renvoyer une réponse 200 avec ou sans jeux

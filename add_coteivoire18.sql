@@ -1,17 +1,16 @@
--- Requêtes SQL pour ajouter le jeu coteivoire18 manuellement dans phpMyAdmin
+-- Requêtes SQL pour METTRE À JOUR le jeu coteivoire18 (déjà en DB)
 
--- 1. Insérer le jeu dans la table Games
-INSERT INTO `Games` (`nom`, `description`, `statut`, `pays`, `doubleChance`, `manualOverride`, `createdAt`, `updatedAt`)
-VALUES ('coteivoire18', 'Disponible dès 18h00 et devient indisponible à partir de 17h55.', 'ouvert', 'Côte d\'Ivoire', 1, 0, NOW(), NOW());
+-- 1. Mettre à jour la description du jeu
+UPDATE `Games`
+SET `description` = 'Disponible dès 21h00 et devient indisponible à partir de 17h55.'
+WHERE `nom` = 'coteivoire18';
 
--- 2. Insérer le schedule dans la table Schedules
--- Récupérer d'abord l'ID du jeu créé
-SET @gameId = (SELECT id FROM Games WHERE nom = 'coteivoire18' LIMIT 1);
+-- 2. Mettre à jour les horaires
+UPDATE `Schedules`
+SET `startTime` = '21:00:00', `endTime` = '17:55:00'
+WHERE `gameId` = (SELECT id FROM Games WHERE nom = 'coteivoire18' LIMIT 1);
 
-INSERT INTO `Schedules` (`gameId`, `startTime`, `endTime`, `pays`, `timezone`, `createdAt`, `updatedAt`)
-VALUES (@gameId, '18:00:00', '17:55:00', 'Côte d\'Ivoire', 'Africa/Abidjan', NOW(), NOW());
-
--- Vérification : Afficher le jeu et son schedule
+-- Vérification : Afficher le jeu et son schedule mis à jour
 SELECT g.nom, g.description, g.pays, g.doubleChance, s.startTime, s.endTime, s.timezone
 FROM Games g
 LEFT JOIN Schedules s ON g.id = s.gameId

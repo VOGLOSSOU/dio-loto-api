@@ -27,7 +27,7 @@ const games = [
   { nom: 'coteivoire10', description: 'Disponible dès 13h00 et devient indisponible à partir de 09h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire13', description: 'Disponible dès 16h00 et devient indisponible à partir de 12h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire16', description: 'Disponible dès 19h00 et devient indisponible à partir de 15h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
-  { nom: 'coteivoire18', description: 'Disponible dès 18h00 et devient indisponible à partir de 17h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
+  { nom: 'coteivoire18', description: 'Disponible dès 21h00 et devient indisponible à partir de 17h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire21', description: 'Disponible dès 00h00 et devient indisponible à partir de 20h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire22', description: 'Disponible dès 01h00 et devient indisponible à partir de 21h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire23', description: 'Disponible dès 02h00 et devient indisponible à partir de 22h55.', pays: 'Côte d\'Ivoire', doubleChance: true },

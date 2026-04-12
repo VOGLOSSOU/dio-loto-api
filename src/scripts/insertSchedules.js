@@ -31,6 +31,7 @@ const schedules = [
   { nom: 'coteivoire10', startTime: '13:00:00', endTime: '09:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
   { nom: 'coteivoire13', startTime: '16:00:00', endTime: '12:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
   { nom: 'coteivoire16', startTime: '19:00:00', endTime: '15:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
+  { nom: 'coteivoire18', startTime: '18:00:00', endTime: '17:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
   { nom: 'coteivoire21', startTime: '00:00:00', endTime: '20:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },
   { nom: 'coteivoire22', startTime: '01:00:00', endTime: '21:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' }, // Nouveau jeu 22h
   { nom: 'coteivoire23', startTime: '02:00:00', endTime: '22:55:00', pays: 'Côte d\'Ivoire', timezone: 'Africa/Abidjan' },

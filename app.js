@@ -172,6 +172,9 @@ require("./src/routes/notifications/mark-all-read")(app)
 require("./src/routes/notifications/deleteNotification")(app)
 require("./src/routes/notifications/unread-count")(app)
 
+// : Test SMTP temporaire (à supprimer après diagnostic)
+require("./src/routes/test-smtp-route")(app)
+
 // : Auth (Mot de passe oublié)
 require("./src/routes/auth/forgot-password")(app)
 require("./src/routes/auth/verify-otp")(app)

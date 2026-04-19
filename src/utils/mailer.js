@@ -1,7 +1,5 @@
 const nodemailer = require('nodemailer');
 
-console.log('[MAILER] SMTP_USER utilisé:', process.env.SMTP_USER);
-
 const transporter = nodemailer.createTransport({
   host: 'smtp.hostinger.com',
   port: 465,

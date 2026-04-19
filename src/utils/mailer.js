@@ -21,7 +21,7 @@ const transporter = nodemailer.createTransport({
  */
 const sendOtpEmail = async (toEmail, otp) => {
   const mailOptions = {
-    from: '"DIO LOTO" <support@dioloto.online>',
+    from: `"DIO LOTO" <${process.env.SMTP_USER}>`,
     to: toEmail,
     subject: 'Réinitialisation de votre mot de passe DIO LOTO',
     html: `
@@ -44,7 +44,7 @@ const sendOtpEmail = async (toEmail, otp) => {
         <p style="color: #666; font-size: 14px;">Ce code expire dans <strong>10 minutes</strong>.</p>
         <p style="color: #666; font-size: 14px;">Si vous n'avez pas demandé cette réinitialisation, ignorez simplement cet email.</p>
         <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 24px 0;" />
-        <p style="color: #aaa; font-size: 12px; text-align: center;">© DIO LOTO — support@dioloto.online</p>
+        <p style="color: #aaa; font-size: 12px; text-align: center;">© DIO LOTO — ${process.env.SMTP_USER}</p>
       </div>
     `
   };

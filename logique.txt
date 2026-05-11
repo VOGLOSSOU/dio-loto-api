@@ -142,6 +142,10 @@ Condition de gain : Au moins 1 binôme complet dans les 4 premiers de Win OU au 
 Anagramme + AnnagrammesimpleDoubleChance
 Numéros joués : AUTOMATIQUE - Les 37 binômes
 Condition de gain : Au moins 1 binôme complet dans Win OU au moins 1 binôme complet dans Machine
+💰 MISES PAR PRISE (MONTANTS FIXES)
+Double Number    : 280 FCFA × nombre de prises
+Anagramme Simple : 370 FCFA × nombre de prises
+
 📝 NOTES IMPORTANTES
 Double Chance :
 Win : Les 5 premiers numéros tirés (60% des gains)

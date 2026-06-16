@@ -17,7 +17,7 @@ const games = [
   { nom: 'benin11', description: 'Disponible dès 14h00 et devient indisponible à partir de 10h55.', pays: 'Benin', doubleChance: false },
   { nom: 'benin14', description: 'Disponible dès 17h00 et devient indisponible à partir de 13h55.', pays: 'Benin', doubleChance: true },
   { nom: 'benin18', description: 'Disponible dès 21h00 et devient indisponible à partir de 17h55.', pays: 'Benin', doubleChance: false },
-  { nom: 'benin21', description: 'Disponible dès 00h00 et devient indisponible à partir de 20h55.', pays: 'Benin', doubleChance: false },
+  { nom: 'benin20', description: 'Disponible dès 23h00 et devient indisponible à partir de 19h55.', pays: 'Benin', doubleChance: false },
   { nom: 'benin00', description: 'Disponible dès 03h00 et devient indisponible à partir de 23h55.', pays: 'Benin', doubleChance: false },
   { nom: 'togo9', description: 'Disponible dès 12h00 et devient indisponible à partir de 08h55.', pays: 'Togo', doubleChance: true },
   { nom: 'togo13', description: 'Disponible dès 16h00 et devient indisponible à partir de 12h55.', pays: 'Togo', doubleChance: false },

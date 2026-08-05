@@ -17,6 +17,14 @@ const updateGameStatus = () => {
 
       for (const schedule of schedules) {
         const currentTime = now.tz(schedule.timezone); // Convertir l'heure actuelle dans le fuseau horaire du jeu
+
+        // Jeux hebdomadaires (ex: togodetente) : startTime/endTime ne s'appliquent
+        // que le jour indiqué par dayOfWeek (0=dimanche...6=samedi). Les autres jours,
+        // on ne touche pas au statut du jeu (il reste ouvert en continu).
+        if (schedule.dayOfWeek !== null && schedule.dayOfWeek !== undefined && currentTime.day() !== schedule.dayOfWeek) {
+          continue;
+        }
+
         const startTime = moment.tz(schedule.startTime, 'HH:mm:ss', schedule.timezone);
         const endTime = moment.tz(schedule.endTime, 'HH:mm:ss', schedule.timezone);
 

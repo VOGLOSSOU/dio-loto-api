@@ -67,7 +67,7 @@ AND created >= DATE_SUB(NOW(), INTERVAL 24 HOUR);
 SELECT 
     *
 FROM Users 
-WHERE email = 'jeans@gmail.com';
+WHERE email = 'esaieodjo@gmail.com';
 
 
 UPDATE Users 
@@ -81,9 +81,16 @@ WHERE email = 'tossoufolly@gmail.fr';
 -- Ajouter un montant au gain existant
 UPDATE Users 
 SET 
-    gain = gain + 4800,
+    gain = gain + 1200,
     updatedAt = NOW()
-WHERE email = 'jeans@gmail.com';
+WHERE email = 'esaieodjo@gmail.com';
+
+-- Ajouter un montant au solde existant
+UPDATE Users 
+SET 
+    solde = solde + 1080,
+    updatedAt = NOW()
+WHERE email = 'esaieodjo@gmail.com';
 
 
 UPDATE Users 

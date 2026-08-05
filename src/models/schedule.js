@@ -48,6 +48,16 @@ module.exports = (sequelize, DataTypes) => {
           msg: 'Le fuseau horaire doit être l’un des suivants : Africa/Porto-Novo, Africa/Lome, Africa/Abidjan, Africa/Accra, Africa/Niamey.'
         }
       }
+    },
+    dayOfWeek: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      comment: 'Jour de la semaine où startTime/endTime s\'appliquent (0=dimanche...6=samedi). null = tous les jours (comportement historique).',
+      validate: {
+        min: 0,
+        max: 6
+      }
     }
   });
 

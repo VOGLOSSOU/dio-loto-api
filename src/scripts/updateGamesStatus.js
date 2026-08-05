@@ -18,20 +18,23 @@ const updateGameStatus = () => {
       for (const schedule of schedules) {
         const currentTime = now.tz(schedule.timezone); // Convertir l'heure actuelle dans le fuseau horaire du jeu
 
-        // Jeux hebdomadaires (ex: togodetente) : startTime/endTime ne s'appliquent
-        // que le jour indiqué par dayOfWeek (0=dimanche...6=samedi). Les autres jours,
-        // on ne touche pas au statut du jeu (il reste ouvert en continu).
-        if (schedule.dayOfWeek !== null && schedule.dayOfWeek !== undefined && currentTime.day() !== schedule.dayOfWeek) {
-          continue;
-        }
-
         const startTime = moment.tz(schedule.startTime, 'HH:mm:ss', schedule.timezone);
         const endTime = moment.tz(schedule.endTime, 'HH:mm:ss', schedule.timezone);
 
-        // Vérifier si le jeu est dans son horaire
-        const isInSchedule = startTime.isBefore(endTime)
-          ? currentTime.isBetween(startTime, endTime) // Cas normal : startTime < endTime
-          : currentTime.isAfter(startTime) || currentTime.isBefore(endTime); // Cas où la plage traverse minuit
+        let isInSchedule;
+        const isWeeklyGame = schedule.dayOfWeek !== null && schedule.dayOfWeek !== undefined;
+
+        if (isWeeklyGame) {
+          // Jeux hebdomadaires (ex: togodetente) : fermé tous les jours sauf le jour
+          // dayOfWeek (0=dimanche...6=samedi), où il est ouvert entre startTime et endTime.
+          isInSchedule = currentTime.day() === schedule.dayOfWeek
+            && currentTime.isBetween(startTime, endTime);
+        } else {
+          // Jeux quotidiens : ouvert tous les jours entre startTime et endTime
+          isInSchedule = startTime.isBefore(endTime)
+            ? currentTime.isBetween(startTime, endTime) // Cas normal : startTime < endTime
+            : currentTime.isAfter(startTime) || currentTime.isBefore(endTime); // Cas où la plage traverse minuit
+        }
 
         // Mettre à jour le statut du jeu SEULEMENT si pas de contrôle manuel
         const game = schedule.game;

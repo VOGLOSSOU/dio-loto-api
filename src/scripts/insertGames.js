@@ -23,7 +23,7 @@ const games = [
   { nom: 'togo9', description: 'Disponible dès 12h00 et devient indisponible à partir de 08h55.', pays: 'Togo', doubleChance: true },
   { nom: 'togo13', description: 'Disponible dès 16h00 et devient indisponible à partir de 12h55.', pays: 'Togo', doubleChance: false },
   { nom: 'togo18', description: 'Disponible dès 21h00 et devient indisponible à partir de 17h55.', pays: 'Togo', doubleChance: false },
-  { nom: 'togodetente', description: 'Togo Détente - Disponible uniquement le dimanche à partir de 00h00, devient indisponible le dimanche à partir de 15h55 (tirage 16h00, double chance).', pays: 'Togo', doubleChance: true }, // Nouveau jeu hebdomadaire, dimanche uniquement (2026-08-05)
+  { nom: 'togodetente', description: 'Togo Détente - Disponible le samedi à partir de 19h00, devient indisponible le dimanche à partir de 15h55 (tirage dimanche 16h00, double chance).', pays: 'Togo', doubleChance: true }, // Nouveau jeu hebdomadaire, samedi 19h -> dimanche 15h55 (2026-08-05, corrigé 2026-08-22)
   { nom: 'coteivoire7', description: 'Disponible dès 10h00 et devient indisponible à partir de 06h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire8', description: 'Disponible dès 11h00 et devient indisponible à partir de 07h55.', pays: 'Côte d\'Ivoire', doubleChance: true },
   { nom: 'coteivoire10', description: 'Disponible dès 13h00 et devient indisponible à partir de 09h55.', pays: 'Côte d\'Ivoire', doubleChance: true },

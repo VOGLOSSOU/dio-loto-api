@@ -25,10 +25,18 @@ const updateGameStatus = () => {
         const isWeeklyGame = schedule.dayOfWeek !== null && schedule.dayOfWeek !== undefined;
 
         if (isWeeklyGame) {
-          // Jeux hebdomadaires (ex: togodetente) : fermé tous les jours sauf le jour
-          // dayOfWeek (0=dimanche...6=samedi), où il est ouvert entre startTime et endTime.
-          isInSchedule = currentTime.day() === schedule.dayOfWeek
-            && currentTime.isBetween(startTime, endTime);
+          // Jeux hebdomadaires (0=dimanche...6=samedi). dayOfWeek = jour où DÉMARRE la fenêtre.
+          if (startTime.isBefore(endTime)) {
+            // Fenêtre contenue dans une seule journée (ex: dimanche 00h00-15h55)
+            isInSchedule = currentTime.day() === schedule.dayOfWeek
+              && currentTime.isBetween(startTime, endTime);
+          } else {
+            // Fenêtre qui traverse minuit vers le jour suivant
+            // (ex: togodetente, samedi 19h00 -> dimanche 15h55)
+            const endDay = (schedule.dayOfWeek + 1) % 7;
+            isInSchedule = (currentTime.day() === schedule.dayOfWeek && !currentTime.isBefore(startTime))
+              || (currentTime.day() === endDay && currentTime.isBefore(endTime));
+          }
         } else {
           // Jeux quotidiens : ouvert tous les jours entre startTime et endTime
           isInSchedule = startTime.isBefore(endTime)

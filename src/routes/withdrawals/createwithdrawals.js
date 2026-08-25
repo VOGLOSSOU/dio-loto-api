@@ -33,14 +33,38 @@ module.exports = (app) => {
     // 2) Démarrage de la transaction
     const t = await sequelize.transaction();
     try {
-      // 2a) On récupère l’utilisateur (dans la même transaction)
-      const user = await User.findOne({ where: { uniqueUserId }, transaction: t });
+      // 2a) On récupère l’utilisateur, verrouillé pour toute la durée de la transaction
+      // (sérialise les demandes concurrentes du même utilisateur)
+      const user = await User.findOne({
+        where: { uniqueUserId },
+        transaction: t,
+        lock: t.LOCK.UPDATE
+      });
       if (!user) {
         await t.rollback();
         return res.status(404).json({ message: "Utilisateur non trouvé." });
       }
 
-      // 2b) Vérification du gain disponible
+      // 2b) Bloquer une nouvelle demande tant qu'une précédente n'est pas traitée
+      // (lecture verrouillée : voit l'état réellement commité, pas un instantané périmé)
+      const retraitEnCours = await Withdrawal.findOne({
+        where: { uniqueUserId, statut: 'en cours de traitement' },
+        transaction: t,
+        lock: t.LOCK.UPDATE
+      });
+      if (retraitEnCours) {
+        await t.rollback();
+        return res.status(400).json({
+          message: "Vous avez déjà une demande de retrait en cours de traitement. Veuillez attendre qu'elle soit traitée avant d'en soumettre une nouvelle.",
+          retraitEnCours: {
+            uniqueId: retraitEnCours.uniqueId,
+            montant: retraitEnCours.montant,
+            created: retraitEnCours.created
+          }
+        });
+      }
+
+      // 2c) Vérification du gain disponible
       if (montant > user.gain) {
         await t.rollback();
         return res
@@ -48,11 +72,11 @@ module.exports = (app) => {
           .json({ message: "Le montant demandé dépasse le gain disponible." });
       }
 
-      // 2c) On débite le gain de l'utilisateur
+      // 2d) On débite le gain de l'utilisateur
       user.gain -= montant;
       await user.save({ transaction: t });
 
-      // 2d) On crée la demande de retrait
+      // 2e) On crée la demande de retrait
       const withdrawal = await Withdrawal.create(
         {
           uniqueUserId,
@@ -66,7 +90,7 @@ module.exports = (app) => {
         { transaction: t }
       );
 
-      // 2e) Si tout s’est bien passé, on commit
+      // 2f) Si tout s’est bien passé, on commit
       await t.commit();
       return res.status(201).json({
         message: "Demande de retrait enregistrée avec succès.",

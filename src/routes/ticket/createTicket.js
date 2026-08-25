@@ -21,6 +21,15 @@ module.exports = (app) => {
       return res.status(400).json({ message: 'Tous les champs sont requis.' });
     }
 
+    // 1b) Formules désactivées sur la plateforme (comparaison insensible à la casse,
+    // rejette toute demande directe à l'API même si retirée du frontend)
+    const FORMULES_DESACTIVEES = ['turbo2'];
+    if (FORMULES_DESACTIVEES.includes(String(formule).trim().toLowerCase())) {
+      return res.status(403).json({
+        message: `La formule "${formule}" est actuellement désactivée sur la plateforme.`
+      });
+    }
+
     // 2) Vérifier que le jeu existe et est ouvert
     const game = await Game.findOne({ where: { nom: nomJeu } });
     if (!game) {

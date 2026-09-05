@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
-    "build": "npm install"
+    "build": "npm install",
+    "result:cancel": "node src/scripts/cancelWrongResult.js"
   },
   "author": "Nathan VOGLOSSOU",
   "license": "ISC",

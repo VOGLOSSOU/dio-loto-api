@@ -67,7 +67,7 @@ AND created >= DATE_SUB(NOW(), INTERVAL 24 HOUR);
 SELECT 
     *
 FROM Users 
-WHERE email = 'jeans@gmail.com';
+WHERE email = 'jeanoke76@gmail.com';
 
 
 UPDATE Users 
@@ -95,9 +95,9 @@ WHERE email = 'esaieodjo@gmail.com';
 
 UPDATE Users 
 SET 
-    gain = gain - 48000,
+    solde = solde - 3000,
     updatedAt = NOW()
-WHERE email = 'jeans@gmail.com';
+WHERE email = 'jeanoke76@gmail.com';
 
 UPDATE Users 
 SET 

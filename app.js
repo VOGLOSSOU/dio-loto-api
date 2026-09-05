@@ -87,6 +87,7 @@ require("./src/routes/admin/login")(app)
 require("./src/routes/admin/fixUserBalances")(app) // Correction d'urgence des soldes
 require("./src/routes/admin/reverseUserBalances")(app) // Annulation des corrections
 require("./src/routes/admin/resetBonuses")(app) // Remise à zéro des bonus (cron-job.org)
+require("./src/routes/admin/wrongResultManagement")(app) // Analyse et annulation des faux résultats
 
 // : Resellers
 require("./src/routes/reseller/createReseller")(app)
